@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="center" spacing="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="com.cgreen.ygocardtracker.MainMenuController">
+	<padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+	<Text text="Welcome to this Alpha build!" />
+	<Button onAction="#handleViewTableButtonAction" text="View table" />
+    <Button onAction="#handleExitButtonAction" text="Exit" />
+</VBox>
