@@ -19,7 +19,7 @@ public class MainMenuController {
     
     @FXML
     public void handleViewTableButtonAction(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(LoginController.class.getClassLoader().getResource("my_table.fxml"));
+        FXMLLoader loader = new FXMLLoader(MyTableController.class.getClassLoader().getResource("my_table.fxml"));
         Parent parent = loader.load();        
         stage.hide();
         
