@@ -56,23 +56,38 @@ public class DatabaseManager {
     
     public boolean initializeTables() {
         try {
-            createTable();
+            createCardInfoTable();
+            createDeckTable();
+            createMyCardCollectionTable();
         } catch (SQLException sqle) {
-            return false;
+            AlertHelper.raiseAlert(sqle.getMessage());
+            sqle.printStackTrace();
         }
         return true;
     }
     
-    private void createTable() throws SQLException {
+    private void createCardInfoTable() throws SQLException {
         // TODO: Insert driver and db url from props file
-        Connection conn = DriverManager.getConnection("jdbc:h2:./ygodb", user.getUsername(), user.getPassword());
-        String sqlCreate = "CREATE TABLE IF NOT EXISTS MyTable"
-                + " (id int NOT NULL AUTO_INCREMENT,"
-                + " col1 tinytext,"
-                + " col2 smallint(3),"
-                + " col3 tinytext,"
-                + " col4 tinytext,"
-                + " PRIMARY KEY (id))";
+        Connection conn = connectToDatabase();
+        String sqlCreate = Queries.getQuery("create_card_info_table_statement");
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        stmt.close();
+        conn.close();
+    }
+    
+    private void createDeckTable() throws SQLException {
+        Connection conn = connectToDatabase();
+        String sqlCreate = Queries.getQuery("create_deck_table_statement");
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        stmt.close();
+        conn.close();
+    }
+    
+    private void createMyCardCollectionTable() throws SQLException {
+        Connection conn = connectToDatabase();
+        String sqlCreate = Queries.getQuery("create_my_card_collection_table_statement");
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
         stmt.close();
