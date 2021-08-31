@@ -42,11 +42,8 @@ public class YGOCardTracker extends Application
                 
                 dbm.initializeTables();
             
-                Stage mainMenuStage = new Stage();
-                mainMenuStage.setScene(new Scene(parent));                
-                MainMenuController mmc = loader.getController();
-                mmc.setStage(mainMenuStage);
-                mainMenuStage.show();
+                primaryStage.setScene(new Scene(parent));                
+                primaryStage.show();
                 
             } catch (IOException e) {
                 // TODO Auto-generated catch block

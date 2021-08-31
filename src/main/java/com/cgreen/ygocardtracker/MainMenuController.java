@@ -8,27 +8,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class MainMenuController {
-    private Stage stage;
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-    
     @FXML
-    public void handleViewTableButtonAction(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(MyTableController.class.getClassLoader().getResource("my_table.fxml"));
+    public void handleViewCollectionButtonAction(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(CollectionMenuController.class.getClassLoader().getResource("collection_menu.fxml"));
         Parent parent = loader.load();        
-        stage.hide();
         
-        Stage myTableStage = new Stage();
-        myTableStage.setScene(new Scene(parent));
-        MyTableController mtc = loader.getController();
-        mtc.init();
-        mtc.setStage(myTableStage);
-        myTableStage.show();
+        Stage collectionStage = new Stage();
+        collectionStage.setScene(new Scene(parent));
+        CollectionMenuController cmc = loader.getController();
+        cmc.setStage(collectionStage);
+        collectionStage.initModality(Modality.APPLICATION_MODAL);
+        collectionStage.showAndWait();
     }
     
     @FXML

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="231.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.AddCardsMenuController">
+  <tabs>
+    <Tab text="Add by Name">
+         <content>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <TextField promptText="e.g. Dark Magician" />
+                  <Button mnemonicParsing="false" text="Search" />
+               </children>
+            </HBox>
+         </content></Tab>
+    <Tab text="Add by Passcode">
+         <content>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <TextField promptText="e.g. 58192742" />
+                  <Button mnemonicParsing="false" text="Search" />
+               </children>
+            </HBox>
+         </content></Tab>
+  </tabs>
+</TabPane>
