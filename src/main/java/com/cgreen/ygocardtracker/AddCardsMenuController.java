@@ -52,7 +52,7 @@ public class AddCardsMenuController {
     }
     
     public void handleAddByPasscodeButtonAction(ActionEvent event) {
-        System.out.println("You pressed the wrong button!");
+        AlertHelper.raiseAlert("This feature is not yet available.");
     }
     
     private void promptForOnlineSearchByName(String searchItem) {
@@ -93,7 +93,7 @@ public class AddCardsMenuController {
                         promptCustomEntry.setHeaderText("Online search failed.");
                         promptCustomEntry.showAndWait().ifPresent(r -> {
                             if (r == customEntry) {
-                                System.out.println("Here is where we can manually add card info to the DB.");
+                                AlertHelper.raiseAlert("This feature is not yet available.");
                             }
                         });
                     default:
