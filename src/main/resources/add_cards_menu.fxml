@@ -12,8 +12,8 @@
          <content>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <TextField promptText="e.g. Dark Magician" />
-                  <Button mnemonicParsing="false" text="Search" />
+                  <TextField promptText="e.g. Dark Magician" fx:id="nameSearchField" />
+                  <Button mnemonicParsing="false" text="Search" onAction="#handleAddByNameButtonAction" />
                </children>
             </HBox>
          </content></Tab>
@@ -21,8 +21,8 @@
          <content>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <TextField promptText="e.g. 58192742" />
-                  <Button mnemonicParsing="false" text="Search" />
+                  <TextField promptText="e.g. 58192742" fx:id="passcodeSearchField" />
+                  <Button mnemonicParsing="false" text="Search" onAction="#handleAddByPasscodeButtonAction" />
                </children>
             </HBox>
          </content></Tab>
