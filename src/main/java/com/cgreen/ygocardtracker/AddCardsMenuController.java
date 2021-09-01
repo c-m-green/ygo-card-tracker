@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.json.JSONObject;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -81,7 +83,8 @@ public class AddCardsMenuController {
                             sb.append(line + "\n");
                         }
                         br.close();
-                        System.out.println(sb);
+                        // https://stackoverflow.com/a/29183161
+                        JSONObject jsonObj = new JSONObject(sb.toString());
                         break;
                     case 400:
                         ButtonType customEntry = new ButtonType("Enter custom card info...", ButtonBar.ButtonData.NEXT_FORWARD);
