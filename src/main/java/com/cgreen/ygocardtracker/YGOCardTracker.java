@@ -1,7 +1,10 @@
 package com.cgreen.ygocardtracker;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
+import com.cgreen.ygocardtracker.db.DatabaseManager;
+import com.cgreen.ygocardtracker.db.User;
+import com.cgreen.ygocardtracker.menu.MainMenuController;
 
 import javafx.application.Application;
 import javafx.application.Platform;

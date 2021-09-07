@@ -1,4 +1,4 @@
-package com.cgreen.ygocardtracker;
+package com.cgreen.ygocardtracker.menu;
 
 import java.io.IOException;
 

@@ -1,0 +1,59 @@
+package com.cgreen.ygocardtracker.util;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
+
+public class CardImageSaver {
+    private static final String IMAGES_TOP_DIR = "card_images";
+    private static final String IMAGES_DIR = "images";
+    private static final String SMALL_IMAGES_DIR = "images_small";
+    
+    public static Image getCardImage(String remoteUrl) throws MalformedURLException, IOException {
+        URL url = new URL(remoteUrl);
+        Image image = ImageIO.read(url);
+        return image;
+    }
+    
+    public static Image getDefaultImage() {
+        // TODO
+        return null;
+    }
+    
+    public static Image getDefaultImageSmall() {
+        // TODO
+        return null;
+    }
+    
+    public static String saveCardImageFile(Image image, Integer passcode) throws IOException {
+        File homeDir = new File(System.getProperty("user.dir"));
+        File allImages = new File(homeDir, IMAGES_TOP_DIR);
+        File allRegImages = new File(allImages, IMAGES_DIR);
+        if (!allRegImages.exists()) {
+            allRegImages.mkdirs();
+        }
+        BufferedImage bi = (BufferedImage)image;
+        File outputFile = new File(allRegImages, passcode + ".jpg");
+        ImageIO.write(bi, "jpg", outputFile);
+        return outputFile.getAbsolutePath();
+    }
+    
+    public static String saveCardImageFileSmall(Image image, Integer passcode) throws IOException {
+        File homeDir = new File(System.getProperty("user.dir"));
+        File allImages = new File(homeDir, IMAGES_TOP_DIR);
+        File allSmallImages = new File(allImages, SMALL_IMAGES_DIR);
+        if (!allSmallImages.exists()) {
+            allSmallImages.mkdirs();
+        }
+        BufferedImage bi = (BufferedImage)image;
+        File outputFile = new File(allSmallImages, passcode + ".jpg");
+        ImageIO.write(bi, "jpg", outputFile);
+        return outputFile.getAbsolutePath();
+    }
+}

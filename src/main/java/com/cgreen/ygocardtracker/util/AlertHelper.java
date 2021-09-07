@@ -1,4 +1,4 @@
-package com.cgreen.ygocardtracker;
+package com.cgreen.ygocardtracker.util;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;

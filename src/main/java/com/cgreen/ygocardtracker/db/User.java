@@ -1,4 +1,4 @@
-package com.cgreen.ygocardtracker;
+package com.cgreen.ygocardtracker.db;
 
 public class User {
     private String username, password;

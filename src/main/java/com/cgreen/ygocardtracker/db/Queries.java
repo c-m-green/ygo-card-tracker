@@ -1,4 +1,4 @@
-package com.cgreen.ygocardtracker;
+package com.cgreen.ygocardtracker.db;
 
 import java.io.IOException;
 import java.io.InputStream;
