@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.cgreen.ygocardtracker.dao.impl.DBCardInfo;
-import com.cgreen.ygocardtracker.dao.impl.DBCardInfoDao;
+import com.cgreen.ygocardtracker.dao.impl.CardInfo;
+import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 
@@ -21,15 +21,15 @@ import javafx.stage.Stage;
 public class AllCardsController {
 
     private Stage stage;
-    private DBCardInfoDao myTable;
+    private CardInfoDao myTable;
     @FXML
-    private TableView<DBCardInfo> tableView;
+    private TableView<CardInfo> tableView;
     @FXML
-    private TableColumn<DBCardInfo, Integer> passcodeCol, cardTypeCol, variantCol, atkCol, defCol, levelCol, scaleCol, linkValCol;
+    private TableColumn<CardInfo, Integer> passcodeCol, cardTypeCol, variantCol, atkCol, defCol, levelCol, scaleCol, linkValCol;
     @FXML
-    private TableColumn<DBCardInfo, String> nameCol, descCol, attributeCol, linkMarkersCol, imageCol, imageSmallCol;
+    private TableColumn<CardInfo, String> nameCol, descCol, attributeCol, linkMarkersCol, imageCol, imageSmallCol;
     @FXML
-    private TableColumn<DBCardInfo, Boolean> isFakeCol;
+    private TableColumn<CardInfo, Boolean> isFakeCol;
     //TEMP
     @FXML
     private Button deleteButton;
@@ -40,7 +40,7 @@ public class AllCardsController {
 
     public void init() {
         try {
-            myTable = new DBCardInfoDao();
+            myTable = new CardInfoDao();
             passcodeCol.setCellValueFactory(cellData -> cellData.getValue().getPasscodeCol());
             nameCol.setCellValueFactory(cellData -> cellData.getValue().getNameCol());
             descCol.setCellValueFactory(cellData -> cellData.getValue().getDescriptionCol());
@@ -64,7 +64,7 @@ public class AllCardsController {
     }
     
     public void handleDeleteButtonAction(ActionEvent event) {
-        DBCardInfo cardInfo = tableView.getSelectionModel().getSelectedItem();
+        CardInfo cardInfo = tableView.getSelectionModel().getSelectedItem();
         try {
             myTable.delete(cardInfo);
         } catch (SQLException e) {

@@ -71,7 +71,7 @@ public class AddCardsMenuController {
         } else {
             // Save info for this card (may include multiple IDs)
             CardInfoSaver cis = new CardInfoSaver();
-            cis.saveCardInfo(data);
+            cis.saveCardInfoFromJson(data);
         }
         progress.close();
         addByNameButton.setDisable(false);

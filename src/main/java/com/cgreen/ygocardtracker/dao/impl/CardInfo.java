@@ -2,13 +2,13 @@ package com.cgreen.ygocardtracker.dao.impl;
 
 import javafx.beans.property.SimpleObjectProperty;
 
-public class DBCardInfo {
+public class CardInfo {
     private SimpleObjectProperty<String> nameCol, descriptionCol, attributeCol, linkMarkersCol, imageLinkCol, smallImageLinkCol;
     private SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol, variantCol, cardTypeCol;
     private SimpleObjectProperty<Boolean> isFakeCol;
     private int id;
     
-    public DBCardInfo() { 
+    public CardInfo() { 
         nameCol = new SimpleObjectProperty<String>();
         descriptionCol = new SimpleObjectProperty<String>();
         attributeCol = new SimpleObjectProperty<String>();

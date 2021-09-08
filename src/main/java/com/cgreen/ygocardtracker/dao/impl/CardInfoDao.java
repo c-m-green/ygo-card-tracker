@@ -14,16 +14,16 @@ import com.cgreen.ygocardtracker.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class DBCardInfoDao implements Dao<DBCardInfo> {
+public class CardInfoDao implements Dao<CardInfo> {
     
-    private ObservableList<DBCardInfo> collectionItems;
+    private ObservableList<CardInfo> collectionItems;
     
-    public DBCardInfoDao() {
+    public CardInfoDao() {
         collectionItems = FXCollections.observableArrayList();
     }
     // SELECT
     @Override
-    public ObservableList<DBCardInfo> getAll() throws SQLException {
+    public ObservableList<CardInfo> getAll() throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -33,7 +33,7 @@ public class DBCardInfoDao implements Dao<DBCardInfo> {
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
             while (rs.next()) {                
-                DBCardInfo cardInfo = new DBCardInfo();
+                CardInfo cardInfo = new CardInfo();
                 cardInfo.setPasscodeCol(rs.getInt("passcode"));
                 cardInfo.setNameCol(rs.getString("name"));
                 cardInfo.setCardTypeCol(rs.getInt("card_type"));
@@ -66,7 +66,7 @@ public class DBCardInfoDao implements Dao<DBCardInfo> {
     }
     // INSERT
     @Override
-    public void save(DBCardInfo c) throws SQLException {
+    public void save(CardInfo c) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -112,7 +112,7 @@ public class DBCardInfoDao implements Dao<DBCardInfo> {
     }
     // UPDATE
     @Override
-    public void update(DBCardInfo c, String[] params) {
+    public void update(CardInfo c, String[] params) {
         /*c.setCol1(Objects.requireNonNull(params[0], "Column 1 must not be null."));
         c.setCol2(Objects.requireNonNull(Integer.parseInt(params[1]), "Column 2 must not be null."));
         c.setCol3(Objects.requireNonNull(params[2], "Column 3 must not be null."));
@@ -121,7 +121,7 @@ public class DBCardInfoDao implements Dao<DBCardInfo> {
     }
     // DELETE
     @Override
-    public void delete(DBCardInfo c) throws SQLException {
+    public void delete(CardInfo c) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;

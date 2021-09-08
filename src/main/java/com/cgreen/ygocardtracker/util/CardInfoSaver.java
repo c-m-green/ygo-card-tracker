@@ -11,14 +11,14 @@ import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
 import com.cgreen.ygocardtracker.card.model.CardModel;
 import com.cgreen.ygocardtracker.card.model.CardModelFactory;
-import com.cgreen.ygocardtracker.dao.impl.DBCardInfo;
-import com.cgreen.ygocardtracker.dao.impl.DBCardInfoDao;
+import com.cgreen.ygocardtracker.dao.impl.CardInfo;
+import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 
 public class CardInfoSaver {
     public CardInfoSaver() { }
     
-    public void saveCardInfo(JSONArray cardData) {
-        DBCardInfoDao dao = new DBCardInfoDao();
+    public void saveCardInfoFromJson(JSONArray cardData) {
+        CardInfoDao dao = new CardInfoDao();
         // We're not doing fuzzy searches, so we should only have one card.
         JSONObject cardInfo = cardData.getJSONObject(0);
         CardModelFactory cardModelFactory = new CardModelFactory();
@@ -49,7 +49,7 @@ public class CardInfoSaver {
         attributeColVal = (cardModel.hasAttribute()) ? cardInfo.getString("attribute") : null;
         JSONArray cardImagesArr = cardInfo.getJSONArray("card_images");
         for (int i = 0; i < cardImagesArr.length(); i++) {
-            DBCardInfo dbCardInfo = new DBCardInfo();
+            CardInfo dbCardInfo = new CardInfo();
             dbCardInfo.setIsFakeCol(false);
             JSONObject cardImageObj = cardImagesArr.getJSONObject(i);
             Integer passcodeColVal = cardImageObj.getInt("id");
@@ -95,5 +95,9 @@ public class CardInfoSaver {
                 AlertHelper.raiseAlert("Something went wrong saving this card info to the DB.");
             }
         }
+    }
+    
+    public void saveCardInfo(CardInfo cardInfo) {
+        
     }
 }
