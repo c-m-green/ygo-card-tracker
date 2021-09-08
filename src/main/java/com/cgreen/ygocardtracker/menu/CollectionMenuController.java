@@ -25,6 +25,7 @@ public class CollectionMenuController {
         Stage allCardsStage = new Stage();
         allCardsStage.setScene(new Scene(parent));
         AllCardsController acc = loader.getController();
+        acc.init();
         acc.setStage(allCardsStage);
         allCardsStage.initModality(Modality.APPLICATION_MODAL);
         allCardsStage.showAndWait();

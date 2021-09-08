@@ -9,9 +9,13 @@ import com.cgreen.ygocardtracker.dao.impl.DBCardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class AllCardsController {
@@ -21,42 +25,48 @@ public class AllCardsController {
     @FXML
     private TableView<DBCardInfo> tableView;
     @FXML
-    private TextField newCol1Text, newCol2Text, newCol3Text, newCol4Text;
+    private TableColumn<DBCardInfo, Integer> passcodeCol, cardTypeCol, variantCol, atkCol, defCol, levelCol, scaleCol, linkValCol;
     @FXML
-    //private TableColumn col1, col2, col3, col4;
+    private TableColumn<DBCardInfo, String> nameCol, descCol, attributeCol, linkMarkersCol, imageCol, imageSmallCol;
+    @FXML
+    private TableColumn<DBCardInfo, Boolean> isFakeCol;
+    //TEMP
+    @FXML
+    private Button deleteButton;
     
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
     public void init() {
-        // TODO: Clean this up.
         try {
-            DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-            Connection conn = dbm.connectToDatabase();
-            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_table_query"));
-            stmt.executeQuery();
-            ResultSet rs = stmt.getResultSet();
             myTable = new DBCardInfoDao();
-            while(rs.next()) {
-                String[] params = new String[4];
-                params[0] = rs.getString("COL1");
-                params[1] = rs.getInt("COL2") + "";
-                params[2] = rs.getString("COL3");
-                params[3] = rs.getString("COL4");
-               DBCardInfo c = new DBCardInfo();
-                c.setId(rs.getInt("ID"));
-                myTable.update(c, params);
-            }
-            
-            stmt.close();
-            conn.close();
-            /*col1.setCellValueFactory(new PropertyValueFactory<DBCardInfo, String>("col1"));
-            col2.setCellValueFactory(new PropertyValueFactory<DBCardInfo, Integer>("col2"));
-            col3.setCellValueFactory(new PropertyValueFactory<DBCardInfo, String>("col3"));
-            col4.setCellValueFactory(new PropertyValueFactory<DBCardInfo, String>("col4"));*/            
+            passcodeCol.setCellValueFactory(cellData -> cellData.getValue().getPasscodeCol());
+            nameCol.setCellValueFactory(cellData -> cellData.getValue().getNameCol());
+            descCol.setCellValueFactory(cellData -> cellData.getValue().getDescriptionCol());
+            cardTypeCol.setCellValueFactory(cellData -> cellData.getValue().getCardTypeCol());
+            variantCol.setCellValueFactory(cellData -> cellData.getValue().getVariantCol());
+            attributeCol.setCellValueFactory(cellData -> cellData.getValue().getAttributeCol());
+            atkCol.setCellValueFactory(cellData -> cellData.getValue().getAttackCol());
+            defCol.setCellValueFactory(cellData -> cellData.getValue().getDefenseCol());
+            levelCol.setCellValueFactory(cellData -> cellData.getValue().getLevelCol());
+            scaleCol.setCellValueFactory(cellData -> cellData.getValue().getScaleCol());
+            linkValCol.setCellValueFactory(cellData -> cellData.getValue().getLinkValueCol());
+            linkMarkersCol.setCellValueFactory(cellData -> cellData.getValue().getLinkMarkersCol());
+            imageCol.setCellValueFactory(cellData -> cellData.getValue().getImageLinkCol());
+            imageSmallCol.setCellValueFactory(cellData -> cellData.getValue().getSmallImageLinkCol());
+            isFakeCol.setCellValueFactory(cellData -> cellData.getValue().getIsFakeCol());
             tableView.setItems(myTable.getAll());
-
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    public void handleDeleteButtonAction(ActionEvent event) {
+        DBCardInfo cardInfo = tableView.getSelectionModel().getSelectedItem();
+        try {
+            myTable.delete(cardInfo);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
