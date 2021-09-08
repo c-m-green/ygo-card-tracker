@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<Group xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.AllCardsController">
+<Group xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AllCardsController">
    <children>
       <VBox prefHeight="513.0" prefWidth="1006.0">
          <children>
