@@ -7,6 +7,6 @@
    <children>
       <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleAddCardsToCollectionButtonAction" text="Add cards to collection" />
       <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleViewAllCardsButtonAction" text="View all cards" />
-      <Button alignment="CENTER" mnemonicParsing="false" text="View stored card information" />
+      <Button alignment="CENTER" mnemonicParsing="false" onAction="#handleViewAllCardInfoButtonAction" text="View stored card information" />
    </children>
 </VBox>

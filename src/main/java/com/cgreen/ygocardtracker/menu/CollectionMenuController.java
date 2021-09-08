@@ -18,7 +18,7 @@ public class CollectionMenuController {
     }
     
     @FXML
-    public void handleViewAllCardsButtonAction(ActionEvent event) throws IOException {
+    public void handleViewAllCardInfoButtonAction(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(AllCardsController.class.getClassLoader().getResource("all_cards.fxml"));
         Parent parent = loader.load();        
         
@@ -29,6 +29,11 @@ public class CollectionMenuController {
         acc.setStage(allCardsStage);
         allCardsStage.initModality(Modality.APPLICATION_MODAL);
         allCardsStage.showAndWait();
+    }
+    
+    @FXML
+    public void handleViewAllCardsButtonAction(ActionEvent event) {
+        System.out.println("This doesn't do anything yet.");
     }
     
     @FXML
