@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.cgreen.ygocardtracker.dao.impl.CardInfo;
+import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;

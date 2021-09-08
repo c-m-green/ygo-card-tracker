@@ -11,7 +11,7 @@ import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
 import com.cgreen.ygocardtracker.card.model.CardModel;
 import com.cgreen.ygocardtracker.card.model.CardModelFactory;
-import com.cgreen.ygocardtracker.dao.impl.CardInfo;
+import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 
 public class CardInfoSaver {

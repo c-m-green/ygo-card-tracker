@@ -28,10 +28,9 @@ public class CardConfirmerController {
         this.stage = stage;
     }
     
-    public void init(JSONArray data) throws SQLException {
-        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        
-        cardConfirmer = new CardConfirmer(data);
+    public void init() throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();        
+        cardConfirmer = new CardConfirmer();
     }
     
     public void handleSaveButtonAction(ActionEvent event) {

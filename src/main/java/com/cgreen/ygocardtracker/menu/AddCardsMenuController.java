@@ -22,7 +22,9 @@ import com.cgreen.ygocardtracker.util.CardInfoSaver;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -59,10 +61,10 @@ public class AddCardsMenuController {
                 stmt.setString(1,  nameSearchField.getText());
                 stmt.executeQuery();
                 ResultSet rs = stmt.getResultSet();
-                if (!rs.isBeforeFirst()) {
-                    AlertHelper.raiseAlert("No card info found.");
-                } else {
+                if (rs.isBeforeFirst()) {
                     // Cue info from DB for this card's name (may include multiple IDs)
+                } else {
+                    AlertHelper.raiseAlert("No card info found.");
                 }
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -138,7 +140,7 @@ public class AddCardsMenuController {
                 System.out.println(sb);
                 JSONArray data = (JSONArray) new JSONObject(sb.toString()).get("data");
                 // TODO: Change this to CardConfirmerController
-                /*FXMLLoader loader = new FXMLLoader(CardConfirmerController.class.getClassLoader().getResource("card_confirmation_menu.fxml"));
+                FXMLLoader loader = new FXMLLoader(CardConfirmerController.class.getClassLoader().getResource("card_confirmation_menu.fxml"));
                 Parent parent = loader.load();        
                 
                 Stage cardConfirmerStage = new Stage();
@@ -146,13 +148,13 @@ public class AddCardsMenuController {
                 CardConfirmerController ccc = loader.getController();
                 ccc.setStage(cardConfirmerStage);
                 try {
-                    ccc.init(data);
+                    ccc.init();
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 //cardConfirmerStage.initModality(Modality.APPLICATION_MODAL);
-                cardConfirmerStage.show();*/
+                cardConfirmerStage.show();
                 /*for (int i = 0; i < data.length(); i++) {
                     JSONObject cardData = data.getJSONObject(i);
                     System.out.println(cardData.get("name"));

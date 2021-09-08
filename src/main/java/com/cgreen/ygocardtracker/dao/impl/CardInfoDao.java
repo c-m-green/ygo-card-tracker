@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.Dao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;

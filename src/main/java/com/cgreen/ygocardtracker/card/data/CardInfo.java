@@ -1,4 +1,4 @@
-package com.cgreen.ygocardtracker.dao.impl;
+package com.cgreen.ygocardtracker.card.data;
 
 import javafx.beans.property.SimpleObjectProperty;
 
