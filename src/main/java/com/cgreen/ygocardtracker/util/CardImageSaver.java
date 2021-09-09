@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
@@ -55,5 +57,13 @@ public class CardImageSaver {
         File outputFile = new File(allSmallImages, passcode + ".jpg");
         ImageIO.write(bi, "jpg", outputFile);
         return outputFile.getAbsolutePath();
+    }
+    
+    public static Path getImagesDir() {
+        return Paths.get(IMAGES_TOP_DIR, IMAGES_DIR);
+    }
+    
+    public static Path getSmallImagesDir() {
+        return Paths.get(IMAGES_TOP_DIR, SMALL_IMAGES_DIR);
     }
 }

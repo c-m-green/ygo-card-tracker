@@ -10,16 +10,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.cgreen.ygocardtracker.card.data.CardInfo;
+import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 import com.cgreen.ygocardtracker.remote.RemoteDBKey;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardInfoSaver;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +35,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -50,21 +55,18 @@ public class AddCardsMenuController {
         nameSearchField.setDisable(true);
         Stage progress = createProgressBar();
         progress.show();
-        JSONArray data = doOnlineSearch(RemoteDBKey.NAME, nameSearchField.getText());
+        String searchTerm = nameSearchField.getText();
+        JSONArray data = doOnlineSearch(RemoteDBKey.NAME, searchTerm);
         // TODO: Might just want 200, not 201?
         if (data == null) {
             System.out.println("Online search failed -- resorting to local DB");
             try {
-                DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-                Connection conn = dbm.connectToDatabase();
-                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_name_query"));
-                stmt.setString(1,  nameSearchField.getText());
-                stmt.executeQuery();
-                ResultSet rs = stmt.getResultSet();
-                if (rs.isBeforeFirst()) {
-                    // Cue info from DB for this card's name (may include multiple IDs)
-                } else {
+                CardInfoDao dao = new CardInfoDao();
+                ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
+                if (cardInfos.isEmpty()) {
                     AlertHelper.raiseAlert("No card info found.");
+                } else {
+                    showConfirmationScreen(cardInfos);
                 }
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -73,7 +75,8 @@ public class AddCardsMenuController {
         } else {
             // Save info for this card (may include multiple IDs)
             CardInfoSaver cis = new CardInfoSaver();
-            cis.saveCardInfoFromJson(data);
+            List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
+            showConfirmationScreen(newlySavedCardInfo);
         }
         progress.close();
         addByNameButton.setDisable(false);
@@ -86,26 +89,28 @@ public class AddCardsMenuController {
         Stage progress = createProgressBar();
         progress.show();
         try {
-            DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-            Connection conn = dbm.connectToDatabase();
-            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_passcode_query"));
-            String searchTerm = passcodeSearchField.getText();
-            stmt.setString(1, searchTerm);
-            stmt.executeQuery();
-            ResultSet rs = stmt.getResultSet();
-            if (rs.isBeforeFirst()) {
-                // TODO: We found it, so use the local info
-            } else {
-                JSONArray data = doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm);
+            Integer searchTerm = Integer.parseInt(passcodeSearchField.getText());
+            CardInfoDao dao = new CardInfoDao();
+            ObservableList<CardInfo> cardInfos = dao.getCardInfoByPasscode(searchTerm);
+            if (cardInfos.isEmpty()) {
+                JSONArray data = doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
                 if (data == null) {
                     AlertHelper.raiseAlert("Could not find id #" + searchTerm);
                 } else {
-                    // TODO: We found it, so save it locally
+                    CardInfoSaver cis = new CardInfoSaver();
+                    List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
+                    showConfirmationScreen(newlySavedCardInfo);
                 }
+            } else if (cardInfos.size() > 1) {
+                AlertHelper.raiseAlert("Multiple records found for passcode #" + String.format("%08d", searchTerm) + ". Please try searching by card name.");
+            } else {
+                showConfirmationScreen(cardInfos);
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        } catch (NumberFormatException nfe) {
+            AlertHelper.raiseAlert("You need to enter an integer here...");
         }
         progress.close();
         addByPasscodeButton.setDisable(false);
@@ -139,22 +144,6 @@ public class AddCardsMenuController {
                 // https://stackoverflow.com/a/29183161
                 System.out.println(sb);
                 JSONArray data = (JSONArray) new JSONObject(sb.toString()).get("data");
-                // TODO: Change this to CardConfirmerController
-                FXMLLoader loader = new FXMLLoader(CardConfirmerController.class.getClassLoader().getResource("card_confirmation_menu.fxml"));
-                Parent parent = loader.load();        
-                
-                Stage cardConfirmerStage = new Stage();
-                cardConfirmerStage.setScene(new Scene(parent));
-                CardConfirmerController ccc = loader.getController();
-                ccc.setStage(cardConfirmerStage);
-                try {
-                    ccc.init();
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                //cardConfirmerStage.initModality(Modality.APPLICATION_MODAL);
-                cardConfirmerStage.show();
                 /*for (int i = 0; i < data.length(); i++) {
                     JSONObject cardData = data.getJSONObject(i);
                     System.out.println(cardData.get("name"));
@@ -185,5 +174,24 @@ public class AddCardsMenuController {
         stage.setTitle("Searching...");
         stage.setScene(new Scene(vbox));
         return stage;
+    }
+    
+    private void showConfirmationScreen(List<CardInfo> savedCardInfo) {
+        // TODO: Review/revise how these exceptions are getting handled.
+        try {
+            FXMLLoader loader = new FXMLLoader(CardConfirmerController.class.getClassLoader().getResource("card_confirmation_menu.fxml"));
+            Parent parent = loader.load();        
+            
+            Stage cardConfirmerStage = new Stage();
+            cardConfirmerStage.setScene(new Scene(parent));
+            CardConfirmerController ccc = loader.getController();
+            ccc.setStage(cardConfirmerStage);
+            ccc.init(savedCardInfo);
+            cardConfirmerStage.initModality(Modality.APPLICATION_MODAL);
+            cardConfirmerStage.show();
+        } catch (SQLException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

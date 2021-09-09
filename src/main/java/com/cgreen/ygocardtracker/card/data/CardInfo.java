@@ -3,7 +3,7 @@ package com.cgreen.ygocardtracker.card.data;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class CardInfo {
-    private SimpleObjectProperty<String> nameCol, descriptionCol, attributeCol, linkMarkersCol, imageLinkCol, smallImageLinkCol;
+    private SimpleObjectProperty<String> nameCol, descriptionCol, attributeCol, linkMarkersCol, imageLinkCol, smallImageLinkCol, setCodesCol;
     private SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol, variantCol, cardTypeCol;
     private SimpleObjectProperty<Boolean> isFakeCol;
     private int id;
@@ -15,6 +15,7 @@ public class CardInfo {
         linkMarkersCol = new SimpleObjectProperty<String>();
         imageLinkCol = new SimpleObjectProperty<String>();
         smallImageLinkCol = new SimpleObjectProperty<String>();
+        setCodesCol = new SimpleObjectProperty<String>();
         
         passcodeCol = new SimpleObjectProperty<Integer>();
         attackCol = new SimpleObjectProperty<Integer>();
@@ -154,5 +155,13 @@ public class CardInfo {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public SimpleObjectProperty<String> getSetCodesCol() {
+        return setCodesCol;
+    }
+    
+    public void setSetCodesCol(String setCodes) {
+        this.setCodesCol.set(setCodes);
     }
 }

@@ -23,6 +23,98 @@ public class CardInfoDao implements Dao<CardInfo> {
         collectionItems = FXCollections.observableArrayList();
     }
     // SELECT
+    public ObservableList<CardInfo> getCardInfoByName(String cardName) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ObservableList<CardInfo> cardInfos = FXCollections.observableArrayList();
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_name_query"));
+            stmt.setString(1, cardName);
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {                
+                CardInfo cardInfo = new CardInfo();
+                cardInfo.setPasscodeCol(rs.getInt("passcode"));
+                cardInfo.setNameCol(rs.getString("name"));
+                cardInfo.setCardTypeCol(rs.getInt("card_type"));
+                cardInfo.setDescriptionCol(rs.getString("description"));
+                cardInfo.setAttackCol(rs.getInt("attack"));
+                cardInfo.setDefenseCol(rs.getInt("defense"));
+                cardInfo.setLevelCol(rs.getInt("level"));
+                cardInfo.setVariantCol(rs.getInt("variant"));
+                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setScaleCol(rs.getInt("scale"));
+                cardInfo.setLinkValueCol(rs.getInt("link_value"));
+                cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
+                cardInfo.setSetCodesCol(rs.getString("set_codes"));
+                cardInfo.setImageLinkCol(rs.getString("image"));
+                cardInfo.setSmallImageLinkCol(rs.getString("image_small"));
+                cardInfo.setIsFakeCol(rs.getBoolean("is_fake"));
+                cardInfo.setId(rs.getInt("ID"));
+                cardInfos.add(cardInfo);
+            }
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return cardInfos;
+    }
+    
+    // SELECT
+    public ObservableList<CardInfo> getCardInfoByPasscode(int passcode) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ObservableList<CardInfo> cardInfos = FXCollections.observableArrayList();
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_passcode_query"));
+            stmt.setInt(1, passcode);
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {                
+                CardInfo cardInfo = new CardInfo();
+                cardInfo.setPasscodeCol(rs.getInt("passcode"));
+                cardInfo.setNameCol(rs.getString("name"));
+                cardInfo.setCardTypeCol(rs.getInt("card_type"));
+                cardInfo.setDescriptionCol(rs.getString("description"));
+                cardInfo.setAttackCol(rs.getInt("attack"));
+                cardInfo.setDefenseCol(rs.getInt("defense"));
+                cardInfo.setLevelCol(rs.getInt("level"));
+                cardInfo.setVariantCol(rs.getInt("variant"));
+                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setScaleCol(rs.getInt("scale"));
+                cardInfo.setLinkValueCol(rs.getInt("link_value"));
+                cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
+                cardInfo.setSetCodesCol(rs.getString("set_codes"));
+                cardInfo.setImageLinkCol(rs.getString("image"));
+                cardInfo.setSmallImageLinkCol(rs.getString("image_small"));
+                cardInfo.setIsFakeCol(rs.getBoolean("is_fake"));
+                cardInfo.setId(rs.getInt("ID"));
+                cardInfos.add(cardInfo);
+            }
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return cardInfos;
+    }
+    
+    // SELECT
     @Override
     public ObservableList<CardInfo> getAll() throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
@@ -47,6 +139,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setScaleCol(rs.getInt("scale"));
                 cardInfo.setLinkValueCol(rs.getInt("link_value"));
                 cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
+                cardInfo.setSetCodesCol(rs.getString("set_codes"));
                 cardInfo.setImageLinkCol(rs.getString("image"));
                 cardInfo.setSmallImageLinkCol(rs.getString("image_small"));
                 cardInfo.setIsFakeCol(rs.getBoolean("is_fake"));
@@ -89,9 +182,10 @@ public class CardInfoDao implements Dao<CardInfo> {
             stmt.setObject(10, c.getScaleCol().getValue());
             stmt.setObject(11, c.getLinkValueCol().getValue());
             stmt.setObject(12, c.getLinkMarkersCol().getValue());
-            stmt.setObject(13, c.getImageLinkCol().getValue());
-            stmt.setObject(14, c.getSmallImageLinkCol().getValue());
-            stmt.setObject(15, c.getIsFakeCol().getValue());
+            stmt.setObject(13, c.getSetCodesCol().getValue());
+            stmt.setObject(14, c.getImageLinkCol().getValue());
+            stmt.setObject(15, c.getSmallImageLinkCol().getValue());
+            stmt.setObject(16, c.getIsFakeCol().getValue());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
