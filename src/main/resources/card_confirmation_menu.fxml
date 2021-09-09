@@ -8,26 +8,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="332.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.CardConfirmerController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="542.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.CardConfirmerController">
    <children>
-      <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="imageView" fitHeight="415.0" fitWidth="331.0" pickOnBounds="true" preserveRatio="true" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select passcode/image:" />
-            <ChoiceBox prefWidth="150.0" fx:id="passcodeChoiceBox" onAction="#handlePasscodeSelectAction" />
+            <ChoiceBox fx:id="passcodeChoiceBox" onAction="#handlePasscodeSelectAction" prefWidth="150.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select card set:" />
-            <ChoiceBox prefWidth="150.0" fx:id="cardSetChoiceBox" />
+            <ChoiceBox fx:id="cardSetChoiceBox" prefWidth="150.0" />
          </children>
       </HBox>
       <ButtonBar prefHeight="40.0" prefWidth="200.0">
         <buttons>
-          <Button mnemonicParsing="false" text="Save" fx:id="saveButton" onAction="#handleSaveButtonAction" />
-            <Button mnemonicParsing="false" text="Cancel" fx:id="cancelButton" onAction="#handleCancelButtonAction" />
+          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButtonAction" text="Save" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handleCancelButtonAction" text="Cancel" />
         </buttons>
       </ButtonBar>
    </children>
