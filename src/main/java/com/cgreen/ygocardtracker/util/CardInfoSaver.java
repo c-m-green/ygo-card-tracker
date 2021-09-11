@@ -118,8 +118,4 @@ public class CardInfoSaver {
         }
         return out;
     }
-    
-    public void saveCardInfo(CardInfo cardInfo) {
-        
-    }
 }
