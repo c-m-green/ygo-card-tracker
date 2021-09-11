@@ -60,10 +60,18 @@ public class CardInfoSaver {
         setCodesColVal += cardSetObjLast.getString("set_code");
         JSONArray cardImagesArr = allCardInfo.getJSONArray("card_images");
         for (int i = 0; i < cardImagesArr.length(); i++) {
-            CardInfo dbCardInfo = new CardInfo();
-            dbCardInfo.setIsFakeCol(false);
             JSONObject cardImageObj = cardImagesArr.getJSONObject(i);
             Integer passcodeColVal = cardImageObj.getInt("id");
+            int numCardsInDBWithThisPasscode = dao.getNumCardInfos(passcodeColVal);
+            if (numCardsInDBWithThisPasscode > 0) {
+                // TODO: Log this
+                continue;
+            } else if (numCardsInDBWithThisPasscode == -1) {
+                // TODO: Log this
+                continue;
+            }
+            CardInfo dbCardInfo = new CardInfo();
+            dbCardInfo.setIsFakeCol(false);
             dbCardInfo.setPasscodeCol(passcodeColVal);
             dbCardInfo.setCardTypeCol(cardTypeIndex);
             dbCardInfo.setNameCol(nameColVal);

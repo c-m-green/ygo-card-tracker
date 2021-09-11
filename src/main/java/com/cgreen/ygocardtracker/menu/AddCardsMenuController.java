@@ -64,7 +64,7 @@ public class AddCardsMenuController {
                 CardInfoDao dao = new CardInfoDao();
                 ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
                 if (cardInfos.isEmpty()) {
-                    AlertHelper.raiseAlert("No card info found.");
+                    AlertHelper.raiseAlert("No card info found for \"" + searchTerm + "\".");
                 } else {
                     showConfirmationScreen(cardInfos);
                 }
@@ -76,7 +76,21 @@ public class AddCardsMenuController {
             // Save info for this card (may include multiple IDs)
             CardInfoSaver cis = new CardInfoSaver();
             List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
-            showConfirmationScreen(newlySavedCardInfo);
+            if (newlySavedCardInfo.isEmpty()) {
+                try {
+                    CardInfoDao dao = new CardInfoDao();
+                    ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
+                    if (cardInfos.isEmpty()) {
+                        AlertHelper.raiseAlert("No cards were found matching \"" + searchTerm + ".\" This could be due to an error while locating card information, or there could be an invalid passcode in the database.");
+                    } else {
+                        showConfirmationScreen(cardInfos);
+                    }
+                } catch (SQLException e) {
+                    AlertHelper.raiseAlert(e.getStackTrace().toString());
+                }
+            } else {
+                showConfirmationScreen(newlySavedCardInfo);
+            }
         }
         progress.close();
         addByNameButton.setDisable(false);

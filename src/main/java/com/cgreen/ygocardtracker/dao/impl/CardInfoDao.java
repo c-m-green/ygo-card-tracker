@@ -69,7 +69,7 @@ public class CardInfoDao implements Dao<CardInfo> {
     }
     
     // SELECT
-    public ObservableList<CardInfo> getCardInfoByPasscode(int passcode) throws SQLException {
+    public ObservableList<CardInfo> getCardInfoByPasscode(Integer passcode) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -158,6 +158,79 @@ public class CardInfoDao implements Dao<CardInfo> {
         }
         return collectionItems;
     }
+    
+    // SELECT
+    public int getNumCardInfos(String name) {
+        if (name.isBlank() || name.isEmpty() || name == null) {
+            throw new IllegalArgumentException("Card name cannot be blank in query.");
+        }
+        int numberOfHits = 0;
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_name_query"));
+            stmt.setObject(1, Objects.requireNonNull(name, "Card name must have a value."));
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {                
+                numberOfHits++;
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            numberOfHits = -1;
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                return -1;
+            }
+        }
+        return numberOfHits;
+    }
+    
+    // SELECT
+    public int getNumCardInfos(Integer passcode) {
+        if (passcode > 99999999 || passcode < 0 || passcode == null) {
+            throw new IllegalArgumentException("Received invalid passcode value.");
+        }
+        int numberOfHits = 0;
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_passcode_query"));
+            stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            while (rs.next()) {                
+                numberOfHits++;
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+            numberOfHits = -1;
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                return -1;
+            }
+        }
+        return numberOfHits;
+    }
+    
     // INSERT
     @Override
     public void save(CardInfo c) throws SQLException {
@@ -208,6 +281,7 @@ public class CardInfoDao implements Dao<CardInfo> {
     // UPDATE
     @Override
     public void update(CardInfo c, String[] params) {
+        // TODO
         /*c.setCol1(Objects.requireNonNull(params[0], "Column 1 must not be null."));
         c.setCol2(Objects.requireNonNull(Integer.parseInt(params[1]), "Column 2 must not be null."));
         c.setCol3(Objects.requireNonNull(params[2], "Column 3 must not be null."));

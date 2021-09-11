@@ -19,12 +19,12 @@ public class CollectionMenuController {
     
     @FXML
     public void handleViewAllCardInfoButtonAction(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(AllCardsController.class.getClassLoader().getResource("all_cards.fxml"));
+        FXMLLoader loader = new FXMLLoader(AllCardInfoController.class.getClassLoader().getResource("all_card_info.fxml"));
         Parent parent = loader.load();        
         
         Stage allCardsStage = new Stage();
         allCardsStage.setScene(new Scene(parent));
-        AllCardsController acc = loader.getController();
+        AllCardInfoController acc = loader.getController();
         acc.init();
         acc.setStage(allCardsStage);
         allCardsStage.initModality(Modality.APPLICATION_MODAL);

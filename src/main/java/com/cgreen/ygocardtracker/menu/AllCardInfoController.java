@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-public class AllCardsController {
+public class AllCardInfoController {
 
     private Stage stage;
     private CardInfoDao myTable;

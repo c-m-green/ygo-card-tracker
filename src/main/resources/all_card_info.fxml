@@ -14,7 +14,7 @@
             <TableView fx:id="tableView" prefHeight="536.0" prefWidth="1006.0">
               <columns>
                 <TableColumn fx:id="passcodeCol" editable="false" prefWidth="96.0" text="Passcode" />
-                <TableColumn fx:id="nameCol" editable="false" minWidth="0.0" prefWidth="0.0" text="Name" />
+                <TableColumn fx:id="nameCol" editable="false" minWidth="0.0" prefWidth="75.0" text="Name" />
                   <TableColumn fx:id="descCol" editable="false" prefWidth="75.0" text="Description" />
                   <TableColumn fx:id="cardTypeCol" editable="false" prefWidth="75.0" text="Type" />
                   <TableColumn fx:id="variantCol" prefWidth="75.0" text="Variant" />

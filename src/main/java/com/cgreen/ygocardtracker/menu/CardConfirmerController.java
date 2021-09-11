@@ -49,11 +49,13 @@ public class CardConfirmerController {
         passcodeChoiceBox.setItems(passcodeChoices);
         passcodeChoiceBox.setValue(passcodeChoices.get(0));
         cardSetChoiceBox.setItems(cardConfirmer.getCardSetChoicesForPasscode(passcodeChoices.get(0)));
+        // TODO: Handle case where image URL is empty, null, or links to nothing.
         imageView.setImage(new Image(new File(cardConfirmer.getImageLinkForPasscode(passcodeChoices.get(0))).toURI().toString()));
     }
     
     public void handlePasscodeSelectAction(ActionEvent event) {
         cardSetChoiceBox.setItems(cardConfirmer.getCardSetChoicesForPasscode(passcodeChoiceBox.getValue()));
+        // TODO: Handle case where image URL is empty, null, or links to nothing.
         imageView.setImage(new Image(new File(cardConfirmer.getImageLinkForPasscode(passcodeChoiceBox.getValue())).toURI().toString()));
     }
     
