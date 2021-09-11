@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.json.JSONArray;
 
+import com.cgreen.ygocardtracker.card.data.Card;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
+import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
+import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardConfirmer;
 
 import javafx.collections.FXCollections;
@@ -60,7 +63,27 @@ public class CardConfirmerController {
     }
     
     public void handleSaveButtonAction(ActionEvent event) {
-        
+        if (cardSetChoiceBox.getValue() == null || cardSetChoiceBox.getValue().isEmpty()) {
+            AlertHelper.raiseAlert("Please select a set code for this card before saving.");
+        } else {
+            saveButton.setDisable(true);
+            Integer passcode = Integer.parseInt(passcodeChoiceBox.getValue());
+            Card card = new Card();
+            card.setDeckIdCol(1);
+            card.setInSideDeckCol(false);
+            card.setIsVirtualCol(false);
+            card.setSetCodeCol(cardSetChoiceBox.getValue());
+            CardDao dao = new CardDao();
+            try {
+                dao.save(card, passcode);
+                AlertHelper.raiseAlert("Success", "Card saved successfully", "Saved 1 of " + passcode + " to collection.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                AlertHelper.raiseAlert("Error saving to the database.");
+            } finally {
+                saveButton.setDisable(false);
+            }
+        }
     }
     
     public void handleCancelButtonAction(ActionEvent event) {

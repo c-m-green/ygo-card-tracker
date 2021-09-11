@@ -90,6 +90,39 @@ public class CardDao implements Dao<Card> {
             }
         }
     }
+    
+    // INSERT
+    public void save(Card card, Integer passcode) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"));           
+            stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
+            stmt.setObject(2, Objects.requireNonNull(card.getDeckIdCol().getValue(), "Deck ID must have a value."));
+            stmt.setObject(3, card.getSetCodeCol().getValue());
+            stmt.setObject(4, card.getInSideDeckCol().getValue());
+            stmt.setObject(5, card.getIsVirtualCol().getValue());
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                card.setId(rs.getInt(1));
+            }
+            collectionItems.add(card);
+        } catch (SQLException sqle) {
+            throw sqle;
+        } catch (IllegalArgumentException iae) {
+            AlertHelper.raiseAlert(iae.getMessage());
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
 
     @Override
     public void update(Card t, String[] params) throws SQLException {
