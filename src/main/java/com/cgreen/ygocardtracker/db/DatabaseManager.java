@@ -79,6 +79,8 @@ public class DatabaseManager {
         String sqlCreate = Queries.getQuery("create_deck_table_statement");
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
+        String deckCreate = Queries.getQuery("insert_default_deck_statement");
+        stmt.execute(deckCreate);
         stmt.close();
         conn.close();
     }
