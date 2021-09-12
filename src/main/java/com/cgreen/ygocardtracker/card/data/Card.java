@@ -65,4 +65,24 @@ public class Card {
     public void setId(int id) {
         this.id = id;
     }
+    
+    public Integer getCardInfoId() {
+        return cardInfoIdCol.getValue();
+    }
+
+    public Integer getDeckId() {
+        return deckIdCol.getValue();
+    }
+
+    public String getSetCode() {
+        return setCodeCol.getValue();
+    }
+
+    public Boolean getInSideDeck() {
+        return inSideDeckCol.getValue();
+    }
+
+    public Boolean getIsVirtual() {
+        return isVirtualCol.getValue();
+    }
 }

@@ -164,4 +164,69 @@ public class CardInfo {
     public void setSetCodesCol(String setCodes) {
         setCodesCol.set(setCodes);
     }
+    
+    public String getName() {
+        return nameCol.getValue();
+    }
+
+    public Integer getCardType() {
+        return cardTypeCol.getValue();
+    }
+
+    public String getDescription() {
+        return descriptionCol.getValue();
+    }
+
+    public Integer getVariant() {
+        return variantCol.getValue();
+    }
+
+    public String getAttribute() {
+        return attributeCol.getValue();
+    }
+
+    public String getLinkMarkers() {
+        return linkMarkersCol.getValue();
+    }
+
+    public String getImageLink() {
+        return imageLinkCol.getValue();
+    }
+
+    public String getSmallImageLink() {
+        return smallImageLinkCol.getValue();
+    }
+    
+    public Integer getPasscode() {
+        return passcodeCol.getValue();
+    }
+
+    public Integer getAttack() {
+        return attackCol.getValue();
+    }
+
+    public Integer getDefense() {
+        return defenseCol.getValue();
+    }
+
+    public Integer getLevel() {
+        return levelCol.getValue();
+    }
+
+    public Integer getScale() {
+        return scaleCol.getValue();
+    }
+
+    public Integer getLinkValue() {
+        return linkValueCol.getValue();
+    }
+
+    public Boolean getIsFake() {
+        return isFakeCol.getValue();
+    }
+
+    public String getSetCodes() {
+        return setCodesCol.getValue();
+    }
+    
 }
