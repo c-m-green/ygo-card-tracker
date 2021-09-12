@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
-<Group xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AllCardsController">
+<Group xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AllCardInfoController">
    <children>
       <VBox prefHeight="513.0" prefWidth="1006.0">
          <children>

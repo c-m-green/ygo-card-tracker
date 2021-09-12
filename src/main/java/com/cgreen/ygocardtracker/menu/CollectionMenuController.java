@@ -22,18 +22,27 @@ public class CollectionMenuController {
         FXMLLoader loader = new FXMLLoader(AllCardInfoController.class.getClassLoader().getResource("all_card_info.fxml"));
         Parent parent = loader.load();        
         
+        Stage allCardInfoStage = new Stage();
+        allCardInfoStage.setScene(new Scene(parent));
+        AllCardInfoController acc = loader.getController();
+        acc.init();
+        acc.setStage(allCardInfoStage);
+        allCardInfoStage.initModality(Modality.APPLICATION_MODAL);
+        allCardInfoStage.showAndWait();
+    }
+    
+    @FXML
+    public void handleViewAllCardsButtonAction(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(AllCardsController.class.getClassLoader().getResource("all_cards.fxml"));
+        Parent parent = loader.load();        
+        
         Stage allCardsStage = new Stage();
         allCardsStage.setScene(new Scene(parent));
-        AllCardInfoController acc = loader.getController();
+        AllCardsController acc = loader.getController();
         acc.init();
         acc.setStage(allCardsStage);
         allCardsStage.initModality(Modality.APPLICATION_MODAL);
         allCardsStage.showAndWait();
-    }
-    
-    @FXML
-    public void handleViewAllCardsButtonAction(ActionEvent event) {
-        System.out.println("This doesn't do anything yet.");
     }
     
     @FXML
