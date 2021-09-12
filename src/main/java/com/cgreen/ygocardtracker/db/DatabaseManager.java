@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -60,6 +61,7 @@ public class DatabaseManager {
         } catch (SQLException sqle) {
             AlertHelper.raiseAlert(sqle.getMessage());
             sqle.printStackTrace();
+            return false;
         }
         return true;
     }
@@ -79,8 +81,14 @@ public class DatabaseManager {
         String sqlCreate = Queries.getQuery("create_deck_table_statement");
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
-        String deckCreate = Queries.getQuery("insert_default_deck_statement");
-        stmt.execute(deckCreate);
+        // TODO: Find a less hacky was to insert this row *if it doesn't exist*.
+        String sqlQuery = Queries.getQuery("select_deck_table_query");
+        stmt.execute(sqlQuery);
+        ResultSet rs = stmt.getResultSet();
+        if (!rs.isBeforeFirst()) {
+            String deckCreate = Queries.getQuery("insert_default_deck_statement");
+            stmt.execute(deckCreate);
+        }
         stmt.close();
         conn.close();
     }
