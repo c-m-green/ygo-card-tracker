@@ -36,11 +36,11 @@ public class CardDao implements Dao<Card> {
             ResultSet rs = stmt.getResultSet();
             while (rs.next()) {                
                 Card card = new Card();
-                card.setCardInfoIdCol(rs.getInt("card_info_id"));
-                card.setDeckIdCol(rs.getInt("deck_id"));
-                card.setSetCodeCol(rs.getString("set_code"));
-                card.setInSideDeckCol(rs.getBoolean("in_side_deck"));
-                card.setIsVirtualCol(rs.getBoolean("is_virtual"));
+                card.setCardInfoId(rs.getInt("card_info_id"));
+                card.setDeckId(rs.getInt("deck_id"));
+                card.setSetCode(rs.getString("set_code"));
+                card.setInSideDeck(rs.getBoolean("in_side_deck"));
+                card.setIsVirtual(rs.getBoolean("is_virtual"));
                 card.setId(rs.getInt("ID"));
                 collectionItems.add(card);
             }
@@ -66,11 +66,11 @@ public class CardDao implements Dao<Card> {
         try {
             conn = dbm.connectToDatabase();
             stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_statement"));           
-            stmt.setObject(1, Objects.requireNonNull(card.getCardInfoIdCol().getValue(), "Card info ID must have a value."));
-            stmt.setObject(2, Objects.requireNonNull(card.getDeckIdCol().getValue(), "Deck ID must have a value."));
-            stmt.setObject(3, card.getSetCodeCol().getValue());
-            stmt.setObject(4, card.getInSideDeckCol().getValue());
-            stmt.setObject(5, card.getIsVirtualCol().getValue());
+            stmt.setObject(1, Objects.requireNonNull(card.getCardInfoId(), "Card info ID must have a value."));
+            stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
+            stmt.setObject(3, card.getSetCode());
+            stmt.setObject(4, card.getInSideDeck());
+            stmt.setObject(5, card.getIsVirtual());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -100,10 +100,10 @@ public class CardDao implements Dao<Card> {
             conn = dbm.connectToDatabase();
             stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"));           
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
-            stmt.setObject(2, Objects.requireNonNull(card.getDeckIdCol().getValue(), "Deck ID must have a value."));
-            stmt.setObject(3, card.getSetCodeCol().getValue());
-            stmt.setObject(4, card.getInSideDeckCol().getValue());
-            stmt.setObject(5, card.getIsVirtualCol().getValue());
+            stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
+            stmt.setObject(3, card.getSetCode());
+            stmt.setObject(4, card.getInSideDeck());
+            stmt.setObject(5, card.getIsVirtual());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {

@@ -47,7 +47,7 @@ public class CardConfirmerController {
         cardConfirmer = new CardConfirmer(cardInfos);
         ObservableList<String> passcodeChoices = FXCollections.observableArrayList();
         for (CardInfo info : cardInfos) {
-            passcodeChoices.add(String.format("%08d", info.getPasscodeCol().getValue()));            
+            passcodeChoices.add(String.format("%08d", info.getPasscode()));            
         }
         passcodeChoiceBox.setItems(passcodeChoices);
         passcodeChoiceBox.setValue(passcodeChoices.get(0));
@@ -69,10 +69,10 @@ public class CardConfirmerController {
             saveButton.setDisable(true);
             Integer passcode = Integer.parseInt(passcodeChoiceBox.getValue());
             Card card = new Card();
-            card.setDeckIdCol(1);
-            card.setInSideDeckCol(false);
-            card.setIsVirtualCol(false);
-            card.setSetCodeCol(cardSetChoiceBox.getValue());
+            card.setDeckId(1);
+            card.setInSideDeck(false);
+            card.setIsVirtual(false);
+            card.setSetCode(cardSetChoiceBox.getValue());
             CardDao dao = new CardDao();
             try {
                 dao.save(card, passcode);

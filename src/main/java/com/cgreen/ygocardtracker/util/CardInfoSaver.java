@@ -30,7 +30,8 @@ public class CardInfoSaver {
         CardModel cardModel = cardModelFactory.getCardModel(cardType);
         String nameColVal = allCardInfo.getString("name");
         String descColVal = allCardInfo.getString("desc");
-        Integer variantColVal = CardVariant.getIndexOf(allCardInfo.getString("race"));
+        Integer variantIndex = CardVariant.getIndexOf(allCardInfo.getString("race"));
+        CardVariant cardVariant = CardVariant.getCardVariant(variantIndex);
         Integer linkValueColVal, atkColVal, defColVal, levelColVal, scaleColVal;
         String linkMarkersColVal, attributeColVal, setCodesColVal;
         if (cardModel.isLink()) {
@@ -73,10 +74,10 @@ public class CardInfoSaver {
             CardInfo dbCardInfo = new CardInfo();
             dbCardInfo.setIsFakeCol(false);
             dbCardInfo.setPasscodeCol(passcodeColVal);
-            dbCardInfo.setCardTypeCol(cardTypeIndex);
+            dbCardInfo.setCardTypeCol(cardType);
             dbCardInfo.setNameCol(nameColVal);
             dbCardInfo.setDescriptionCol(descColVal);
-            dbCardInfo.setVariantCol(variantColVal);
+            dbCardInfo.setVariantCol(cardVariant);
             dbCardInfo.setAttributeCol(attributeColVal);
             dbCardInfo.setAttackCol(atkColVal);
             dbCardInfo.setLinkMarkersCol(linkMarkersColVal);

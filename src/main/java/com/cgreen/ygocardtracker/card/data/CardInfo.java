@@ -4,8 +4,10 @@ import javafx.beans.property.SimpleObjectProperty;
 
 public class CardInfo {
     private SimpleObjectProperty<String> nameCol, descriptionCol, attributeCol, linkMarkersCol, imageLinkCol, smallImageLinkCol, setCodesCol;
-    private SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol, variantCol, cardTypeCol;
+    private SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol;
     private SimpleObjectProperty<Boolean> isFakeCol;
+    private SimpleObjectProperty<CardType> cardTypeCol;
+    private SimpleObjectProperty<CardVariant> variantCol;
     private int id;
     
     public CardInfo() { 
@@ -23,8 +25,8 @@ public class CardInfo {
         levelCol = new SimpleObjectProperty<Integer>();
         scaleCol = new SimpleObjectProperty<Integer>();
         linkValueCol = new SimpleObjectProperty<Integer>();
-        cardTypeCol = new SimpleObjectProperty<Integer>();
-        variantCol = new SimpleObjectProperty<Integer>();
+        cardTypeCol = new SimpleObjectProperty<CardType>();
+        variantCol = new SimpleObjectProperty<CardVariant>();
         
         isFakeCol = new SimpleObjectProperty<Boolean>();
     }
@@ -37,11 +39,11 @@ public class CardInfo {
         nameCol.set(name);
     }
 
-    public SimpleObjectProperty<Integer> getCardTypeCol() {
+    public SimpleObjectProperty<CardType> getCardTypeCol() {
         return cardTypeCol;
     }
 
-    public void setCardTypeCol(Integer cardType) {
+    public void setCardTypeCol(CardType cardType) {
         cardTypeCol.set(cardType);;
     }
 
@@ -53,11 +55,11 @@ public class CardInfo {
         descriptionCol.set(description);
     }
 
-    public SimpleObjectProperty<Integer> getVariantCol() {
+    public SimpleObjectProperty<CardVariant> getVariantCol() {
         return variantCol;
     }
 
-    public void setVariantCol(Integer variant) {
+    public void setVariantCol(CardVariant variant) {
         variantCol.set(variant);
     }
 
@@ -169,7 +171,7 @@ public class CardInfo {
         return nameCol.getValue();
     }
 
-    public Integer getCardType() {
+    public CardType getCardType() {
         return cardTypeCol.getValue();
     }
 
@@ -177,7 +179,7 @@ public class CardInfo {
         return descriptionCol.getValue();
     }
 
-    public Integer getVariant() {
+    public CardVariant getVariant() {
         return variantCol.getValue();
     }
 

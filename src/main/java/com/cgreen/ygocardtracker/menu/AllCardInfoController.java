@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.cgreen.ygocardtracker.card.data.CardInfo;
+import com.cgreen.ygocardtracker.card.data.CardType;
+import com.cgreen.ygocardtracker.card.data.CardVariant;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
@@ -25,11 +27,15 @@ public class AllCardInfoController {
     @FXML
     private TableView<CardInfo> tableView;
     @FXML
-    private TableColumn<CardInfo, Integer> passcodeCol, cardTypeCol, variantCol, atkCol, defCol, levelCol, scaleCol, linkValCol;
+    private TableColumn<CardInfo, Integer> passcodeCol, atkCol, defCol, levelCol, scaleCol, linkValCol;
     @FXML
     private TableColumn<CardInfo, String> nameCol, descCol, attributeCol, linkMarkersCol, imageCol, imageSmallCol;
     @FXML
     private TableColumn<CardInfo, Boolean> isFakeCol;
+    @FXML
+    private TableColumn<CardInfo, CardType> cardTypeCol;
+    @FXML
+    private TableColumn<CardInfo, CardVariant> variantCol;
     //TEMP
     @FXML
     private Button deleteButton;
