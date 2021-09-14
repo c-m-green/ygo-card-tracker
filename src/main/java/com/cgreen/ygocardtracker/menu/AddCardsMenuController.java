@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -23,6 +24,7 @@ import com.cgreen.ygocardtracker.remote.RemoteDBKey;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardInfoSaver;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -105,8 +107,8 @@ public class AddCardsMenuController {
         try {
             Integer searchTerm = Integer.parseInt(passcodeSearchField.getText());
             CardInfoDao dao = new CardInfoDao();
-            ObservableList<CardInfo> cardInfos = dao.getCardInfoByPasscode(searchTerm);
-            if (cardInfos.isEmpty()) {
+            CardInfo cardInfo = dao.getCardInfoByPasscode(searchTerm);
+            if (cardInfo == null) {
                 JSONArray data = doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
                 if (data == null) {
                     AlertHelper.raiseAlert("Could not find id #" + searchTerm);
@@ -115,10 +117,8 @@ public class AddCardsMenuController {
                     List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
                     showConfirmationScreen(newlySavedCardInfo);
                 }
-            } else if (cardInfos.size() > 1) {
-                AlertHelper.raiseAlert("Multiple records found for passcode #" + String.format("%08d", searchTerm) + ". Please try searching by card name.");
             } else {
-                showConfirmationScreen(cardInfos);
+                showConfirmationScreen(FXCollections.observableArrayList(cardInfo));
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block

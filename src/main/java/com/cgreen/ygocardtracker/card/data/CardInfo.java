@@ -1,5 +1,8 @@
 package com.cgreen.ygocardtracker.card.data;
 
+import com.cgreen.ygocardtracker.card.model.CardModel;
+import com.cgreen.ygocardtracker.card.model.CardModelFactory;
+
 import javafx.beans.property.SimpleObjectProperty;
 
 public class CardInfo {
@@ -9,6 +12,7 @@ public class CardInfo {
     private SimpleObjectProperty<CardType> cardTypeCol;
     private SimpleObjectProperty<CardVariant> variantCol;
     private int id;
+    private CardModel cardModel;
     
     public CardInfo() { 
         nameCol = new SimpleObjectProperty<String>();
@@ -25,10 +29,24 @@ public class CardInfo {
         levelCol = new SimpleObjectProperty<Integer>();
         scaleCol = new SimpleObjectProperty<Integer>();
         linkValueCol = new SimpleObjectProperty<Integer>();
+        
         cardTypeCol = new SimpleObjectProperty<CardType>();
         variantCol = new SimpleObjectProperty<CardVariant>();
         
         isFakeCol = new SimpleObjectProperty<Boolean>();
+        cardModel = null;
+    }
+    
+    public void initCardModel() {
+        if (this.getCardType() == null) {
+            cardModel = CardModelFactory.getCardModel(CardType.UNKNOWN);
+        } else {
+            cardModel = CardModelFactory.getCardModel(this.getCardType());
+        }
+    }
+    
+    public CardModel getCardModel() {
+        return cardModel;
     }
 
     public SimpleObjectProperty<String> getNameCol() {

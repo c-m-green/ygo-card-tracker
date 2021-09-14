@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import com.cgreen.ygocardtracker.card.data.Card;
+import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.Dao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
@@ -55,6 +55,40 @@ public class CardDao implements Dao<Card> {
             }
         }
         return collectionItems;
+    }
+    
+    // SELECT
+    public Card getCardByPasscode(Integer passcode) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        Card card = null;
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_by_passcode_query"));
+            stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            rs.next();                
+            card = new Card();
+            card.setCardInfoId(rs.getInt("card_info_id"));
+            card.setDeckId(rs.getInt("deck_id"));
+            card.setSetCode(rs.getString("set_code"));
+            card.setInSideDeck(rs.getBoolean("in_side_deck"));
+            card.setIsVirtual(rs.getBoolean("is_virtual"));
+            card.setId(rs.getInt("ID"));
+            collectionItems.add(card);
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return card; 
     }
 
     // INSERT

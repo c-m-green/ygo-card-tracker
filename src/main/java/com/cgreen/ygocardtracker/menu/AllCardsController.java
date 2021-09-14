@@ -4,14 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.cgreen.ygocardtracker.card.data.Card;
+import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
+import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -21,18 +24,12 @@ import javafx.stage.Stage;
 public class AllCardsController {
 
     private Stage stage;
-    private CardDao myTable;
+    private CardDao cardDao;
+    private CardInfoDao cardInfoDao;
     @FXML
-    private TableView<Card> tableView;
+    private ListView<Card> listView;
     @FXML
-    private TableColumn<Card, Integer> cardInfoIdCol, deckIdCol;
-    @FXML
-    private TableColumn<Card, String> setCodeCol;
-    @FXML
-    private TableColumn<Card, Boolean> isInSideDeckCol, isVirtualCol;
-    //TEMP
-    @FXML
-    private Button deleteButton;
+    private Button addCardButton, viewInfoButton, deleteButton, backButton;
     
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -40,13 +37,13 @@ public class AllCardsController {
 
     public void init() {
         try {
-            myTable = new CardDao();
-            cardInfoIdCol.setCellValueFactory(cellData -> cellData.getValue().getCardInfoIdCol());
-            deckIdCol.setCellValueFactory(cellData -> cellData.getValue().getDeckIdCol());
-            setCodeCol.setCellValueFactory(cellData -> cellData.getValue().getSetCodeCol());
-            isInSideDeckCol.setCellValueFactory(cellData -> cellData.getValue().getInSideDeckCol());
-            isVirtualCol.setCellValueFactory(cellData -> cellData.getValue().getIsVirtualCol());
-            tableView.setItems(myTable.getAll());
+            cardDao = new CardDao();
+            cardInfoDao = new CardInfoDao();
+            ObservableList<Card> allCards = cardDao.getAll();
+            for (Card card : allCards) {
+                card.setCardInfo(cardInfoDao.getCardInfoById(card.getCardInfoId()));
+            }
+            listView.setItems(allCards);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -54,12 +51,24 @@ public class AllCardsController {
     }
     
     public void handleDeleteButtonAction(ActionEvent event) {
-        Card card = tableView.getSelectionModel().getSelectedItem();
+        Card card = listView.getSelectionModel().getSelectedItem();
         try {
-            myTable.delete(card);
+            cardDao.delete(card);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public void handleAddCardButtonAction() {
+        
+    }
+    
+    public void handleViewInfoButtonAction() {
+        
+    }
+    
+    public void handleBackButtonAction() {
+        
     }
 }

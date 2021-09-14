@@ -13,8 +13,8 @@ import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
 import com.cgreen.ygocardtracker.card.model.CardModel;
 import com.cgreen.ygocardtracker.card.model.CardModelFactory;
-import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
+import com.cgreen.ygocardtracker.card.data.CardInfo;
 
 public class CardInfoSaver {
     public CardInfoSaver() { }
@@ -24,10 +24,9 @@ public class CardInfoSaver {
         CardInfoDao dao = new CardInfoDao();
         // We're not doing fuzzy searches, so we should only have one card.
         JSONObject allCardInfo = cardData.getJSONObject(0);
-        CardModelFactory cardModelFactory = new CardModelFactory();
         Integer cardTypeIndex = CardType.getIndexOf(allCardInfo.getString("type"));
         CardType cardType = CardType.getCardType(cardTypeIndex);
-        CardModel cardModel = cardModelFactory.getCardModel(cardType);
+        CardModel cardModel = CardModelFactory.getCardModel(cardType);
         String nameColVal = allCardInfo.getString("name");
         String descColVal = allCardInfo.getString("desc");
         Integer variantIndex = CardVariant.getIndexOf(allCardInfo.getString("race"));

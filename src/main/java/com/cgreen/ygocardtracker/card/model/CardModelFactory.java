@@ -2,10 +2,8 @@ package com.cgreen.ygocardtracker.card.model;
 
 import com.cgreen.ygocardtracker.card.data.CardType;
 
-public class CardModelFactory {
-    public CardModelFactory() { }
-    
-    public CardModel getCardModel(CardType cardType) {
+public final class CardModelFactory {
+    public static CardModel getCardModel(CardType cardType) {
         CardModel cardModel = null;
         switch(cardType) {
         case MONSTER_FLIP_TUNER_EFFECT:
@@ -167,6 +165,8 @@ public class CardModelFactory {
             break;
         case UNKNOWN:
             // TODO: Need to figure out what a default card looks like
+            cardModel = new SpellCardModel();
+            break;
         case SKILL:
             // TODO: Need to figure out what to do here
         default:

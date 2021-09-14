@@ -71,18 +71,17 @@ public class CardInfoDao implements Dao<CardInfo> {
     }
     
     // SELECT
-    public ObservableList<CardInfo> getCardInfoByPasscode(Integer passcode) throws SQLException {
+    public CardInfo getCardInfoById(Integer infoId) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;
-        ObservableList<CardInfo> cardInfos = FXCollections.observableArrayList();
         try {            
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_passcode_query"));
-            stmt.setInt(1, passcode);
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_id_query"));
+            stmt.setInt(1, infoId);
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
-            while (rs.next()) {                
+            if (rs.next()) {                
                 CardInfo cardInfo = new CardInfo();
                 cardInfo.setPasscodeCol(rs.getInt("passcode"));
                 cardInfo.setNameCol(rs.getString("name"));
@@ -101,7 +100,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setSmallImageLinkCol(rs.getString("image_small"));
                 cardInfo.setIsFakeCol(rs.getBoolean("is_fake"));
                 cardInfo.setId(rs.getInt("ID"));
-                cardInfos.add(cardInfo);
+                return cardInfo;
             }
         } catch (SQLException sqle) {
             throw sqle;
@@ -113,7 +112,52 @@ public class CardInfoDao implements Dao<CardInfo> {
                 conn.close();
             }
         }
-        return cardInfos;
+        return null;
+    }
+    
+    // SELECT
+    public CardInfo getCardInfoByPasscode(Integer passcode) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_passcode_query"));
+            stmt.setInt(1, passcode);
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            if (rs.next()) {                
+                CardInfo cardInfo = new CardInfo();
+                cardInfo.setPasscodeCol(rs.getInt("passcode"));
+                cardInfo.setNameCol(rs.getString("name"));
+                cardInfo.setCardTypeCol(CardType.getCardType(rs.getInt("card_type")));
+                cardInfo.setDescriptionCol(rs.getString("description"));
+                cardInfo.setAttackCol(rs.getInt("attack"));
+                cardInfo.setDefenseCol(rs.getInt("defense"));
+                cardInfo.setLevelCol(rs.getInt("level"));
+                cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
+                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setScaleCol(rs.getInt("scale"));
+                cardInfo.setLinkValueCol(rs.getInt("link_value"));
+                cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
+                cardInfo.setSetCodesCol(rs.getString("set_codes"));
+                cardInfo.setImageLinkCol(rs.getString("image"));
+                cardInfo.setSmallImageLinkCol(rs.getString("image_small"));
+                cardInfo.setIsFakeCol(rs.getBoolean("is_fake"));
+                cardInfo.setId(rs.getInt("ID"));
+                return cardInfo;
+            }
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return null;
     }
     
     // SELECT

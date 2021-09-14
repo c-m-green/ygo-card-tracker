@@ -1,11 +1,18 @@
-package com.cgreen.ygocardtracker.card.data;
+package com.cgreen.ygocardtracker.card;
+
+import com.cgreen.ygocardtracker.card.data.CardInfo;
 
 public class Card {
     private Integer id, cardInfoId, deckId;
     private String setCode;
     private Boolean inSideDeck, isVirtual;
+    private CardInfo cardInfo;
     
     public Card() { }
+    
+    public Card(CardInfo cardInfo) {
+        this.cardInfo = cardInfo;
+    }
 
     public void setCardInfoId(Integer cardInfoId) {
         this.cardInfoId = cardInfoId;
@@ -53,5 +60,22 @@ public class Card {
 
     public Boolean getIsVirtual() {
         return isVirtual;
+    }
+    
+    public void setCardInfo(CardInfo cardInfo) {
+        this.cardInfo = cardInfo;
+    }
+    
+    public CardInfo getCardInfo() {
+        return cardInfo;
+    }
+    
+    @Override
+    public String toString() {
+        if (cardInfo == null) {
+            return "id:" + id;
+        } else {
+            return cardInfo.getName();
+        }
     }
 }
