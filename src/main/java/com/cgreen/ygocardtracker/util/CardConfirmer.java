@@ -19,8 +19,8 @@ public class CardConfirmer {
     public ObservableList<String> getCardSetChoicesForPasscode(String passcode) {
         ObservableList<String> cardSetChoices = FXCollections.observableArrayList();
         for (CardInfo cardInfo : cardInfos) {
-            if (String.format("%08d", cardInfo.getPasscodeCol().getValue()).equals(passcode)) {
-                String[] cardSetArr = cardInfo.getSetCodesCol().getValue().split(",");
+            if (String.format("%08d", cardInfo.getPasscode()).equals(passcode)) {
+                String[] cardSetArr = cardInfo.getSetCodes().split(",");
                 for (String cardSet : cardSetArr) {
                     cardSetChoices.add(cardSet);
                 }
@@ -34,8 +34,8 @@ public class CardConfirmer {
         // TODO: Set this link to the default card image.
         String defaultImageLink = "";
         for (CardInfo cardInfo : cardInfos) {
-            if (String.format("%08d", cardInfo.getPasscodeCol().getValue()).equals(passcode)) {
-                String imgLink = cardInfo.getImageLinkCol().getValue();
+            if (String.format("%08d", cardInfo.getPasscode()).equals(passcode)) {
+                String imgLink = cardInfo.getImageLink();
                 if (imgLink == null) {
                     return defaultImageLink;
                 } else {

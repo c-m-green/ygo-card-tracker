@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
@@ -275,6 +276,51 @@ public class CardInfoDao implements Dao<CardInfo> {
             }
         }
         return numberOfHits;
+    }
+    
+    // SELECT
+    public void setCardInfosToCards(ObservableList<Card> cards) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {            
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_id_query"));
+            for (Card card : cards) {
+                stmt.setInt(1, card.getCardInfoId());
+                stmt.executeQuery();
+                ResultSet rs = stmt.getResultSet();
+                rs.next();                
+                CardInfo cardInfo = new CardInfo();
+                cardInfo.setPasscodeCol(rs.getInt("passcode"));
+                cardInfo.setNameCol(rs.getString("name"));
+                cardInfo.setCardTypeCol(CardType.getCardType(rs.getInt("card_type")));
+                cardInfo.setDescriptionCol(rs.getString("description"));
+                cardInfo.setAttackCol(rs.getInt("attack"));
+                cardInfo.setDefenseCol(rs.getInt("defense"));
+                cardInfo.setLevelCol(rs.getInt("level"));
+                cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
+                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setScaleCol(rs.getInt("scale"));
+                cardInfo.setLinkValueCol(rs.getInt("link_value"));
+                cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
+                cardInfo.setSetCodesCol(rs.getString("set_codes"));
+                cardInfo.setImageLinkCol(rs.getString("image"));
+                cardInfo.setSmallImageLinkCol(rs.getString("image_small"));
+                cardInfo.setIsFakeCol(rs.getBoolean("is_fake"));
+                cardInfo.setId(rs.getInt("ID"));
+                card.setCardInfo(cardInfo);
+            }
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
     
     // INSERT
