@@ -54,11 +54,11 @@ public class Card {
         return setCode;
     }
 
-    public Boolean getInSideDeck() {
+    public Boolean inSideDeck() {
         return inSideDeck;
     }
 
-    public Boolean getIsVirtual() {
+    public Boolean isVirtual() {
         return isVirtual;
     }
     

@@ -103,8 +103,8 @@ public class CardDao implements Dao<Card> {
             stmt.setObject(1, Objects.requireNonNull(card.getCardInfoId(), "Card info ID must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
             stmt.setObject(3, card.getSetCode());
-            stmt.setObject(4, card.getInSideDeck());
-            stmt.setObject(5, card.getIsVirtual());
+            stmt.setObject(4, card.inSideDeck());
+            stmt.setObject(5, card.isVirtual());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -136,8 +136,8 @@ public class CardDao implements Dao<Card> {
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
             stmt.setObject(3, card.getSetCode());
-            stmt.setObject(4, card.getInSideDeck());
-            stmt.setObject(5, card.getIsVirtual());
+            stmt.setObject(4, card.inSideDeck());
+            stmt.setObject(5, card.isVirtual());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {

@@ -14,6 +14,8 @@ import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,6 +31,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -60,15 +63,22 @@ public class AllCardsController {
             Comparator<Card> comparator = new Comparator<Card>() {
                 @Override
                 public int compare(Card c1, Card c2) {
-                    return c1.toString().compareTo(c2.toString());
+                    if (c1.getCardInfo().isFake() != c2.getCardInfo().isFake()) {
+                        return c1.getCardInfo().isFake() ? -1 : 1;
+                    } else {
+                        return c1.toString().compareTo(c2.toString());
+                    }
                 }
             };
             FXCollections.sort(allCards, comparator);
             listView.setItems(allCards);
-            cardNameText.setText("");
-            setCodeText.setText("");
-            deckText.setText("");
-            imageView.setImage(null);
+            wipeCurrentCardView();
+            listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Card>() {
+                @Override
+                public void changed(ObservableValue<? extends Card> observable, Card oldValue, Card newValue) {
+                    updateCurrentCardView(newValue);
+                }
+            });
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -79,14 +89,12 @@ public class AllCardsController {
         Card card = listView.getSelectionModel().getSelectedItem();
         try {
             cardDao.delete(card);
-            cardNameText.setText("");
-            setCodeText.setText("");
-            deckText.setText("");
-            imageView.setImage(null);
+            wipeCurrentCardView();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        event.consume();
     }
     
     public void handleAddCardButtonAction(ActionEvent event) throws IOException {
@@ -100,26 +108,38 @@ public class AllCardsController {
         addCardsStage.initModality(Modality.APPLICATION_MODAL);
         addCardsStage.showAndWait();
         init();
+        event.consume();
     }
     
     public void handleBackButtonAction(ActionEvent event) {
         
     }
     
-    public void handleSelectedListItem() {
+    public void handleListClickEvent() {
         Card card = listView.getSelectionModel().getSelectedItem();
-        if (card.getCardInfo() == null) {
+        updateCurrentCardView(card);
+    }
+    
+    private void updateCurrentCardView(Card newValue) {
+        if (newValue == null || newValue.getCardInfo() == null) {
             // TODO: Display default card image
         } else {
-            imageView.setImage(new Image(new File(card.getCardInfo().getImageLink()).toURI().toString()));
-            cardNameText.setText(card.getCardInfo().getName());
-            setCodeText.setText(card.getSetCode());
-            if (card.getDeckId() > 1) {
+            imageView.setImage(new Image(new File(newValue.getCardInfo().getImageLink()).toURI().toString()));
+            cardNameText.setText(newValue.getCardInfo().getName());
+            setCodeText.setText(newValue.getSetCode());
+            if (newValue.getDeckId() > 1) {
                 deckText.setText("Assigned to deck");
             } else {
                 deckText.setText("Unassigned");
             }
         }
+    }
+    
+    private void wipeCurrentCardView() {
+        cardNameText.setText("");
+        setCodeText.setText("");
+        deckText.setText("");
+        imageView.setImage(null);
     }
     
     

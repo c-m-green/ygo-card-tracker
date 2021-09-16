@@ -241,7 +241,7 @@ public class CardInfo {
         return linkValueCol.getValue();
     }
 
-    public Boolean getIsFake() {
+    public Boolean isFake() {
         return isFakeCol.getValue();
     }
 
