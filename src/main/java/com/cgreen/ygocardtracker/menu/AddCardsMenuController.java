@@ -46,7 +46,7 @@ public class AddCardsMenuController {
     @FXML
     private TextField nameSearchField, passcodeSearchField;
     @FXML
-    private Button addByNameButton, addByPasscodeButton;
+    private Button addByNameButton, addByPasscodeButton, addManuallyButton;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -129,6 +129,24 @@ public class AddCardsMenuController {
         progress.close();
         addByPasscodeButton.setDisable(false);
         passcodeSearchField.setDisable(false);
+    }
+    
+    public void handleAddManuallyButtonAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(CustomCardEntryController.class.getClassLoader().getResource("custom_card_menu.fxml"));
+            Parent parent = loader.load();        
+            
+            Stage customCardEntryStage = new Stage();
+            customCardEntryStage.setScene(new Scene(parent));
+            CustomCardEntryController ccec = loader.getController();
+            ccec.setStage(customCardEntryStage);
+            ccec.init();
+            customCardEntryStage.initModality(Modality.APPLICATION_MODAL);
+            customCardEntryStage.show();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     private JSONArray doOnlineSearch(RemoteDBKey key, String value) {

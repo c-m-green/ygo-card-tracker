@@ -5,15 +5,16 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="231.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AddCardsMenuController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="296.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AddCardsMenuController">
   <tabs>
     <Tab text="Add by Name">
          <content>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <TextField promptText="e.g. Dark Magician" fx:id="nameSearchField" />
-                  <Button mnemonicParsing="false" fx:id="addByNameButton" text="Search" onAction="#handleAddByNameButtonAction" />
+                  <TextField fx:id="nameSearchField" promptText="e.g. Dark Magician" />
+                  <Button fx:id="addByNameButton" mnemonicParsing="false" onAction="#handleAddByNameButtonAction" text="Search" />
                </children>
             </HBox>
          </content></Tab>
@@ -21,10 +22,19 @@
          <content>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <TextField promptText="e.g. 58192742" fx:id="passcodeSearchField" />
-                  <Button mnemonicParsing="false" fx:id="addByPasscodeButton" text="Search" onAction="#handleAddByPasscodeButtonAction" />
+                  <TextField fx:id="passcodeSearchField" promptText="e.g. 58192742" />
+                  <Button fx:id="addByPasscodeButton" mnemonicParsing="false" onAction="#handleAddByPasscodeButtonAction" text="Search" />
                </children>
             </HBox>
          </content></Tab>
+      <Tab text="Add Manually">
+         <content>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+               <children>
+                  <Button fx:id="addManuallyButton" mnemonicParsing="false" text="Add custom card info..." onAction="#handleAddManuallyButtonAction" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
   </tabs>
 </TabPane>

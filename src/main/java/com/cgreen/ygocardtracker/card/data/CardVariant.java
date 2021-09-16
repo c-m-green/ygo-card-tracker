@@ -25,13 +25,13 @@ public enum CardVariant {
     THUNDER(21, "Thunder"),
     WARRIOR(22, "Warrior"),
     WINGED_BEAST(23, "Winged Beast"),
-    SPELL_NORMAL(24, "Normal"),
+    SPELL_NORMAL(24, "Normal (S)"),
     SPELL_FIELD(25, "Field"),
     SPELL_EQUIP(26, "Equip"),
     SPELL_CONTINUOUS(27, "Continuous"),
     SPELL_QUICK_PLAY(28, "Quick-Play"),
     SPELL_RITUAL(29, "Ritual"),
-    TRAP_NORMAL(30, "Normal"),
+    TRAP_NORMAL(30, "Normal (T)"),
     TRAP_CONTINUOUS(31, "Continuous"),
     TRAP_COUNTER(32, "Counter");
     
@@ -45,6 +45,10 @@ public enum CardVariant {
     
     public int getIndex() {
         return this.index;
+    }
+    
+    public static int getNumberOfCardVariants() {
+        return list.length;
     }
     
     public static int getIndexOf(String label) {

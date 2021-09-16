@@ -41,6 +41,10 @@ public enum CardType {
         return this.index;
     }
     
+    public static int getNumberOfCardTypes() {
+        return list.length;
+    }
+    
     public static int getIndexOf(String label) {
         for (CardType cardType : list) {
             if (cardType.toString().equalsIgnoreCase(label)) {

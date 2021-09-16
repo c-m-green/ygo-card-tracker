@@ -23,7 +23,7 @@
       </VBox>
    </right>
    <left>
-      <ListView fx:id="listView" onMouseClicked="#handleSelectedListItem" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="listView" onMouseClicked="#handleListClickEvent" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </left>
    <center>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
