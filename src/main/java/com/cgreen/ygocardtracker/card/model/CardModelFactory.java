@@ -168,7 +168,8 @@ public final class CardModelFactory {
             cardModel = new SpellCardModel();
             break;
         case SKILL:
-            // TODO: Need to figure out what to do here
+            cardModel = new SkillCardModel();
+            break;
         default:
             throw new IllegalArgumentException("Unrecognized card type");
         }

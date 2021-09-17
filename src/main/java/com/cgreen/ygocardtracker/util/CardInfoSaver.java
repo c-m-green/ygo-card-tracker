@@ -26,6 +26,10 @@ public class CardInfoSaver {
         JSONObject allCardInfo = cardData.getJSONObject(0);
         Integer cardTypeIndex = CardType.getIndexOf(allCardInfo.getString("type"));
         CardType cardType = CardType.getCardType(cardTypeIndex);
+        if (cardType == CardType.SKILL) {
+            // TODO: Log this
+            return out;
+        }
         CardModel cardModel = CardModelFactory.getCardModel(cardType);
         String nameColVal = allCardInfo.getString("name");
         String descColVal = allCardInfo.getString("desc");

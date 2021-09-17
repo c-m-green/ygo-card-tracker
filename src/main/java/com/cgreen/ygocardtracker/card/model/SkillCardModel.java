@@ -1,7 +1,8 @@
 package com.cgreen.ygocardtracker.card.model;
 
 public class SkillCardModel extends CardModel {
-    // TODO: Fix this class once I know what skill cards are
+    // TODO: This will likely need revision if this app ever
+    // supports Skill cards!
     
     SkillCardModel() { }
     

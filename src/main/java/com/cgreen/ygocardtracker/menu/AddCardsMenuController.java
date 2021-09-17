@@ -83,7 +83,7 @@ public class AddCardsMenuController {
                     CardInfoDao dao = new CardInfoDao();
                     ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
                     if (cardInfos.isEmpty()) {
-                        AlertHelper.raiseAlert("No cards were found matching \"" + searchTerm + ".\" This could be due to an error while locating card information, or there could be an invalid passcode in the database.");
+                        AlertHelper.raiseAlert("No valid cards were found matching \"" + searchTerm + ".\"\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
                     } else {
                         showConfirmationScreen(cardInfos);
                     }
@@ -115,7 +115,11 @@ public class AddCardsMenuController {
                 } else {
                     CardInfoSaver cis = new CardInfoSaver();
                     List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
-                    showConfirmationScreen(newlySavedCardInfo);
+                    if (newlySavedCardInfo.isEmpty()) {
+                        AlertHelper.raiseAlert("No valid cards were found matching \"" + searchTerm + ".\"\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
+                    } else {
+                        showConfirmationScreen(newlySavedCardInfo);
+                    }
                 }
             } else {
                 showConfirmationScreen(FXCollections.observableArrayList(cardInfo));
