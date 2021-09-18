@@ -37,11 +37,13 @@ public class CardInfo {
         cardModel = null;
     }
     
-    public void initCardModel() {
+    public boolean initCardModel() {
         if (this.getCardType() == null) {
             cardModel = CardModelFactory.getCardModel(CardType.UNKNOWN);
+            return false;
         } else {
             cardModel = CardModelFactory.getCardModel(this.getCardType());
+            return true;
         }
     }
     
@@ -248,5 +250,4 @@ public class CardInfo {
     public String getSetCodes() {
         return setCodesCol.getValue();
     }
-    
 }
