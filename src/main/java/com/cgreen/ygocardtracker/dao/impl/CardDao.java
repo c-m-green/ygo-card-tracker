@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 import com.cgreen.ygocardtracker.card.Card;
@@ -99,7 +100,7 @@ public class CardDao implements Dao<Card> {
         PreparedStatement stmt = null;
         try {
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_statement"));           
+            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_statement"), Statement.RETURN_GENERATED_KEYS);           
             stmt.setObject(1, Objects.requireNonNull(card.getCardInfoId(), "Card info ID must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
             stmt.setObject(3, card.getSetCode());
@@ -127,6 +128,9 @@ public class CardDao implements Dao<Card> {
     
     // INSERT
     public void save(Card card, Integer passcode) throws SQLException {
+        if (passcode == 100000000) {
+            throw new IllegalArgumentException("Invalid passcode " + passcode);
+        }
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -156,11 +160,6 @@ public class CardDao implements Dao<Card> {
                 conn.close();
             }
         }
-    }
-
-    @Override
-    public void update(Card t, String[] params) throws SQLException {
-        // TODO Auto-generated method stub    
     }
 
     @Override

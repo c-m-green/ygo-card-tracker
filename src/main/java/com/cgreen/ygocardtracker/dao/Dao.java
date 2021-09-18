@@ -8,8 +8,6 @@ public interface Dao<T> {
     ObservableList<T> getAll() throws SQLException;
     
     void save(T t) throws SQLException;
-    
-    void update(T t, String[] params) throws SQLException;
-    
+        
     void delete(T t) throws SQLException;
 }

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 import com.cgreen.ygocardtracker.card.Card;
@@ -217,12 +218,12 @@ public class CardInfoDao implements Dao<CardInfo> {
         PreparedStatement stmt = null;
         try {            
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_name_query"));
+            stmt = conn.prepareStatement(Queries.getQuery("select_count_card_info_by_name_query"));
             stmt.setObject(1, Objects.requireNonNull(name, "Card name must have a value."));
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
-            while (rs.next()) {                
-                numberOfHits++;
+            if (rs.next()) {                
+                numberOfHits = rs.getInt("num_rows");
             }
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -253,12 +254,12 @@ public class CardInfoDao implements Dao<CardInfo> {
         PreparedStatement stmt = null;
         try {            
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_passcode_query"));
+            stmt = conn.prepareStatement(Queries.getQuery("select_count_card_info_by_passcode_query"));
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
-            while (rs.next()) {                
-                numberOfHits++;
+            if (rs.next()) {
+                numberOfHits = rs.getInt("num_rows");
             }
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -330,11 +331,15 @@ public class CardInfoDao implements Dao<CardInfo> {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            if (c.getPasscodeCol().getValue() < 0 || c.getPasscodeCol().getValue() > 99999999) {
-                throw new IllegalArgumentException("Card passcode out of range.");
+            boolean hasInvalidPasscode = false;
+            hasInvalidPasscode = c.getPasscode() < 0;
+            hasInvalidPasscode = hasInvalidPasscode || (c.isFake() && c.getPasscode() > 999999999);
+            hasInvalidPasscode = hasInvalidPasscode || (!c.isFake() && c.getPasscode() > 99999999);
+            if (hasInvalidPasscode) {
+                throw new IllegalArgumentException("Passcode out of range");
             }
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_info_table_statement"));           
+            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_info_table_statement"), Statement.RETURN_GENERATED_KEYS);           
             stmt.setObject(1, Objects.requireNonNull(c.getPasscodeCol().getValue(), "Passcode must have a value."));
             stmt.setObject(2, Objects.requireNonNull(c.getNameCol().getValue(), "Card name must have a value."));
             stmt.setObject(3, c.getDescriptionCol().getValue());
@@ -354,7 +359,7 @@ public class CardInfoDao implements Dao<CardInfo> {
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                c.setId(rs.getInt(1));
+                c.setId((int) rs.getLong(1));
             }
             collectionItems.add(c);
         } catch (SQLException sqle) {
@@ -370,16 +375,59 @@ public class CardInfoDao implements Dao<CardInfo> {
             }
         }
     }
+
     // UPDATE
-    @Override
-    public void update(CardInfo c, String[] params) {
-        // TODO
-        /*c.setCol1(Objects.requireNonNull(params[0], "Column 1 must not be null."));
-        c.setCol2(Objects.requireNonNull(Integer.parseInt(params[1]), "Column 2 must not be null."));
-        c.setCol3(Objects.requireNonNull(params[2], "Column 3 must not be null."));
-        c.setCol4(Objects.requireNonNull(params[3], "Column 4 must not be null."));*/
-        collectionItems.add(c);
+    public void updateFakeCardInfoPasscode(CardInfo c, Integer passcode) throws SQLException {
+        if (!c.isFake()) {
+            throw new IllegalArgumentException("Can only update the passcode of fake card info");
+        }
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            if (c.getPasscodeCol().getValue() < 0) {
+                throw new IllegalArgumentException("Card passcode out of range.");
+            }
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("update_card_info_passcode"));           
+            stmt.setInt(1, passcode);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
+    
+    // UPDATE
+    public void updateCardInfoSetCodes(CardInfo c, String setCodes) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("update_card_info_set_code"));           
+            stmt.setString(1, setCodes);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+    
     // DELETE
     @Override
     public void delete(CardInfo c) throws SQLException {
@@ -387,7 +435,7 @@ public class CardInfoDao implements Dao<CardInfo> {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
-            if (c.getPasscodeCol().getValue() < 0 || c.getPasscodeCol().getValue() > 99999999) {
+            if (c.getPasscodeCol().getValue() < 0 || c.getPasscodeCol().getValue() > 999999999) {
                 throw new IllegalArgumentException("Card passcode out of range.");
             }
             conn = dbm.connectToDatabase();

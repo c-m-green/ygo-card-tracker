@@ -41,13 +41,13 @@
    <children>
       <TextField fx:id="nameField" GridPane.columnIndex="1" />
       <TextField fx:id="passcodeField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <ChoiceBox fx:id="typeChoice" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <ChoiceBox fx:id="typeChoice" onAction="#handleTypeChoiceAction" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <ChoiceBox fx:id="variantChoice" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
       <ChoiceBox fx:id="attributeChoice" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
       <TextArea fx:id="descArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
       <TextField fx:id="atkField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
       <TextField fx:id="defField" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-      <Slider fx:id="levelSlider" blockIncrement="1.0" majorTickUnit="1.0" max="12.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+      <Slider fx:id="levelSlider" blockIncrement="1.0" majorTickUnit="1.0" max="13.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
       <Slider fx:id="scaleSlider" blockIncrement="1.0" majorTickUnit="1.0" max="13.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
       <GridPane fx:id="linkArrowPane" hgap="5.0" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
         <columnConstraints>
@@ -61,14 +61,14 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <CheckBox fx:id="topLeftCheck" mnemonicParsing="false" text="Top-Left" />
-            <CheckBox fx:id="topCheck" mnemonicParsing="false" text="Top" GridPane.columnIndex="1" />
-            <CheckBox fx:id="topRightCheck" mnemonicParsing="false" text="Top-Right" GridPane.columnIndex="2" />
-            <CheckBox fx:id="rightCheck" mnemonicParsing="false" text="Right" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <CheckBox fx:id="bottomRightCheck" mnemonicParsing="false" text="Bottom-Right" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <CheckBox fx:id="bottomCheck" mnemonicParsing="false" text="Bottom" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <CheckBox fx:id="bottomLeftCheck" mnemonicParsing="false" text="Bottom-Left" GridPane.rowIndex="2" />
-            <CheckBox fx:id="leftCheck" mnemonicParsing="false" text="Left" GridPane.rowIndex="1" />
+            <CheckBox fx:id="topLeftCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Top-Left" />
+            <CheckBox fx:id="topCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Top" GridPane.columnIndex="1" />
+            <CheckBox fx:id="topRightCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Top-Right" GridPane.columnIndex="2" />
+            <CheckBox fx:id="rightCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Right" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <CheckBox fx:id="bottomRightCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Bottom-Right" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <CheckBox fx:id="bottomCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Bottom" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="bottomLeftCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Bottom-Left" GridPane.rowIndex="2" />
+            <CheckBox fx:id="leftCheck" onAction="#handleLinkArrowCheckBoxAction" mnemonicParsing="false" text="Left" GridPane.rowIndex="1" />
          </children>
          <GridPane.margin>
             <Insets />
@@ -78,11 +78,11 @@
          </padding>
       </GridPane>
       <TextField fx:id="setCodeField" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-      <CheckBox fx:id="fakeCheck" alignment="TOP_LEFT" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <CheckBox fx:id="fakeCheck" onAction="#handleFakeCheckAction" alignment="TOP_LEFT" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
          <children>
             <TextField fx:id="imagePathField" />
-            <Button fx:id="imageBrowseButton" mnemonicParsing="false" text="Browse...">
+            <Button fx:id="imageBrowseButton" onAction="#handleImageBrowseButtonAction" mnemonicParsing="false" text="Browse...">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
@@ -92,7 +92,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
          <children>
             <TextField fx:id="smallImagePathField" />
-            <Button fx:id="smallImageBrowseButton" mnemonicParsing="false" text="Browse...">
+            <Button fx:id="smallImageBrowseButton" onAction="#handleSmallImageBrowseButtonAction" mnemonicParsing="false" text="Browse...">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
@@ -107,7 +107,7 @@
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select an Attribute:" GridPane.halignment="RIGHT" GridPane.rowIndex="6" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter ATK (if applicable):" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter DEF (if applicable):" GridPane.halignment="RIGHT" GridPane.rowIndex="8" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Level (if applicable):" GridPane.halignment="RIGHT" GridPane.rowIndex="9" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Level OR Xyz Rank (if applicable):" GridPane.halignment="RIGHT" GridPane.rowIndex="9" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Pendulum Scale (if applicable):" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select Link Arrows (if applicable):" GridPane.halignment="RIGHT" GridPane.rowIndex="12" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter set code:" GridPane.halignment="RIGHT" GridPane.rowIndex="13" />
@@ -118,8 +118,8 @@
       <TextArea fx:id="pendulumDescArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="16">
         <buttons>
-          <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
+          <Button fx:id="saveButton" onAction="#handleSaveButtonAction" mnemonicParsing="false" text="Save" />
+            <Button fx:id="cancelButton" onAction="#handleCancelButtonAction" mnemonicParsing="false" text="Cancel" />
         </buttons>
       </ButtonBar>
    </children>
