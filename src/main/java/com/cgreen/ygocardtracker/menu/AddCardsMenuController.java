@@ -58,40 +58,44 @@ public class AddCardsMenuController {
         Stage progress = createProgressBar();
         progress.show();
         String searchTerm = nameSearchField.getText();
-        JSONArray data = doOnlineSearch(RemoteDBKey.NAME, searchTerm);
-        // TODO: Might just want 200, not 201?
-        if (data == null) {
-            System.out.println("Online search failed -- resorting to local DB");
-            try {
-                CardInfoDao dao = new CardInfoDao();
-                ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
-                if (cardInfos.isEmpty()) {
-                    AlertHelper.raiseAlert("No card info found for \"" + searchTerm + "\".");
-                } else {
-                    showConfirmationScreen(cardInfos);
-                }
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                AlertHelper.raiseAlert(e.getStackTrace().toString());
-            }
+        if (searchTerm.isBlank()) {
+            AlertHelper.raiseAlert("Please enter something!");
         } else {
-            // Save info for this card (may include multiple IDs)
-            CardInfoSaver cis = new CardInfoSaver();
-            List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
-            if (newlySavedCardInfo.isEmpty()) {
+            JSONArray data = doOnlineSearch(RemoteDBKey.NAME, searchTerm);
+            // TODO: Might just want 200, not 201?
+            if (data == null) {
+                System.out.println("Online search failed -- resorting to local DB");
                 try {
                     CardInfoDao dao = new CardInfoDao();
                     ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
                     if (cardInfos.isEmpty()) {
-                        AlertHelper.raiseAlert("No valid cards were found matching \"" + searchTerm + ".\"\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
+                        AlertHelper.raiseAlert("No card info found for \"" + searchTerm + "\".");
                     } else {
                         showConfirmationScreen(cardInfos);
                     }
                 } catch (SQLException e) {
+                    // TODO Auto-generated catch block
                     AlertHelper.raiseAlert(e.getStackTrace().toString());
                 }
             } else {
-                showConfirmationScreen(newlySavedCardInfo);
+                // Save info for this card (may include multiple IDs)
+                CardInfoSaver cis = new CardInfoSaver();
+                List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
+                if (newlySavedCardInfo.isEmpty()) {
+                    try {
+                        CardInfoDao dao = new CardInfoDao();
+                        ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
+                        if (cardInfos.isEmpty()) {
+                            AlertHelper.raiseAlert("No valid cards were found matching \"" + searchTerm + ".\"\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
+                        } else {
+                            showConfirmationScreen(cardInfos);
+                        }
+                    } catch (SQLException e) {
+                        AlertHelper.raiseAlert(e.getStackTrace().toString());
+                    }
+                } else {
+                    showConfirmationScreen(newlySavedCardInfo);
+                }
             }
         }
         progress.close();
