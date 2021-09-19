@@ -13,6 +13,17 @@ public class Card {
     public Card(CardInfo cardInfo) {
         this.cardInfo = cardInfo;
     }
+    
+    public int compareTo(Card other) {
+        if (other.getCardInfo() == null || this.getCardInfo() == null) {
+            return 0;
+        }
+        if (this.getCardInfo().isFake() != other.getCardInfo().isFake()) {
+            return this.getCardInfo().isFake() ? -1 : 1;
+        } else {
+            return this.toString().compareTo(other.toString());
+        }
+    }
 
     public void setCardInfoId(Integer cardInfoId) {
         this.cardInfoId = cardInfoId;

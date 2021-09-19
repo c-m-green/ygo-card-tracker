@@ -63,11 +63,7 @@ public class AllCardsController {
             Comparator<Card> comparator = new Comparator<Card>() {
                 @Override
                 public int compare(Card c1, Card c2) {
-                    if (c1.getCardInfo().isFake() != c2.getCardInfo().isFake()) {
-                        return c1.getCardInfo().isFake() ? -1 : 1;
-                    } else {
-                        return c1.toString().compareTo(c2.toString());
-                    }
+                    return c1.compareTo(c2);
                 }
             };
             FXCollections.sort(allCards, comparator);
