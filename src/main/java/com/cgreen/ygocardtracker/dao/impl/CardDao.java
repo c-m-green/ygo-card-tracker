@@ -129,6 +129,7 @@ public class CardDao implements Dao<Card> {
     // INSERT
     public void save(Card card, Integer passcode) throws SQLException {
         if (passcode == 100000000) {
+            // TODO: Maybe handle this more gracefully?
             throw new IllegalArgumentException("Invalid passcode " + passcode);
         }
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
