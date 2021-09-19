@@ -250,4 +250,6 @@ public class CardInfo {
     public String getSetCodes() {
         return setCodesCol.getValue();
     }
+    
+    // TODO: Override toString()
 }
