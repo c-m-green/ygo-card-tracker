@@ -7,7 +7,7 @@
 
 <VBox alignment="center" spacing="10" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.MainMenuController">
 	<padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-	<Text text="Welcome to this Alpha build!" />
+	<Text text="YGO Card Tracker ver. 0.2.0" />
 	<Button onAction="#handleViewCollectionButtonAction" text="Card Collection" />
    <Button mnemonicParsing="false" text="Decks" />
    <Button mnemonicParsing="false" text="Mock Duel" />
