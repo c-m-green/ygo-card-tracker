@@ -174,8 +174,19 @@ public class CustomCardEntryController {
     }
     
     public void handleSaveButtonAction(ActionEvent event) {
+        // TODO: Indeterminate progress box
+        // TODO: Disable buttonbar at this point and reenable it later
         if (hasValidSelections() && !hasEmptyFields()) {
             // TODO: Copy image files into card_images and set the correct image links
+            if (!fakeCheck.isSelected()) {
+                Alert areYouSure = new Alert(AlertType.WARNING, "Manually entering card information for a real card may interfere with future downloads of info for cards with this name or passcode. This can be remedied by deleting card information."
+                        + "\n"
+                        + "\nAre you sure you wish to proceed?", ButtonType.YES, ButtonType.NO);
+                areYouSure.showAndWait();
+                if (areYouSure.getResult() != ButtonType.YES) {
+                    return;
+                }
+            }
             CardInfoDao cardInfoDao = new CardInfoDao();
             CardInfo cardInfo = new CardInfo();
             cardInfo.setNameCol(nameField.getText());
@@ -276,29 +287,93 @@ public class CustomCardEntryController {
                     AlertHelper.raiseAlert("Error saving card information.");
                     return;
                 }
-                Alert success = new Alert(AlertType.INFORMATION, "Card information successfully saved for \"" + cardInfo.getName() + ".\"");
-                success.showAndWait();
-                Card card = new Card();
-                card.setCardInfoId(cardInfo.getId());
-                card.setDeckId(1);
-                CardDao cardDao = new CardDao();
-                try {
-                    cardDao.save(card);
-                } catch (SQLException | RuntimeException e) {
-                    e.printStackTrace();
-                    AlertHelper.raiseAlert("Error saving a copy of this card to the collection."
-                            + "\n"
-                            + "\nTo retry, search by this card's name (\"" + cardInfo.getName() + "\") or by passcode #" + cardInfo.getPasscode() + ".");
-                    return;
-                }
-                Alert successAgain = new Alert(AlertType.INFORMATION, "Copy of \"" + cardInfo.getName() + "\" saved to collection." +
-                        "\n" +
-                        "\nAdditional copies of this card may be added by searching by name or by passcode #" + cardInfo.getPasscode() + ".");
-                successAgain.showAndWait();
             } else {
                 cardInfo.setPasscodeCol(Integer.parseInt(passcodeField.getText()));
-                AlertHelper.raiseAlert("This is where we WOULD save card info, but it's still a W.I.P.");
-            }            
+                int numCardInfoWithSamePasscode = cardInfoDao.getNumCardInfos(cardInfo.getPasscode());
+                if (numCardInfoWithSamePasscode > 0) {
+                    try {
+                        CardInfo otherInfo = cardInfoDao.getCardInfoByPasscode(cardInfo.getPasscode());
+                        if (otherInfo.getName().equals(cardInfo.getName())) {
+                            Alert confirmMerge = new Alert(AlertType.CONFIRMATION, "Card information already exists for this name and passcode. Merge this set code into the existing entry? (This will discard all new entries except for the set code).");
+                            confirmMerge.showAndWait();
+                            if (confirmMerge.getResult() == ButtonType.OK) {
+                                try {
+                                    boolean alreadyHasSetCode = false;
+                                    String[] setCodes = otherInfo.getSetCodes().split(",");
+                                    for (String setCode : setCodes) {
+                                        alreadyHasSetCode = alreadyHasSetCode || setCode.equals(cardInfo.getSetCodes());
+                                    }
+                                    if (!alreadyHasSetCode) {
+                                        cardInfoDao.updateCardInfoSetCodes(otherInfo, otherInfo.getSetCodes() + "," + cardInfo.getSetCodes());
+                                    }
+                                } catch (SQLException sqle) {
+                                    sqle.printStackTrace();
+                                    AlertHelper.raiseAlert("Error updating set code information. Updates may not be complete.");
+                                    return;
+                                }
+                                Card card = new Card();
+                                card.setCardInfoId(otherInfo.getId());
+                                card.setDeckId(1);
+                                card.setSetCode(cardInfo.getSetCodes());
+                                CardDao cardDao = new CardDao();
+                                try {
+                                    cardDao.save(card);
+                                } catch (SQLException | RuntimeException e) {
+                                    e.printStackTrace();
+                                    AlertHelper.raiseAlert("Error saving a copy of this card to the collection."
+                                            + "\n"
+                                            + "\nTo retry, search by this card's name (\"" + otherInfo.getName() + "\") or by passcode #" + otherInfo.getPasscode() + ".");
+                                    return;
+                                }
+                                Alert successAgain = new Alert(AlertType.INFORMATION, "Copy of \"" + cardInfo.getName() + "\" saved to collection.");
+                                successAgain.showAndWait();
+                                return;
+                            } else {
+                                AlertHelper.raiseAlert("New card information was not saved.");
+                                return;
+                            }
+                        } else {
+                            AlertHelper.raiseAlert("Card information already exists for the passcode " + cardInfo.getPasscode() + " under the name \"" + otherInfo.getName() + ".\"");
+                            return;
+                        }
+                    } catch (SQLException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        AlertHelper.raiseAlert("Error reading from the database.");
+                        return;
+                    }
+                } else if (numCardInfoWithSamePasscode == -1) {
+                    AlertHelper.raiseAlert("Error reading from the database.");
+                    return;
+                } else {
+                    try {
+                        cardInfoDao.save(cardInfo);
+                    } catch (SQLException e) {
+                        AlertHelper.raiseAlert("Error saving card information to the database.");
+                        return;
+                    }
+                }
+            }
+            Alert success = new Alert(AlertType.INFORMATION, "Card information successfully saved for \"" + cardInfo.getName() + ".\"");
+            success.showAndWait();
+            Card card = new Card();
+            card.setCardInfoId(cardInfo.getId());
+            card.setDeckId(1);
+            card.setSetCode(cardInfo.getSetCodes());
+            CardDao cardDao = new CardDao();
+            try {
+                cardDao.save(card);
+            } catch (SQLException | RuntimeException e) {
+                e.printStackTrace();
+                AlertHelper.raiseAlert("Error saving a copy of this card to the collection."
+                        + "\n"
+                        + "\nTo retry, search by this card's name (\"" + cardInfo.getName() + "\") or by passcode #" + cardInfo.getPasscode() + ".");
+                return;
+            }
+            Alert successAgain = new Alert(AlertType.INFORMATION, "Copy of \"" + cardInfo.getName() + "\" saved to collection." +
+                    "\n" +
+                    "\nAdditional copies of this card may be added by searching by name or by passcode #" + cardInfo.getPasscode() + ".");
+            successAgain.showAndWait();
         }
     }
     
