@@ -25,15 +25,16 @@ public enum CardVariant {
     THUNDER(21, "Thunder"),
     WARRIOR(22, "Warrior"),
     WINGED_BEAST(23, "Winged Beast"),
-    SPELL_NORMAL(24, "Normal (S)"),
-    SPELL_FIELD(25, "Field"),
-    SPELL_EQUIP(26, "Equip"),
-    SPELL_CONTINUOUS(27, "Continuous"),
-    SPELL_QUICK_PLAY(28, "Quick-Play"),
-    SPELL_RITUAL(29, "Ritual"),
-    TRAP_NORMAL(30, "Normal (T)"),
-    TRAP_CONTINUOUS(31, "Continuous"),
-    TRAP_COUNTER(32, "Counter");
+    ZOMBIE(24, "Zombie"),
+    SPELL_NORMAL(25, "Normal (S)"),
+    SPELL_FIELD(26, "Field"),
+    SPELL_EQUIP(27, "Equip"),
+    SPELL_CONTINUOUS(28, "Continuous"),
+    SPELL_QUICK_PLAY(29, "Quick-Play"),
+    SPELL_RITUAL(30, "Ritual"),
+    TRAP_NORMAL(31, "Normal (T)"),
+    TRAP_CONTINUOUS(32, "Continuous"),
+    TRAP_COUNTER(33, "Counter");
     
     private int index;
     private String label;
