@@ -412,7 +412,7 @@ public class CardInfoDao implements Dao<CardInfo> {
         PreparedStatement stmt = null;
         try {
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("update_card_info_set_code"));           
+            stmt = conn.prepareStatement(Queries.getQuery("update_card_info_set_codes"));           
             stmt.setString(1, setCodes);
             stmt.setInt(2, c.getId());
             stmt.executeUpdate();
