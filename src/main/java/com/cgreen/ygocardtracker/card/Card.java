@@ -19,7 +19,7 @@ public class Card {
             return 0;
         }
         if (this.getCardInfo().isFake() != other.getCardInfo().isFake()) {
-            return this.getCardInfo().isFake() ? -1 : 1;
+            return this.getCardInfo().isFake() ? 1 : -1;
         } else {
             return this.toString().compareTo(other.toString());
         }
