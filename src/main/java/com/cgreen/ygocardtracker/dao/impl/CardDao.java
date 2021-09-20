@@ -137,7 +137,7 @@ public class CardDao implements Dao<Card> {
         PreparedStatement stmt = null;
         try {
             conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"));           
+            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"), Statement.RETURN_GENERATED_KEYS);           
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
             stmt.setObject(3, card.getSetCode());
