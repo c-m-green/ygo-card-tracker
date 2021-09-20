@@ -4,12 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Objects;
 
 import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.Dao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 import com.cgreen.ygocardtracker.deck.Deck;
+import com.cgreen.ygocardtracker.util.AlertHelper;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,8 +42,6 @@ public class DeckDao implements Dao<Deck> {
                 deck.setId(rs.getInt("ID"));
                 collectionItems.add(deck);
             }
-        } catch (SQLException sqle) {
-            throw sqle;
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -52,16 +53,51 @@ public class DeckDao implements Dao<Deck> {
         return collectionItems;
     }
 
-    @Override
+ // INSERT
     public void save(Deck deck) throws SQLException {
-        // TODO Auto-generated method stub
-        
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("insert_into_deck_table_statement"), Statement.RETURN_GENERATED_KEYS);           
+            stmt.setObject(1, Objects.requireNonNull(deck.getName(), "Deck must have a name."));
+            stmt.setObject(2, Objects.requireNonNull(deck.getNote(), "Note must have a value."));
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                deck.setId(rs.getInt(1));
+            }
+            collectionItems.add(deck);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     @Override
     public void delete(Deck deck) throws SQLException {
-        // TODO Auto-generated method stub
-        
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("delete_from_deck_table_statement"));           
+            stmt.setInt(1, deck.getId());
+            stmt.executeUpdate();
+            collectionItems.remove(deck);
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
 }
