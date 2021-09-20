@@ -26,6 +26,20 @@ public class MainMenuController {
     }
     
     @FXML
+    public void handleViewDecksButtonAction(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(DecksMenuController.class.getClassLoader().getResource("decks_menu.fxml"));
+        Parent parent = loader.load();        
+        
+        Stage decksStage = new Stage();
+        decksStage.setScene(new Scene(parent));
+        DecksMenuController dmc = loader.getController();
+        dmc.init();
+        dmc.setStage(decksStage);
+        decksStage.initModality(Modality.APPLICATION_MODAL);
+        decksStage.showAndWait();
+    }
+    
+    @FXML
     public void handleExitButtonAction(ActionEvent event) {
         Platform.exit();
     }
