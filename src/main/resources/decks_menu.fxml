@@ -18,15 +18,15 @@
             <VBox alignment="CENTER">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Available cards: #" />
-                  <ListView fx:id="unassignedCardsList" prefHeight="394.0" prefWidth="200.0" />
+                  <ListView fx:id="unassignedCardsList" onMousePressed="#handleViewUnassignedCardInfoAction" prefHeight="394.0" prefWidth="200.0" />
                </children>
             </VBox>
             <VBox alignment="CENTER">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cards in deck: #" />
-                  <ListView fx:id="deckCardsList" prefHeight="274.0" prefWidth="197.0" />
+                  <ListView fx:id="deckCardsList" onMousePressed="#handleViewDeckCardInfoAction" prefHeight="274.0" prefWidth="197.0" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Side deck: #" />
-                  <ListView fx:id="sideDeckList" prefHeight="173.0" prefWidth="196.0" />
+                  <ListView fx:id="sideDeckList" onMousePressed="#handleViewSideDeckCardInfoAction" prefHeight="173.0" prefWidth="196.0" />
                </children>
             </VBox>
          </children>
