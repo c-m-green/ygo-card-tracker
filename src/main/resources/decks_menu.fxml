@@ -18,15 +18,15 @@
             <VBox alignment="CENTER">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Available cards: #" />
-                  <ListView fx:id="unassignedCardsList" onMousePressed="#handleViewUnassignedCardInfoAction" prefHeight="394.0" prefWidth="200.0" />
+                  <ListView fx:id="unassignedCardsListView" onMousePressed="#handleViewUnassignedCardInfoAction" prefHeight="394.0" prefWidth="200.0" />
                </children>
             </VBox>
             <VBox alignment="CENTER">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cards in deck: #" />
-                  <ListView fx:id="deckCardsList" onMousePressed="#handleViewDeckCardInfoAction" prefHeight="274.0" prefWidth="197.0" />
+                  <ListView fx:id="deckCardsListView" onMousePressed="#handleViewDeckCardInfoAction" prefHeight="274.0" prefWidth="197.0" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Side deck: #" />
-                  <ListView fx:id="sideDeckList" onMousePressed="#handleViewSideDeckCardInfoAction" prefHeight="173.0" prefWidth="196.0" />
+                  <ListView fx:id="sideDeckListView" onMousePressed="#handleViewSideDeckCardInfoAction" prefHeight="173.0" prefWidth="196.0" />
                </children>
             </VBox>
          </children>
@@ -35,7 +35,7 @@
    <right>
       <VBox alignment="CENTER" prefHeight="329.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" text="Add deck..." />
+            <Button onAction="#handleAddDeckButtonAction" mnemonicParsing="false" text="Add deck..." />
             <Button mnemonicParsing="false" text="Delete deck..." />
             <Separator prefWidth="200.0" />
             <Button mnemonicParsing="false" text="Add card" />
@@ -62,7 +62,7 @@
       </ButtonBar>
    </bottom>
    <top>
-      <ChoiceBox prefWidth="150.0" BorderPane.alignment="CENTER" />
+      <ChoiceBox fx:id="deckChoiceBox" prefWidth="150.0" BorderPane.alignment="CENTER" />
    </top>
    <opaqueInsets>
       <Insets />

@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -30,9 +31,11 @@ public class DecksMenuController {
     private CardDao cardDao;
     private CardInfoDao cardInfoDao;
     private DeckDao deckDao;
-    private ObservableList<Deck> allDecks;
+    private ObservableList<Card> unassignedCardsList, deckCardsList, sideDeckList; 
     @FXML
-    ListView<Card> unassignedCardsList, deckCardsList, sideDeckList;
+    private ChoiceBox<Deck> deckChoiceBox;
+    @FXML
+    ListView<Card> unassignedCardsListView, deckCardsListView, sideDeckListView;
     
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -42,6 +45,9 @@ public class DecksMenuController {
         cardDao = new CardDao();
         cardInfoDao = new CardInfoDao();
         deckDao = new DeckDao();
+        unassignedCardsList = FXCollections.observableArrayList();
+        deckCardsList = FXCollections.observableArrayList();
+        sideDeckList = FXCollections.observableArrayList();
         try {
             ObservableList<Card> allCards = cardDao.getAll();
             cardInfoDao.setCardInfosToCards(allCards);
@@ -51,17 +57,42 @@ public class DecksMenuController {
                     return c1.compareTo(c2);
                 }
             });
-            unassignedCardsList.setItems(allCards);
-            
+            for (Card card : allCards) {
+                if (card.getDeckId() == 1) {
+                    unassignedCardsList.add(card);
+                }
+            }
+            unassignedCardsListView.setItems(unassignedCardsList);
+            deckDao = new DeckDao();
+            deckChoiceBox.setItems(deckDao.getAll());
         } catch (SQLException e) {
             AlertHelper.raiseAlert(e.getMessage());
+            stage.close();
         }
+    }
+    public void handleAddDeckButtonAction(ActionEvent event) {
+        FXMLLoader loader = new FXMLLoader(CardInfoViewController.class.getClassLoader().getResource("deck_name_menu.fxml"));
+        Parent parent;
+        try {
+            parent = loader.load();
+            Stage cardInfoStage = new Stage();
+            cardInfoStage.setScene(new Scene(parent));
+            DeckNameMenuController dnmc = loader.getController();
+            dnmc.setStage(cardInfoStage);
+            dnmc.init(deckDao);
+            cardInfoStage.initModality(Modality.APPLICATION_MODAL);
+            cardInfoStage.showAndWait();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            AlertHelper.raiseAlert("Error displaying card information.");
+        } 
     }
     
     @FXML
     public void handleViewUnassignedCardInfoAction(MouseEvent event) throws IOException {
         if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-            Card c = unassignedCardsList.getSelectionModel().getSelectedItem();
+            Card c = unassignedCardsListView.getSelectionModel().getSelectedItem();
             if (c != null) {
                 showCardInfoView(c);
             }
@@ -71,7 +102,7 @@ public class DecksMenuController {
     @FXML
     public void handleViewDeckCardInfoAction(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-            Card c = deckCardsList.getSelectionModel().getSelectedItem();
+            Card c = deckCardsListView.getSelectionModel().getSelectedItem();
             if (c != null) {
                 showCardInfoView(c);
             }
@@ -81,7 +112,7 @@ public class DecksMenuController {
     @FXML
     public void handleViewSideDeckCardInfoAction(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-            Card c = sideDeckList.getSelectionModel().getSelectedItem();
+            Card c = sideDeckListView.getSelectionModel().getSelectedItem();
             if (c != null) {
                 showCardInfoView(c);
             }

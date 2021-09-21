@@ -4,7 +4,10 @@ public class Deck {
     private int id;
     private String name, note;
     
-    public Deck() { }
+    public Deck() {
+        name = "";
+        note = "";
+    }
 
     public int getId() {
         return id;
