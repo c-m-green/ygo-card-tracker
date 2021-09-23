@@ -4,12 +4,9 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.json.JSONArray;
-
 import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
-import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardConfirmer;
 

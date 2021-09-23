@@ -1,19 +1,12 @@
 package com.cgreen.ygocardtracker.menu;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Comparator;
 
 import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
-import com.cgreen.ygocardtracker.db.DatabaseManager;
-import com.cgreen.ygocardtracker.db.Queries;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,13 +18,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;

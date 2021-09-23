@@ -1,23 +1,15 @@
 package com.cgreen.ygocardtracker.menu;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
-import com.cgreen.ygocardtracker.db.DatabaseManager;
-import com.cgreen.ygocardtracker.db.Queries;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class AllCardInfoController {

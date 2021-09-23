@@ -2,13 +2,10 @@ package com.cgreen.ygocardtracker.util;
 
 import java.util.List;
 
-import org.json.JSONArray;
-
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 
 public class CardConfirmer {
     private List<CardInfo> cardInfos;

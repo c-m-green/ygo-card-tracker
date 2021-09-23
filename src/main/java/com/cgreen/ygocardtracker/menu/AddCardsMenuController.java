@@ -6,11 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -18,8 +14,6 @@ import org.json.JSONObject;
 
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
-import com.cgreen.ygocardtracker.db.DatabaseManager;
-import com.cgreen.ygocardtracker.db.Queries;
 import com.cgreen.ygocardtracker.remote.RemoteDBKey;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardInfoSaver;

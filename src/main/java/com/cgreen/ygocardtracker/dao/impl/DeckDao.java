@@ -7,12 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
-import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.Dao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 import com.cgreen.ygocardtracker.deck.Deck;
-import com.cgreen.ygocardtracker.util.AlertHelper;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

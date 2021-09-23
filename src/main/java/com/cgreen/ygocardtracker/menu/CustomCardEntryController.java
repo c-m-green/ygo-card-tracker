@@ -4,7 +4,6 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
