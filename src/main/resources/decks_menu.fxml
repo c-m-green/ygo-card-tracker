@@ -36,11 +36,11 @@
       <VBox alignment="CENTER" prefHeight="329.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button onAction="#handleAddDeckButtonAction" mnemonicParsing="false" text="Add deck..." />
-            <Button mnemonicParsing="false" text="Delete deck..." />
+            <Button onAction="#handleDeleteDeckButtonAction" mnemonicParsing="false" text="Delete deck..." />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" text="Add card" />
-            <Button mnemonicParsing="false" text="Move card" />
-            <Button mnemonicParsing="false" text="Remove card" />
+            <Button fx:id="addCardButton" onAction="#handleAddCardButtonAction" mnemonicParsing="false" text="Add card" />
+            <Button fx:id="moveCardButton" onAction="#handleMoveCardButtonAction" mnemonicParsing="false" text="Move card" />
+            <Button fx:id="removeCardButton" onAction="#handleRemoveCardButtonAction" mnemonicParsing="false" text="Remove card" />
          </children>
          <BorderPane.margin>
             <Insets left="5.0" />
@@ -62,7 +62,7 @@
       </ButtonBar>
    </bottom>
    <top>
-      <ChoiceBox fx:id="deckChoiceBox" prefWidth="150.0" BorderPane.alignment="CENTER" />
+      <ChoiceBox fx:id="deckChoiceBox" onAction="#handleDeckChoiceAction" prefWidth="150.0" BorderPane.alignment="CENTER" />
    </top>
    <opaqueInsets>
       <Insets />

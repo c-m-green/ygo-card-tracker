@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.Objects;
 
 import com.cgreen.ygocardtracker.card.Card;
+import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.Dao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
@@ -93,7 +94,7 @@ public class CardDao implements Dao<Card> {
     }
     
     // SELECT
-    public ObservableList<Card> getCardsByDeckId(Integer deckId) throws SQLException {
+    public ObservableList<Card> getCardsByDeckId(Integer deckId, boolean inSideDeck) throws SQLException {
         ObservableList<Card> out = FXCollections.observableArrayList();
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
@@ -103,17 +104,19 @@ public class CardDao implements Dao<Card> {
             conn = dbm.connectToDatabase();
             stmt = conn.prepareStatement(Queries.getQuery("select_card_by_deck_query"));
             stmt.setObject(1, Objects.requireNonNull(deckId, "A deck must be indicated."));
+            stmt.setObject(2, inSideDeck);
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
-            rs.next();                
-            card = new Card();
-            card.setCardInfoId(rs.getInt("card_info_id"));
-            card.setDeckId(rs.getInt("deck_id"));
-            card.setSetCode(rs.getString("set_code"));
-            card.setInSideDeck(rs.getBoolean("in_side_deck"));
-            card.setIsVirtual(rs.getBoolean("is_virtual"));
-            card.setId(rs.getInt("ID"));
-            out.add(card);
+            while(rs.next()) {                
+                card = new Card();
+                card.setCardInfoId(rs.getInt("card_info_id"));
+                card.setDeckId(rs.getInt("deck_id"));
+                card.setSetCode(rs.getString("set_code"));
+                card.setInSideDeck(rs.getBoolean("in_side_deck"));
+                card.setIsVirtual(rs.getBoolean("is_virtual"));
+                card.setId(rs.getInt("ID"));
+                out.add(card);
+            }
         } finally {
             if (stmt != null) {
                 stmt.close();
@@ -195,7 +198,54 @@ public class CardDao implements Dao<Card> {
             }
         }
     }
-
+    
+    // UPDATE
+    public void updateDeckId(Card c, int deckId) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("update_card_deck_id_statement"));           
+            stmt.setInt(1, deckId);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+    
+ // UPDATE
+    public void updateInSideDeck(Card c, boolean inSideDeck) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dbm.connectToDatabase();
+            stmt = conn.prepareStatement(Queries.getQuery("update_card_side_deck_statement"));           
+            stmt.setBoolean(1, inSideDeck);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+    }
+    
+    // DELETE
     @Override
     public void delete(Card card) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();

@@ -359,7 +359,10 @@ public class CustomCardEntryController {
             Card card = new Card();
             card.setCardInfoId(cardInfo.getId());
             card.setDeckId(1);
+            // There's only one set code in cardInfo at the moment
             card.setSetCode(cardInfo.getSetCodes());
+            card.setIsVirtual(card.getCardInfo().isFake());
+            card.setInSideDeck(false);
             CardDao cardDao = new CardDao();
             try {
                 cardDao.save(card);
