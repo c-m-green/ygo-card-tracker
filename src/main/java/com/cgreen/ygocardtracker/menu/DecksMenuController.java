@@ -155,7 +155,7 @@ public class DecksMenuController {
                 unassignedCardsList.remove(c);
                 alphabetizeCards(deckCardsList);
             } catch (SQLException e) {
-                AlertHelper.raiseAlert("Error adding card.");
+                AlertHelper.raiseAlert("Error adding card: " + e.getMessage());
             }
         }
         setButtonDisable(false);
