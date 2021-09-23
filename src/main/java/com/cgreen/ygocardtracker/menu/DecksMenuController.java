@@ -2,7 +2,9 @@ package com.cgreen.ygocardtracker.menu;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
@@ -37,10 +39,11 @@ public class DecksMenuController {
     private ObservableList<Card> unassignedCardsList, deckCardsList, sideDeckList;
     @FXML
     private Button addCardButton, moveCardButton, removeCardButton;
+    private List<Button> menuButtons;
     @FXML
     private ChoiceBox<Deck> deckChoiceBox;
     @FXML
-    ListView<Card> unassignedCardsListView, deckCardsListView, sideDeckListView;
+    private ListView<Card> unassignedCardsListView, deckCardsListView, sideDeckListView;
     
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -53,6 +56,10 @@ public class DecksMenuController {
         unassignedCardsList = FXCollections.observableArrayList();
         deckCardsList = FXCollections.observableArrayList();
         sideDeckList = FXCollections.observableArrayList();
+        menuButtons = new ArrayList<Button>();
+        menuButtons.add(addCardButton);
+        menuButtons.add(moveCardButton);
+        menuButtons.add(removeCardButton);
         try {
             ObservableList<Card> allCards = cardDao.getAll();
             cardInfoDao.setCardInfosToCards(allCards);
@@ -91,6 +98,7 @@ public class DecksMenuController {
     }
     
     public void handleDeckChoiceAction(ActionEvent event) {
+        setButtonDisable(true);
         Deck d = deckChoiceBox.getValue();
         if (d != null && d.getId() > 1) {
             try {
@@ -106,6 +114,7 @@ public class DecksMenuController {
                 AlertHelper.raiseAlert(e.getClass() + e.getMessage());
             }
         }
+        setButtonDisable(false);
     }
     
     public void handleDeleteDeckButtonAction(ActionEvent event) {
@@ -132,6 +141,7 @@ public class DecksMenuController {
     }
     
     public void handleAddCardButtonAction(ActionEvent event) {
+        setButtonDisable(true);
         Deck d = deckChoiceBox.getValue();
         if (d == null || d.getId() <= 1) {
             AlertHelper.raiseAlert("Please select a deck first.");
@@ -148,9 +158,11 @@ public class DecksMenuController {
                 AlertHelper.raiseAlert("Error adding card.");
             }
         }
+        setButtonDisable(false);
     }
     
     public void handleMoveCardButtonAction(ActionEvent event) {
+        setButtonDisable(true);
         Alert choice = new Alert(AlertType.CONFIRMATION, "\"Yes\" moves to side deck, \"No\" moves from side deck\n\n(This is a temporary thing)", ButtonType.YES, ButtonType.NO);
         choice.showAndWait();
         try {
@@ -178,9 +190,11 @@ public class DecksMenuController {
         } catch (SQLException e) {
             AlertHelper.raiseAlert(e.getMessage());
         }
+        setButtonDisable(false);
     }
     
     public void handleRemoveCardButtonAction(ActionEvent event) {
+        setButtonDisable(true);
         Card c = deckCardsListView.getSelectionModel().getSelectedItem();
         if (c != null) {
             try {
@@ -192,6 +206,7 @@ public class DecksMenuController {
                 AlertHelper.raiseAlert(e.getMessage());
             }
         }
+        setButtonDisable(false);
     }
     
     @FXML
@@ -244,12 +259,18 @@ public class DecksMenuController {
         
     }
     
-    private static void alphabetizeCards(ObservableList<Card> cards) {
+    private void alphabetizeCards(ObservableList<Card> cards) {
         FXCollections.sort(cards, new Comparator<Card>( ) {
             @Override
             public int compare(Card c1, Card c2) {
                 return c1.compareTo(c2);
             }
         });
+    }
+    
+    private void setButtonDisable(boolean isDisabled) {
+        for (Button button : menuButtons) {
+            button.setDisable(isDisabled);
+        }
     }
 }
