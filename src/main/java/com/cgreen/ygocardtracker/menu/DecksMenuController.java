@@ -56,12 +56,7 @@ public class DecksMenuController {
         try {
             ObservableList<Card> allCards = cardDao.getAll();
             cardInfoDao.setCardInfosToCards(allCards);
-            FXCollections.sort(allCards, new Comparator<Card>( ) {
-                @Override
-                public int compare(Card c1, Card c2) {
-                    return c1.compareTo(c2);
-                }
-            });
+            alphabetizeCards(allCards);
             for (Card card : allCards) {
                 if (card.getDeckId() == 1) {
                     unassignedCardsList.add(card);
@@ -103,6 +98,8 @@ public class DecksMenuController {
                 sideDeckList = cardDao.getCardsByDeckId(d.getId(), true);
                 cardInfoDao.setCardInfosToCards(deckCardsList);
                 cardInfoDao.setCardInfosToCards(sideDeckList);
+                alphabetizeCards(deckCardsList);
+                alphabetizeCards(sideDeckList);
                 deckCardsListView.setItems(deckCardsList);
                 sideDeckListView.setItems(sideDeckList);
             } catch (SQLException e) {
@@ -146,6 +143,7 @@ public class DecksMenuController {
                 cardDao.updateDeckId(c, d.getId());
                 deckCardsList.add(c);
                 unassignedCardsList.remove(c);
+                alphabetizeCards(deckCardsList);
             } catch (SQLException e) {
                 AlertHelper.raiseAlert("Error adding card.");
             }
@@ -164,6 +162,7 @@ public class DecksMenuController {
                     cardDao.updateInSideDeck(c, true);
                     sideDeckList.add(c);
                     deckCardsList.remove(c);
+                    alphabetizeCards(sideDeckList);
                 }
             } else if (choice.getResult() == ButtonType.NO) {
                 Card c = sideDeckListView.getSelectionModel().getSelectedItem();
@@ -173,6 +172,7 @@ public class DecksMenuController {
                     cardDao.updateInSideDeck(c, false);
                     deckCardsList.add(c);
                     sideDeckList.remove(c);
+                    alphabetizeCards(deckCardsList);
                 }
             }
         } catch (SQLException e) {
@@ -187,6 +187,7 @@ public class DecksMenuController {
                 cardDao.updateDeckId(c, 1);
                 deckCardsList.remove(c);
                 unassignedCardsList.add(c);
+                alphabetizeCards(unassignedCardsList);
             } catch (SQLException e) {
                 AlertHelper.raiseAlert(e.getMessage());
             }
@@ -241,5 +242,14 @@ public class DecksMenuController {
             AlertHelper.raiseAlert("Error displaying card information.");
         }        
         
+    }
+    
+    private static void alphabetizeCards(ObservableList<Card> cards) {
+        FXCollections.sort(cards, new Comparator<Card>( ) {
+            @Override
+            public int compare(Card c1, Card c2) {
+                return c1.compareTo(c2);
+            }
+        });
     }
 }
