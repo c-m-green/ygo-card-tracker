@@ -27,35 +27,46 @@ public enum CardVariant {
     WINGED_BEAST(23, "Winged Beast"),
     WYRM(24, "Wyrm"),
     ZOMBIE(25, "Zombie"),
-    SPELL_NORMAL(26, "Normal (S)"),
-    SPELL_FIELD(27, "Field"),
-    SPELL_EQUIP(28, "Equip"),
-    SPELL_CONTINUOUS(29, "Continuous"),
-    SPELL_QUICK_PLAY(30, "Quick-Play"),
-    SPELL_RITUAL(31, "Ritual"),
-    TRAP_NORMAL(32, "Normal (T)"),
-    TRAP_CONTINUOUS(33, "Continuous"),
-    TRAP_COUNTER(34, "Counter");
+    SPELL_NORMAL(26, "Normal", "Normal Spell"),
+    SPELL_FIELD(27, "Field", "Field Spell"),
+    SPELL_EQUIP(28, "Equip", "Equip Spell"),
+    SPELL_CONTINUOUS(29, "Continuous", "Continuous Spell"),
+    SPELL_QUICK_PLAY(30, "Quick-Play", "Quick-Play Spell"),
+    SPELL_RITUAL(31, "Ritual", "Ritual Spell"),
+    TRAP_NORMAL(32, "Normal", "Normal Trap"),
+    TRAP_CONTINUOUS(33, "Continuous", "Continuous Trap"),
+    TRAP_COUNTER(34, "Counter", "Counter Trap");
     
     private int index;
-    private String label;
+    private String code, label;
     private static CardVariant[] list = CardVariant.values();
-    private CardVariant(int index, String label) {
+    private CardVariant(int index, String code, String label) {
         this.index = index;
+        this.code = code;
         this.label = label;
+    }
+    
+    private CardVariant(int index, String code) {
+        this.index = index;
+        this.code = code;
+        label = this.code;
     }
     
     public int getIndex() {
         return this.index;
     }
     
+    public String getCode() {
+        return code;
+    }
+    
     public static int getNumberOfCardVariants() {
         return list.length;
     }
     
-    public static int getIndexOf(String label) {
+    public static int getIndexOf(String code) {
         for (CardVariant cardVariant : list) {
-            if (cardVariant.toString().equalsIgnoreCase(label)) {
+            if (cardVariant.getCode().equalsIgnoreCase(code)) {
                 return cardVariant.getIndex();
             }
         }

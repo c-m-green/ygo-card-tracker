@@ -33,8 +33,22 @@ public class CardInfoSaver {
         CardModel cardModel = CardModelFactory.getCardModel(cardType);
         String nameColVal = allCardInfo.getString("name");
         String descColVal = allCardInfo.getString("desc");
-        Integer variantIndex = CardVariant.getIndexOf(allCardInfo.getString("race"));
-        CardVariant cardVariant = CardVariant.getCardVariant(variantIndex);
+        String cardVarStr = allCardInfo.getString("race");
+        // Manually setting card variant in some cases because there are two that
+        // say "Normal"
+        CardVariant cardVariant;
+        if (cardVarStr.equalsIgnoreCase("Normal")) {
+            if (cardType == CardType.SPELL) {
+                cardVariant = CardVariant.SPELL_NORMAL;
+            } else if (cardType == CardType.TRAP) {
+                cardVariant = CardVariant.TRAP_NORMAL;
+            } else {
+                // Dunno what to do in this case...
+                cardVariant = CardVariant.UNKNOWN;
+            }
+        } else {
+            cardVariant = CardVariant.getCardVariant(CardVariant.getIndexOf(cardVarStr));
+        }
         Integer linkValueColVal, atkColVal, defColVal, levelColVal, scaleColVal;
         String linkMarkersColVal, attributeColVal, setCodesColVal;
         if (cardModel.isLink()) {
