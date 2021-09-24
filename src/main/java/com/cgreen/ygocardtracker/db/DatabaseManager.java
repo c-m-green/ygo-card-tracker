@@ -58,6 +58,7 @@ public class DatabaseManager {
             createCardInfoTable();
             createDeckTable();
             createMyCardCollectionTable();
+            createSetCodeTable();
         } catch (SQLException sqle) {
             AlertHelper.raiseAlert(sqle.getMessage());
             sqle.printStackTrace();
@@ -96,6 +97,15 @@ public class DatabaseManager {
     private void createMyCardCollectionTable() throws SQLException {
         Connection conn = connectToDatabase();
         String sqlCreate = Queries.getQuery("create_my_card_collection_table_statement");
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        stmt.close();
+        conn.close();
+    }
+    
+    private void createSetCodeTable() throws SQLException {
+        Connection conn = connectToDatabase();
+        String sqlCreate = Queries.getQuery("create_set_code_table_statement");
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
         stmt.close();
