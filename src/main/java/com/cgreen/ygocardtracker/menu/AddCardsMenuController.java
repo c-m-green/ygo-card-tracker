@@ -1,5 +1,6 @@
 package com.cgreen.ygocardtracker.menu;
 
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,20 +8,29 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.cgreen.ygocardtracker.card.data.CardInfo;
+import com.cgreen.ygocardtracker.card.data.CardType;
+import com.cgreen.ygocardtracker.card.data.CardVariant;
+import com.cgreen.ygocardtracker.card.model.CardModel;
+import com.cgreen.ygocardtracker.card.model.CardModelFactory;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
+import com.cgreen.ygocardtracker.dao.impl.SetCodeDao;
 import com.cgreen.ygocardtracker.remote.RemoteDBKey;
 import com.cgreen.ygocardtracker.util.AlertHelper;
-import com.cgreen.ygocardtracker.util.CardInfoSaver;
+import com.cgreen.ygocardtracker.util.CardImageSaver;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -34,6 +44,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 public class AddCardsMenuController {
     private Stage stage;
@@ -41,16 +52,22 @@ public class AddCardsMenuController {
     private TextField nameSearchField, passcodeSearchField;
     @FXML
     private Button addByNameButton, addByPasscodeButton, addManuallyButton;
+    private boolean isSaving;
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        this.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (isSaving) {
+                    event.consume();
+                }
+            }            
+        });
     }
     
     public void handleAddByNameButtonAction(ActionEvent event) {
-        addByNameButton.setDisable(true);
-        nameSearchField.setDisable(true);
-        Stage progress = createProgressBar();
-        progress.show();
+        setButtonDisable(true);
         String searchTerm = nameSearchField.getText();
         if (searchTerm.isBlank()) {
             AlertHelper.raiseAlert("Please enter something!");
@@ -70,38 +87,18 @@ public class AddCardsMenuController {
                 } catch (SQLException e) {
                     // TODO Auto-generated catch block
                     AlertHelper.raiseAlert(e.getStackTrace().toString());
+                    
                 }
+                setButtonDisable(false);
             } else {
                 // Save info for this card (may include multiple IDs)
-                CardInfoSaver cis = new CardInfoSaver();
-                List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
-                if (newlySavedCardInfo.isEmpty()) {
-                    try {
-                        CardInfoDao dao = new CardInfoDao();
-                        ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
-                        if (cardInfos.isEmpty()) {
-                            AlertHelper.raiseAlert("No valid cards were found matching \"" + searchTerm + ".\"\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
-                        } else {
-                            showConfirmationScreen(cardInfos);
-                        }
-                    } catch (SQLException e) {
-                        AlertHelper.raiseAlert(e.getStackTrace().toString());
-                    }
-                } else {
-                    showConfirmationScreen(newlySavedCardInfo);
-                }
+                saveCardInfoFromJson(data);
             }
         }
-        progress.close();
-        addByNameButton.setDisable(false);
-        nameSearchField.setDisable(false);
     }
     
     public void handleAddByPasscodeButtonAction(ActionEvent event) {
-        addByPasscodeButton.setDisable(true);
-        passcodeSearchField.setDisable(true);
-        Stage progress = createProgressBar();
-        progress.show();
+        setButtonDisable(true);
         try {
             Integer searchTerm = Integer.parseInt(passcodeSearchField.getText());
             CardInfoDao dao = new CardInfoDao();
@@ -110,27 +107,22 @@ public class AddCardsMenuController {
                 JSONArray data = doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
                 if (data == null) {
                     AlertHelper.raiseAlert("Could not find id #" + searchTerm);
+                    setButtonDisable(false);
                 } else {
-                    CardInfoSaver cis = new CardInfoSaver();
-                    List<CardInfo> newlySavedCardInfo = cis.saveCardInfoFromJson(data);
-                    if (newlySavedCardInfo.isEmpty()) {
-                        AlertHelper.raiseAlert("No valid cards were found matching \"" + searchTerm + ".\"\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
-                    } else {
-                        showConfirmationScreen(newlySavedCardInfo);
-                    }
+                    saveCardInfoFromJson(data);
                 }
             } else {
                 showConfirmationScreen(FXCollections.observableArrayList(cardInfo));
+                setButtonDisable(false);
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            setButtonDisable(false);
         } catch (NumberFormatException nfe) {
             AlertHelper.raiseAlert("You need to enter an integer here...");
+            setButtonDisable(false);
         }
-        progress.close();
-        addByPasscodeButton.setDisable(false);
-        passcodeSearchField.setDisable(false);
     }
     
     public void handleAddManuallyButtonAction(ActionEvent event) {
@@ -155,7 +147,7 @@ public class AddCardsMenuController {
         // Do the online search
         // https://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
         // https://stackoverflow.com/questions/8760052/httpurlconnection-sends-a-post-request-even-though-httpcon-setrequestmethodget
-        // TODO: Refactor this into its own class so the URL is kept in one place
+        // TODO: Refactor this into its own class
         try {
             URL ygoDb = new URL("https://db.ygoprodeck.com/api/v7/cardinfo.php?" + key.toString() + "=" + URLEncoder.encode(value, "UTF-8"));
             System.out.println(ygoDb);
@@ -195,23 +187,177 @@ public class AddCardsMenuController {
         return null;
     }
     
-    private Stage createProgressBar() {
-        // TODO: Make this display correctly, and actually track progress.
+    private void saveCardInfoFromJson(JSONArray cardData) {
+        isSaving = true;
+        Stage progress = new Stage(StageStyle.UTILITY);
         Label label = new Label("Checking card info...");
         label.setPrefWidth(350);
         ProgressBar pBar = new ProgressBar();
         pBar.setPrefWidth(350);
-        pBar.setProgress(-1);
+        Task<List<CardInfo>> cardSaveTask = new Task<List<CardInfo>>() {
+            @Override
+            protected List<CardInfo> call() throws SQLException {
+                CardInfoDao dao = new CardInfoDao();
+                // We're not doing fuzzy searches, so we should only have one card.
+                JSONObject allCardInfo = cardData.getJSONObject(0);
+                Integer cardTypeIndex = CardType.getIndexOf(allCardInfo.getString("type"));
+                CardType cardType = CardType.getCardType(cardTypeIndex);
+                if (cardType == CardType.SKILL) {
+                    // TODO: Log this
+                    System.out.println("Encountered a Skill card -- skipping this one.");
+                    return new ArrayList<CardInfo>();
+                }
+                CardModel cardModel = CardModelFactory.getCardModel(cardType);
+                String nameColVal = allCardInfo.getString("name");
+                String descColVal = allCardInfo.getString("desc");
+                String cardVarStr = allCardInfo.getString("race");
+                // Manually setting card variant in some cases because there are two that
+                // say "Normal"
+                CardVariant cardVariant;
+                if (cardVarStr.equalsIgnoreCase("Normal")) {
+                    if (cardType == CardType.SPELL) {
+                        cardVariant = CardVariant.SPELL_NORMAL;
+                    } else if (cardType == CardType.TRAP) {
+                        cardVariant = CardVariant.TRAP_NORMAL;
+                    } else {
+                        // Dunno what to do in this case...
+                        cardVariant = CardVariant.UNKNOWN;
+                    }
+                } else {
+                    cardVariant = CardVariant.getCardVariant(CardVariant.getIndexOf(cardVarStr));
+                }
+                Integer linkValueColVal, atkColVal, defColVal, levelColVal, scaleColVal;
+                String linkMarkersColVal, attributeColVal, setCodesColVal;
+                if (cardModel.isLink()) {
+                    JSONArray linkMarkersArr = allCardInfo.getJSONArray("linkmarkers");
+                    linkMarkersColVal = "";
+                    for (int linkIndex = 0; linkIndex < linkMarkersArr.length() - 1; linkIndex++) {
+                        linkMarkersColVal += linkMarkersArr.getString(linkIndex) + ",";
+                    }
+                    linkMarkersColVal += linkMarkersArr.getString(linkMarkersArr.length() - 1);
+                    linkValueColVal = allCardInfo.getInt("linkval");
+                } else {
+                    linkValueColVal = null;
+                    linkMarkersColVal = null;
+                }
+                atkColVal = (cardModel.isMonster()) ? allCardInfo.getInt("atk") : null;
+                defColVal = (cardModel.isMonster() && !cardModel.isLink()) ? allCardInfo.getInt("def") : null;
+                levelColVal = (cardModel.hasLevel()) ? allCardInfo.getInt("level") : null;
+                scaleColVal = (cardModel.hasScale()) ? allCardInfo.getInt("scale") : null;
+                attributeColVal = (cardModel.hasAttribute()) ? allCardInfo.getString("attribute") : null;
+                JSONArray cardSetsArr = allCardInfo.getJSONArray("card_sets");
+                setCodesColVal = "";
+                for (int i = 0; i < cardSetsArr.length() - 1; i++) {
+                    JSONObject cardSetObj = cardSetsArr.getJSONObject(i);
+                    setCodesColVal += cardSetObj.getString("set_code") + ",";
+                }
+                JSONObject cardSetObjLast = cardSetsArr.getJSONObject(cardSetsArr.length() - 1);
+                setCodesColVal += cardSetObjLast.getString("set_code");
+                SetCodeDao setCodeDao = new SetCodeDao();
+                int setCodeId = setCodeDao.save(setCodesColVal);
+                JSONArray cardImagesArr = allCardInfo.getJSONArray("card_images");
+                List<CardInfo> savedInfos = new ArrayList<CardInfo>();
+                for (int i = 0; i < cardImagesArr.length(); i++) {
+                    updateProgress(i, cardImagesArr.length());
+                    System.out.println("Saving card " + (i + 1));
+                    JSONObject cardImageObj = cardImagesArr.getJSONObject(i);
+                    Integer passcodeColVal = cardImageObj.getInt("id");
+                    int numCardsInDBWithThisPasscode = dao.getNumCardInfos(passcodeColVal);
+                    if (numCardsInDBWithThisPasscode > 0) {
+                        // TODO: Log this
+                        System.out.println("Already have card info for " + passcodeColVal + " -- skipping it");
+                        continue;
+                    } else if (numCardsInDBWithThisPasscode == -1) {
+                        // TODO: Log this
+                        // TODO: Am I sure I want to throw this exception here?
+                        throw new SQLException ("ERROR: Problem checking whether " + passcodeColVal + " is in the DB.");
+                    }
+                    CardInfo dbCardInfo = new CardInfo();
+                    dbCardInfo.setIsFakeCol(false);
+                    dbCardInfo.setPasscodeCol(passcodeColVal);
+                    dbCardInfo.setCardTypeCol(cardType);
+                    dbCardInfo.setNameCol(nameColVal);
+                    dbCardInfo.setDescriptionCol(descColVal);
+                    dbCardInfo.setVariantCol(cardVariant);
+                    dbCardInfo.setAttributeCol(attributeColVal);
+                    dbCardInfo.setAttackCol(atkColVal);
+                    dbCardInfo.setLinkMarkersCol(linkMarkersColVal);
+                    dbCardInfo.setLinkValueCol(linkValueColVal);
+                    dbCardInfo.setDefenseCol(defColVal);
+                    dbCardInfo.setLevelCol(levelColVal);
+                    dbCardInfo.setScaleCol(scaleColVal);
+                    dbCardInfo.setSetCodesCol(setCodesColVal);
+                    dbCardInfo.setSetCodeId(setCodeId);
+                    
+                    String picUrl = cardImageObj.getString("image_url");
+                    String picUrlSmall = cardImageObj.getString("image_url_small");
+                    
+                    Image image;
+                    try {
+                        image = CardImageSaver.getCardImage(picUrl);
+                        dbCardInfo.setImageLinkCol(CardImageSaver.saveCardImageFile(image, passcodeColVal));
+                    } catch (IOException e) {
+                        // TODO Log this
+                        System.out.println("ERROR: Problem saving image for " + passcodeColVal);
+                        dbCardInfo.setImageLinkCol(null);
+                    }
+                    Image imageSmall;
+                    try {
+                        imageSmall = CardImageSaver.getCardImage(picUrlSmall);
+                        dbCardInfo.setSmallImageLinkCol(CardImageSaver.saveCardImageFileSmall(imageSmall, passcodeColVal));
+                    } catch (IOException e) {
+                        // TODO Log this
+                        System.out.println("ERROR: Problem saving small image for " + passcodeColVal);
+                        dbCardInfo.setSmallImageLinkCol(null);
+                    }
+                    dao.save(dbCardInfo);
+                    savedInfos.add(dbCardInfo);
+                }
+                return savedInfos;
+            }
+        };
+        cardSaveTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                System.out.println("Task succeeded!");
+                progress.hide();
+                isSaving = false;
+                showConfirmationScreen(cardSaveTask.getValue());
+                setButtonDisable(false);
+            }           
+        });
+        
+        cardSaveTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                System.out.println("Task failed!");
+                progress.hide();
+                isSaving = false;
+                Throwable ex = cardSaveTask.getException();
+                AlertHelper.raiseAlert("Error while saving card information:\n\n" + ex.getMessage());
+                setButtonDisable(false);
+            }           
+        });
+        
+        cardSaveTask.setOnCancelled(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                System.out.println("Task cancelled!");
+                isSaving = false;
+                AlertHelper.raiseAlert("Cancelled saving.");
+                setButtonDisable(false);
+            }           
+        });
+        pBar.progressProperty().bind(cardSaveTask.progressProperty());
         VBox vbox = new VBox(10, label, pBar);
         vbox.setPadding(new Insets(10));
-        Stage stage = new Stage(StageStyle.UTILITY);
-        stage.setTitle("Searching...");
-        stage.setScene(new Scene(vbox));
-        return stage;
+        progress.setTitle("Searching...");
+        progress.setScene(new Scene(vbox));
+        progress.show();
+        new Thread(cardSaveTask).start();
     }
     
     private void showConfirmationScreen(List<CardInfo> savedCardInfo) {
-        // TODO: Review/revise how these exceptions are getting handled.
         try {
             FXMLLoader loader = new FXMLLoader(CardConfirmerController.class.getClassLoader().getResource("card_confirmation_menu.fxml"));
             Parent parent = loader.load();        
@@ -226,6 +372,17 @@ public class AddCardsMenuController {
         } catch (SQLException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            AlertHelper.raiseAlert("An error has occurred during card saving.");
+        } catch (IllegalArgumentException iae) {
+            AlertHelper.raiseAlert("No valid cards were found matching this term.\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
         }
+    }
+    
+    private void setButtonDisable(boolean isDisabled) {
+        addByNameButton.setDisable(isDisabled);
+        nameSearchField.setDisable(isDisabled);
+        addByPasscodeButton.setDisable(isDisabled);
+        passcodeSearchField.setDisable(isDisabled);
+        addManuallyButton.setDisable(isDisabled);
     }
 }
