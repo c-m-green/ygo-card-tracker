@@ -352,7 +352,7 @@ public class CardInfoDao implements Dao<CardInfo> {
             stmt.setObject(10, c.getScaleCol().getValue());
             stmt.setObject(11, c.getLinkValueCol().getValue());
             stmt.setObject(12, c.getLinkMarkersCol().getValue());
-            stmt.setObject(13, c.getSetCodesCol().getValue());
+            stmt.setObject(13, c.getSetCodeId());
             stmt.setObject(14, c.getImageLinkCol().getValue());
             stmt.setObject(15, c.getSmallImageLinkCol().getValue());
             stmt.setObject(16, c.getIsFakeCol().getValue());

@@ -11,7 +11,7 @@ public class CardInfo {
     private SimpleObjectProperty<Boolean> isFakeCol;
     private SimpleObjectProperty<CardType> cardTypeCol;
     private SimpleObjectProperty<CardVariant> variantCol;
-    private int id;
+    private int id, setCodeId;
     private CardModel cardModel;
     
     public CardInfo() { 
@@ -249,6 +249,14 @@ public class CardInfo {
 
     public String getSetCodes() {
         return setCodesCol.getValue();
+    }
+
+    public int getSetCodeId() {
+        return setCodeId;
+    }
+
+    public void setSetCodeId(int setCodeId) {
+        this.setCodeId = setCodeId;
     }
     
     // TODO: Override toString()

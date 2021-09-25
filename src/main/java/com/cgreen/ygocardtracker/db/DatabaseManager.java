@@ -55,10 +55,10 @@ public class DatabaseManager {
     
     public boolean initializeTables() {
         try {
+            createSetCodeTable();
             createCardInfoTable();
             createDeckTable();
             createMyCardCollectionTable();
-            createSetCodeTable();
         } catch (SQLException sqle) {
             AlertHelper.raiseAlert(sqle.getMessage());
             sqle.printStackTrace();

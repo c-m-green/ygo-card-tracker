@@ -14,6 +14,7 @@ import com.cgreen.ygocardtracker.card.data.CardVariant;
 import com.cgreen.ygocardtracker.card.model.CardModel;
 import com.cgreen.ygocardtracker.card.model.CardModelFactory;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
+import com.cgreen.ygocardtracker.dao.impl.SetCodeDao;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 
 public class CardInfoSaver {
@@ -76,6 +77,14 @@ public class CardInfoSaver {
         }
         JSONObject cardSetObjLast = cardSetsArr.getJSONObject(cardSetsArr.length() - 1);
         setCodesColVal += cardSetObjLast.getString("set_code");
+        int setCodeId = -1;
+        try {
+            SetCodeDao setCodeDao = new SetCodeDao();
+            setCodeId = setCodeDao.save(setCodesColVal);
+        } catch (SQLException e) {
+            // TODO: Log this
+            return out;
+        }
         JSONArray cardImagesArr = allCardInfo.getJSONArray("card_images");
         for (int i = 0; i < cardImagesArr.length(); i++) {
             JSONObject cardImageObj = cardImagesArr.getJSONObject(i);
@@ -103,6 +112,7 @@ public class CardInfoSaver {
             dbCardInfo.setLevelCol(levelColVal);
             dbCardInfo.setScaleCol(scaleColVal);
             dbCardInfo.setSetCodesCol(setCodesColVal);
+            dbCardInfo.setSetCodeId(setCodeId);
             
             String picUrl = cardImageObj.getString("image_url");
             String picUrlSmall = cardImageObj.getString("image_url_small");
