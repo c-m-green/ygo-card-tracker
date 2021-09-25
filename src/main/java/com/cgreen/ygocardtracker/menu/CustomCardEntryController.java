@@ -16,6 +16,7 @@ import com.cgreen.ygocardtracker.card.model.CardModel;
 import com.cgreen.ygocardtracker.card.model.CardModelFactory;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
+import com.cgreen.ygocardtracker.dao.impl.SetCodeDao;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 
 import javafx.collections.FXCollections;
@@ -172,6 +173,7 @@ public class CustomCardEntryController {
         }
     }
     
+    // TODO: This method is a prime candidate for refactoring.
     public void handleSaveButtonAction(ActionEvent event) {
         // TODO: Indeterminate progress box
         // TODO: Disable buttonbar at this point and reenable it later
@@ -263,10 +265,12 @@ public class CustomCardEntryController {
             }
             cardInfo.setImageLinkCol(imagePathField.getText());
             cardInfo.setSmallImageLinkCol(smallImagePathField.getText());
-            cardInfo.setSetCodesCol(setCodeField.getText());
             if (cardInfo.isFake()) {
                 final int tempPasscode = 100000000;
                 try {
+                    SetCodeDao setCodeDao = new SetCodeDao();
+                    cardInfo.setSetCodeId(setCodeDao.save(setCodeField.getText()));
+                    cardInfo.setSetCodesCol(setCodeField.getText());
                     CardInfo temp = cardInfoDao.getCardInfoByPasscode(tempPasscode);
                     if (temp != null) {
                         cardInfoDao.delete(temp);
@@ -303,7 +307,8 @@ public class CustomCardEntryController {
                                         alreadyHasSetCode = alreadyHasSetCode || setCode.equals(cardInfo.getSetCodes());
                                     }
                                     if (!alreadyHasSetCode) {
-                                        cardInfoDao.updateCardInfoSetCodes(otherInfo, otherInfo.getSetCodes() + "," + cardInfo.getSetCodes());
+                                        SetCodeDao setCodeDao = new SetCodeDao();
+                                        setCodeDao.update(otherInfo.getSetCodeId(), otherInfo.getSetCodes() + "," + cardInfo.getSetCodes());
                                     }
                                 } catch (SQLException sqle) {
                                     sqle.printStackTrace();
@@ -314,6 +319,8 @@ public class CustomCardEntryController {
                                 card.setCardInfoId(otherInfo.getId());
                                 card.setDeckId(1);
                                 card.setSetCode(cardInfo.getSetCodes());
+                                card.setInSideDeck(false);
+                                card.setIsVirtual(false);
                                 CardDao cardDao = new CardDao();
                                 try {
                                     cardDao.save(card);
@@ -346,9 +353,11 @@ public class CustomCardEntryController {
                     return;
                 } else {
                     try {
+                        SetCodeDao setCodeDao = new SetCodeDao();
+                        cardInfo.setSetCodeId(setCodeDao.save(setCodeField.getText()));
                         cardInfoDao.save(cardInfo);
                     } catch (SQLException e) {
-                        AlertHelper.raiseAlert("Error saving card information to the database.");
+                        AlertHelper.raiseAlert("Error saving card information to the database.\n" + e.getMessage());
                         return;
                     }
                 }

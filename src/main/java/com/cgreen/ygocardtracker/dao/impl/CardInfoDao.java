@@ -405,29 +405,6 @@ public class CardInfoDao implements Dao<CardInfo> {
         }
     }
     
-    // UPDATE
-    public void updateCardInfoSetCodes(CardInfo c, String setCodes) throws SQLException {
-        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("update_card_info_set_codes"));           
-            stmt.setString(1, setCodes);
-            stmt.setInt(2, c.getId());
-            stmt.executeUpdate();
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
-        }
-    }
-    
     // DELETE
     @Override
     public void delete(CardInfo c) throws SQLException {
