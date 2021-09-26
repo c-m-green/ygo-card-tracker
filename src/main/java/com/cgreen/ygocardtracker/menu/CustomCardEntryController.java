@@ -278,7 +278,7 @@ public class CustomCardEntryController {
                     cardInfo.setPasscodeCol(tempPasscode);
                     cardInfoDao.save(cardInfo);
                 } catch (SQLException e) {
-                    AlertHelper.raiseAlert("Error saving card information.");
+                    AlertHelper.raiseAlert("Error saving card information.\n\n" + e.getMessage());
                     return;
                 }
                 // TODO: Log what we're doing here
@@ -287,7 +287,7 @@ public class CustomCardEntryController {
                     cardInfoDao.updateFakeCardInfoPasscode(cardInfo, newPasscode);
                     cardInfo.setPasscodeCol(tempPasscode + cardInfo.getId());
                 } catch (SQLException e) {
-                    AlertHelper.raiseAlert("Error saving card information.");
+                    AlertHelper.raiseAlert("Error saving card information.\n\n" + e.getMessage());
                     return;
                 }
             } else {
