@@ -78,7 +78,7 @@ public class AddCardsMenuController {
                     CardInfoDao dao = new CardInfoDao();
                     ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
                     if (cardInfos.isEmpty()) {
-                        AlertHelper.raiseAlert("No card info found for \"" + searchTerm + "\".");
+                        AlertHelper.raiseAlert("No card info by the name \"" + searchTerm + "\" was found.");
                     } else {
                         showConfirmationScreen(cardInfos);
                     }
