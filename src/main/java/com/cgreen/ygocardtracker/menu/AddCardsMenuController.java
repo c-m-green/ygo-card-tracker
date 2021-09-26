@@ -110,7 +110,12 @@ public class AddCardsMenuController {
                     saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, data.getJSONObject(0).getString("name")));
                 }
             } else {
-                saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
+                if (cardInfo.isFake()) {
+                    showConfirmationScreen(dao.getCardInfoByName(cardInfo.getName()));
+                    setButtonDisable(false);
+                } else {
+                    saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
+                }
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
