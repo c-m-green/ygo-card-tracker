@@ -258,7 +258,7 @@ public class AddCardsMenuController {
                 JSONArray cardImagesArr = allCardInfo.getJSONArray("card_images");
                 for (int i = 0; i < cardImagesArr.length(); i++) {
                     updateProgress(i, cardImagesArr.length());
-                    System.out.println("Saving card " + (i + 1));
+                    System.out.println("Saving card info for " + nameColVal + "(" + (i + 1) + ")");
                     JSONObject cardImageObj = cardImagesArr.getJSONObject(i);
                     Integer passcodeColVal = cardImageObj.getInt("id");
                     int numCardsInDBWithThisPasscode = dao.getNumCardInfos(passcodeColVal);
@@ -347,13 +347,22 @@ public class AddCardsMenuController {
             @Override
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task cancelled!");
+                progress.hide();
                 isSaving = false;
                 AlertHelper.raiseAlert("Cancelled saving.");
                 setButtonDisable(false);
             }           
         });
         pBar.progressProperty().bind(cardSaveTask.progressProperty());
-        VBox vbox = new VBox(10, label, pBar);
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cardSaveTask.cancel();
+                event.consume();
+            }
+        });
+        VBox vbox = new VBox(10, label, pBar, cancelButton);
         vbox.setPadding(new Insets(10));
         progress.setTitle("Searching...");
         progress.setScene(new Scene(vbox));
