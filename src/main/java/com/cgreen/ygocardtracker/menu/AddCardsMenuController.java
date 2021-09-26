@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -92,7 +91,7 @@ public class AddCardsMenuController {
                 setButtonDisable(false);
             } else {
                 // Save info for this card (may include multiple IDs)
-                saveCardInfoFromJson(data);
+                saveNewCardInfoFromJson(data);
             }
         }
     }
@@ -109,7 +108,7 @@ public class AddCardsMenuController {
                     AlertHelper.raiseAlert("Could not find id #" + searchTerm);
                     setButtonDisable(false);
                 } else {
-                    saveCardInfoFromJson(data);
+                    saveNewCardInfoFromJson(data);
                 }
             } else {
                 showConfirmationScreen(FXCollections.observableArrayList(cardInfo));
@@ -187,28 +186,29 @@ public class AddCardsMenuController {
         return null;
     }
     
-    private void saveCardInfoFromJson(JSONArray cardData) {
+    private void saveNewCardInfoFromJson(JSONArray cardData) {
         isSaving = true;
         Stage progress = new Stage(StageStyle.UTILITY);
         Label label = new Label("Checking card info...");
         label.setPrefWidth(350);
         ProgressBar pBar = new ProgressBar();
         pBar.setPrefWidth(350);
-        Task<List<CardInfo>> cardSaveTask = new Task<List<CardInfo>>() {
+        // We're not doing fuzzy searches, so we should only have one card.
+        JSONObject allCardInfo = cardData.getJSONObject(0);
+        // Grab the name now so we can use it later.
+        String nameColVal = allCardInfo.getString("name");
+        Task<Void> cardSaveTask = new Task<Void>() {
             @Override
-            protected List<CardInfo> call() throws SQLException {
-                CardInfoDao dao = new CardInfoDao();
-                // We're not doing fuzzy searches, so we should only have one card.
-                JSONObject allCardInfo = cardData.getJSONObject(0);
+            protected Void call() throws SQLException {
+                CardInfoDao dao = new CardInfoDao();           
                 Integer cardTypeIndex = CardType.getIndexOf(allCardInfo.getString("type"));
                 CardType cardType = CardType.getCardType(cardTypeIndex);
                 if (cardType == CardType.SKILL) {
                     // TODO: Log this
                     System.out.println("Encountered a Skill card -- skipping this one.");
-                    return new ArrayList<CardInfo>();
+                    return null;
                 }
                 CardModel cardModel = CardModelFactory.getCardModel(cardType);
-                String nameColVal = allCardInfo.getString("name");
                 String descColVal = allCardInfo.getString("desc");
                 String cardVarStr = allCardInfo.getString("race");
                 // Manually setting card variant in some cases because there are two that
@@ -256,7 +256,6 @@ public class AddCardsMenuController {
                 SetCodeDao setCodeDao = new SetCodeDao();
                 int setCodeId = setCodeDao.save(setCodesColVal);
                 JSONArray cardImagesArr = allCardInfo.getJSONArray("card_images");
-                List<CardInfo> savedInfos = new ArrayList<CardInfo>();
                 for (int i = 0; i < cardImagesArr.length(); i++) {
                     updateProgress(i, cardImagesArr.length());
                     System.out.println("Saving card " + (i + 1));
@@ -311,9 +310,8 @@ public class AddCardsMenuController {
                         dbCardInfo.setSmallImageLinkCol(null);
                     }
                     dao.save(dbCardInfo);
-                    savedInfos.add(dbCardInfo);
                 }
-                return savedInfos;
+                return null;
             }
         };
         cardSaveTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -321,8 +319,14 @@ public class AddCardsMenuController {
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task succeeded!");
                 progress.hide();
+                try {
+                    CardInfoDao cardInfoDao = new CardInfoDao();
+                    ObservableList<CardInfo> infos = cardInfoDao.getCardInfoByName(nameColVal);
+                    showConfirmationScreen(infos);
+                } catch (SQLException e) {
+                    AlertHelper.raiseAlert("Error while saving card information:\n\n" + e.getMessage());
+                }
                 isSaving = false;
-                showConfirmationScreen(cardSaveTask.getValue());
                 setButtonDisable(false);
             }           
         });
