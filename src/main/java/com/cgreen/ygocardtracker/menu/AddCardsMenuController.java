@@ -24,7 +24,6 @@ import com.cgreen.ygocardtracker.remote.RemoteDBKey;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardImageSaver;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -108,11 +107,10 @@ public class AddCardsMenuController {
                     AlertHelper.raiseAlert("Could not find id #" + searchTerm);
                     setButtonDisable(false);
                 } else {
-                    saveNewCardInfoFromJson(data);
+                    saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, data.getJSONObject(0).getString("name")));
                 }
             } else {
-                showConfirmationScreen(FXCollections.observableArrayList(cardInfo));
-                setButtonDisable(false);
+                saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
