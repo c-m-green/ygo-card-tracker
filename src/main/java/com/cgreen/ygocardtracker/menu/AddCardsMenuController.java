@@ -390,7 +390,7 @@ public class AddCardsMenuController {
             e.printStackTrace();
             AlertHelper.raiseAlert("An error has occurred during card saving.");
         } catch (IllegalArgumentException iae) {
-            AlertHelper.raiseAlert("No valid cards were found matching this term.\n\nThis could be due to an error while saving card information. Also, please note that Skill cards are currently not supported.");
+            AlertHelper.raiseAlert("No valid cards were found matching this term.\n\nPlease note that Skill cards are currently not supported. Otherwise, this could be due to an error while saving card information.");
         }
     }
     
