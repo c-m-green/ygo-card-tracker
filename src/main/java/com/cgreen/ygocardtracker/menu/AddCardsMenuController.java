@@ -20,6 +20,7 @@ import com.cgreen.ygocardtracker.card.model.CardModel;
 import com.cgreen.ygocardtracker.card.model.CardModelFactory;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.dao.impl.SetCodeDao;
+import com.cgreen.ygocardtracker.remote.CardInfoFetcher;
 import com.cgreen.ygocardtracker.remote.RemoteDBKey;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.CardImageSaver;
@@ -70,7 +71,7 @@ public class AddCardsMenuController {
         if (searchTerm.isBlank()) {
             AlertHelper.raiseAlert("Please enter something!");
         } else {
-            JSONArray data = doOnlineSearch(RemoteDBKey.NAME, searchTerm);
+            JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, searchTerm);
             // TODO: Might just want 200, not 201?
             if (data == null) {
                 System.out.println("Online search failed -- resorting to local DB");
@@ -102,19 +103,19 @@ public class AddCardsMenuController {
             CardInfoDao dao = new CardInfoDao();
             CardInfo cardInfo = dao.getCardInfoByPasscode(searchTerm);
             if (cardInfo == null) {
-                JSONArray data = doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
+                JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
                 if (data == null) {
                     AlertHelper.raiseAlert("Could not find id #" + searchTerm);
                     setButtonDisable(false);
                 } else {
-                    saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, data.getJSONObject(0).getString("name")));
+                    saveNewCardInfoFromJson(CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, data.getJSONObject(0).getString("name")));
                 }
             } else {
                 if (cardInfo.isFake()) {
                     showConfirmationScreen(dao.getCardInfoByName(cardInfo.getName()));
                     setButtonDisable(false);
                 } else {
-                    saveNewCardInfoFromJson(doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
+                    saveNewCardInfoFromJson(CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
                 }
             }
         } catch (SQLException e) {
@@ -143,50 +144,6 @@ public class AddCardsMenuController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-    
-    private JSONArray doOnlineSearch(RemoteDBKey key, String value) {
-        // Do the online search
-        // https://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
-        // https://stackoverflow.com/questions/8760052/httpurlconnection-sends-a-post-request-even-though-httpcon-setrequestmethodget
-        // TODO: Refactor this into its own class
-        try {
-            URL ygoDb = new URL("https://db.ygoprodeck.com/api/v7/cardinfo.php?" + key.toString() + "=" + URLEncoder.encode(value, "UTF-8"));
-            System.out.println(ygoDb);
-            HttpURLConnection connection = (HttpURLConnection) ygoDb.openConnection();
-            connection.setUseCaches(false);
-            connection.setAllowUserInteraction(false);
-            connection.connect();
-            // https://stackoverflow.com/questions/10500775/parse-json-from-httpurlconnection-object
-            int status = connection.getResponseCode();
-            System.out.println(status + ": " + connection.getResponseMessage());
-            switch (status) {
-            case 200:
-                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
-                // https://stackoverflow.com/a/29183161
-                System.out.println(sb);
-                JSONArray data = (JSONArray) new JSONObject(sb.toString()).get("data");
-                /*for (int i = 0; i < data.length(); i++) {
-                    JSONObject cardData = data.getJSONObject(i);
-                    System.out.println(cardData.get("name"));
-                }*/
-                return data;
-            case 400:
-                break;
-            default:
-                AlertHelper.raiseAlert("There was a problem contacting the remote database.");
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            AlertHelper.raiseAlert("Error", "YGOCardTracker has encountered an error.", "There was a problem contacting the remote database.");
-        }
-        return null;
     }
     
     private void saveNewCardInfoFromJson(JSONArray cardData) {
