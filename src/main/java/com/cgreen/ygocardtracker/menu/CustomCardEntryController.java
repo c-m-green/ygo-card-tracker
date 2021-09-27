@@ -265,12 +265,12 @@ public class CustomCardEntryController {
             }
             cardInfo.setImageLinkCol(imagePathField.getText());
             cardInfo.setSmallImageLinkCol(smallImagePathField.getText());
+            cardInfo.setSetCodesCol(setCodeField.getText());
             if (cardInfo.isFake()) {
                 final int tempPasscode = 100000000;
                 try {
                     SetCodeDao setCodeDao = new SetCodeDao();
-                    cardInfo.setSetCodeId(setCodeDao.save(setCodeField.getText()));
-                    cardInfo.setSetCodesCol(setCodeField.getText());
+                    cardInfo.setSetCodeId(setCodeDao.save(cardInfo.getSetCodes()));
                     CardInfo temp = cardInfoDao.getCardInfoByPasscode(tempPasscode);
                     if (temp != null) {
                         cardInfoDao.delete(temp);
@@ -285,7 +285,7 @@ public class CustomCardEntryController {
                 int newPasscode = tempPasscode + cardInfo.getId();
                 try {
                     cardInfoDao.updateFakeCardInfoPasscode(cardInfo, newPasscode);
-                    cardInfo.setPasscodeCol(tempPasscode + cardInfo.getId());
+                    cardInfo.setPasscodeCol(newPasscode);
                 } catch (SQLException e) {
                     AlertHelper.raiseAlert("Error saving card information.\n\n" + e.getMessage());
                     return;
