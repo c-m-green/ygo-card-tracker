@@ -35,8 +35,9 @@ public class YGOCardTracker extends Application
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         if (dbm.testConnection("ygoadmin", "password")) {
             try {
-                FXMLLoader loader = new FXMLLoader(MainMenuController.class.getClassLoader().getResource("main_menu.fxml"));
+                FXMLLoader loader = new FXMLLoader(MainMenuController.class.getClassLoader().getResource("main_menu.fxml"));                
                 Parent parent = loader.load();
+                ((MainMenuController)loader.getController()).init();
                 
                 User user = new User();
                 user.setUsername("ygoadmin");
