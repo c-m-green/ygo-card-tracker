@@ -1,10 +1,9 @@
 package com.cgreen.ygocardtracker.menu;
 
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.nio.file.Paths;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,6 +33,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class CustomCardEntryController {
@@ -129,38 +129,28 @@ public class CustomCardEntryController {
     }
     
     public void handleImageBrowseButtonAction(ActionEvent event) {
-        FileDialog fd = new FileDialog(new Frame(), "Select an image file", FileDialog.LOAD);
-        fd.setDirectory("C:\\");
-        fd.setFile("*.jpg;*.jpeg;*.png");
-        fd.setVisible(true);
-        String fileName = fd.getFile();
-        if (fileName != null) {
-            if (fileName.endsWith(".png") || fileName.endsWith(".PNG") || 
-                    fileName.endsWith(".jpeg") || fileName.endsWith(".JPEG") ||
-                    fileName.endsWith(".jpg") || fileName.endsWith(".JPG")) {
-                String dir = fd.getDirectory();
-                imagePathField.setText(Paths.get(dir, fileName).toString());
-            } else {
-                AlertHelper.raiseAlert("Please select a PNG or JPG image.");
-            }
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select card image");
+        fc.setInitialDirectory(new File(System.getProperty("user.home")));
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Compatible Images", Arrays.asList("*.jpg", "*.JPG", "*.jpeg", "*.JPEG", "*.png", "*.PNG"))
+        );
+        File imgFile = fc.showOpenDialog(stage);
+        if (imgFile != null) {
+            imagePathField.setText(imgFile.toString());
         }
     }
     
     public void handleSmallImageBrowseButtonAction(ActionEvent event) {
-        FileDialog fd = new FileDialog(new Frame(), "Select an image file", FileDialog.LOAD);
-        fd.setDirectory("C:\\");
-        fd.setFile("*.jpg;*.jpeg;*.png");
-        fd.setVisible(true);
-        String fileName = fd.getFile();
-        if (fileName != null) {
-            if (fileName.endsWith(".png") || fileName.endsWith(".PNG") || 
-                    fileName.endsWith(".jpeg") || fileName.endsWith(".JPEG") ||
-                    fileName.endsWith(".jpg") || fileName.endsWith(".JPG")) {
-                String dir = fd.getDirectory();
-                smallImagePathField.setText(Paths.get(dir, fileName).toString());
-            } else {
-                AlertHelper.raiseAlert("Please select a PNG or JPG image.");
-            }
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select small card image");
+        fc.setInitialDirectory(new File(System.getProperty("user.home")));
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Compatible Images", Arrays.asList("*.jpg", "*.JPG", "*.jpeg", "*.JPEG", "*.png", "*.PNG"))
+        );
+        File imgFile = fc.showOpenDialog(stage);
+        if (imgFile != null) {
+            smallImagePathField.setText(imgFile.toString());
         }
     }
     
