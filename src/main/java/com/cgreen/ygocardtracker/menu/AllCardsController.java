@@ -7,6 +7,9 @@ import java.util.Comparator;
 import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
+import com.cgreen.ygocardtracker.db.export.CardExporter;
+import com.cgreen.ygocardtracker.util.AlertHelper;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -67,6 +70,18 @@ public class AllCardsController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public void handleExportButtonAction(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(CardExporterController.class.getClassLoader().getResource("card_export_menu.fxml"));
+        Parent parent = loader.load();        
+        
+        Stage cardExportStage = new Stage();
+        cardExportStage.setScene(new Scene(parent));
+        CardExporterController cec = loader.getController();
+        cec.setStage(cardExportStage);
+        cardExportStage.initModality(Modality.APPLICATION_MODAL);
+        cardExportStage.showAndWait();
     }
     
     public void handleDeleteButtonAction(ActionEvent event) {
