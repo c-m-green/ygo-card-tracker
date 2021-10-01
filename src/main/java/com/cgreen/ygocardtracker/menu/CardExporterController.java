@@ -34,7 +34,7 @@ public class CardExporterController {
             if (dir.isDirectory()) {
                 try {
                     CardExporter.exportCollection(dir, jsonCheckbox.isSelected(), csvCheckbox.isSelected(), txtCheckbox.isSelected());
-                    Alert complete = new Alert(AlertType.INFORMATION, "Export complete!");
+                    Alert complete = new Alert(AlertType.INFORMATION, "Card export complete!");
                     complete.showAndWait();
                     stage.hide();
                 } catch (SQLException e) {
