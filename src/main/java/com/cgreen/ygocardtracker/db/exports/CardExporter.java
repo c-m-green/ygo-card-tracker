@@ -21,11 +21,6 @@ import com.cgreen.ygocardtracker.db.Queries;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 import com.cgreen.ygocardtracker.util.Version;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-
 public class CardExporter {
     private static final String CARD_QUERY = "select_cards_for_export_query";
     private static final String DECK_QUERY = "select_deck_table_query";
