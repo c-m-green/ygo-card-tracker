@@ -34,49 +34,40 @@ public class CardExporter {
     private static final String CSV_FILENAME = "collection.csv";
     private static final String TXT_FILENAME = "set_codes.txt";
     
-    public static void exportCollection(Stage stage, boolean doJson, boolean doCsv, boolean doTxt) throws SQLException {
-        if (stage == null) {
-            throw new IllegalArgumentException("No stage passed to exporter");
+    public static void exportCollection(File outputDir, boolean doJson, boolean doCsv, boolean doTxt) throws IOException, SQLException {
+        if (outputDir == null || !outputDir.isDirectory()) {
+            throw new IllegalArgumentException("No directory passed to exporter");
         }
         if (doJson || doCsv || doTxt) {    
-            DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle("Select a save location");
-            File dir = chooser.showDialog(stage);
-            if (dir != null) {
-                if (doJson) {
-                    File jsonOut = new File(Paths.get(dir.toString(), JSON_FILENAME).toString());
-                    try (Writer out = new BufferedWriter(new FileWriter(jsonOut));) {
-                        JSONObject json = buildJsonFromDatabase();
-                        if (json != null) {
-                            out.write(json.toString());
-                        }
-                        // TODO: Log that we succeeded
-                    } catch (IOException e) {
-                        // TODO: Log this
-                        AlertHelper.raiseAlert("Error writing to " + jsonOut);
-                        return;
+            if (doJson) {
+                File jsonOut = new File(Paths.get(outputDir.toString(), JSON_FILENAME).toString());
+                try (Writer out = new BufferedWriter(new FileWriter(jsonOut));) {
+                    JSONObject json = buildJsonFromDatabase();
+                    if (json != null) {
+                        out.write(json.toString());
                     }
+                    // TODO: Log that we succeeded
+                } catch (IOException e) {
+                    // TODO: Log this
+                    throw new IOException("Error writing to " + jsonOut);
                 }
-                if (doCsv) {
-                    // TODO
-                }
-                if (doTxt) {
-                    File txtOut = new File(Paths.get(dir.toString(), TXT_FILENAME).toString());
-                    try (Writer out = new BufferedWriter(new FileWriter(txtOut));) {
-                        String txt = buildTxtFromDatabase();
-                        if (txt != null) {
-                            out.write(txt);
-                        }
-                    } catch (IOException e) {
-                     // TODO: Log this
-                        AlertHelper.raiseAlert("Error writing to " + txtOut);
-                        return;
-                    }
-                }
-                Alert complete = new Alert(AlertType.INFORMATION, "Export complete!");
-                complete.showAndWait();
-                // TODO: Log this
             }
+            if (doCsv) {
+                // TODO
+            }
+            if (doTxt) {
+                File txtOut = new File(Paths.get(outputDir.toString(), TXT_FILENAME).toString());
+                try (Writer out = new BufferedWriter(new FileWriter(txtOut));) {
+                    String txt = buildTxtFromDatabase();
+                    if (txt != null) {
+                        out.write(txt);
+                    }
+                } catch (IOException e) {
+                 // TODO: Log this
+                    throw new IOException("Error writing to " + txtOut);
+                }
+            }
+            // TODO: Log that exporter is closing
         }
     }
     
