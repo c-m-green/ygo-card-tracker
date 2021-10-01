@@ -58,8 +58,7 @@ public class CardExporter {
                     }
                 }
                 if (doCsv) {
-                    Alert csvWarn = new Alert(AlertType.WARNING, "Export to CSV is not yet supported. This will be skipped.");
-                    csvWarn.showAndWait();
+                    // TODO
                 }
                 if (doTxt) {
                     File txtOut = new File(Paths.get(dir.toString(), TXT_FILENAME).toString());

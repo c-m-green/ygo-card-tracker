@@ -16,6 +16,8 @@ public class CardExporterController {
     private CheckBox jsonCheckbox, csvCheckbox, txtCheckbox;
     public void setStage(Stage stage) {
         this.stage = stage;
+        // TODO: Remove this line once CSV export is ready
+        csvCheckbox.setDisable(true);
     }
     
     @FXML
