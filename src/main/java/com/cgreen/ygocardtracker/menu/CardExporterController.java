@@ -27,26 +27,31 @@ public class CardExporterController {
     
     @FXML
     public void handleOkButtonAction(ActionEvent event) {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select a save location");
-        File dir = chooser.showDialog(stage);
-        if (dir != null) {
-            if (dir.isDirectory()) {
-                try {
-                    CardExporter.exportCollection(dir, jsonCheckbox.isSelected(), csvCheckbox.isSelected(), txtCheckbox.isSelected());
-                    Alert complete = new Alert(AlertType.INFORMATION, "Card export complete!");
-                    complete.showAndWait();
-                    stage.hide();
-                } catch (SQLException e) {
-                    AlertHelper.raiseAlert("Export failed due to a database error.");
-                } catch (IOException e) {
-                    AlertHelper.raiseAlert("Error exporting collection: " + e.getMessage());
+        if (jsonCheckbox.isSelected() || csvCheckbox.isSelected() || txtCheckbox.isSelected()) {
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle("Select a save location");
+            File dir = chooser.showDialog(stage);
+            if (dir != null) {
+                if (dir.isDirectory()) {
+                    try {
+                        CardExporter.exportCollection(dir, jsonCheckbox.isSelected(), csvCheckbox.isSelected(), txtCheckbox.isSelected());
+                        Alert complete = new Alert(AlertType.INFORMATION, "Card export complete!");
+                        complete.showAndWait();
+                        stage.hide();
+                    } catch (SQLException e) {
+                        AlertHelper.raiseAlert("Export failed due to a database error.");
+                    } catch (IOException e) {
+                        AlertHelper.raiseAlert("Error exporting collection: " + e.getMessage());
+                    }
+                } else {
+                    AlertHelper.raiseAlert("Please select a directory.");
                 }
-            } else {
-                AlertHelper.raiseAlert("Please select a directory.");
             }
+            event.consume();
+        } else {
+            event.consume();
+            stage.hide();
         }
-        event.consume();
     }
     
     @FXML
