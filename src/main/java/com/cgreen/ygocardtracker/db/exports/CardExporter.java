@@ -1,4 +1,4 @@
-package com.cgreen.ygocardtracker.db.export;
+package com.cgreen.ygocardtracker.db.exports;
 
 import java.io.BufferedWriter;
 import java.io.File;

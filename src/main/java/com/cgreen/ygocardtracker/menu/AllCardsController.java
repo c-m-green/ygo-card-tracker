@@ -7,8 +7,6 @@ import java.util.Comparator;
 import com.cgreen.ygocardtracker.card.Card;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
-import com.cgreen.ygocardtracker.db.export.CardExporter;
-import com.cgreen.ygocardtracker.util.AlertHelper;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

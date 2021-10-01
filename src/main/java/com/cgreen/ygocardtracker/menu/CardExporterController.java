@@ -2,7 +2,7 @@ package com.cgreen.ygocardtracker.menu;
 
 import java.sql.SQLException;
 
-import com.cgreen.ygocardtracker.db.export.CardExporter;
+import com.cgreen.ygocardtracker.db.exports.CardExporter;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 
 import javafx.event.ActionEvent;
