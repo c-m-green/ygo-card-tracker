@@ -42,8 +42,8 @@
             <Button fx:id="moveCardButton" mnemonicParsing="false" onAction="#handleMoveCardButtonAction" text="Move card" />
             <Button fx:id="removeCardButton" mnemonicParsing="false" onAction="#handleRemoveCardButtonAction" text="Remove card" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" text="Import decks..." />
-            <Button mnemonicParsing="false" text="Export decks..." />
+            <Button fx:id="importDecksButton" mnemonicParsing="false" onAction="#handleImportDecksButtonAction" text="Import decks..." />
+            <Button fx:id="exportDecksButton" mnemonicParsing="false" onAction="#handleExportDecksButtonAction" text="Export decks..." />
          </children>
          <BorderPane.margin>
             <Insets left="5.0" />

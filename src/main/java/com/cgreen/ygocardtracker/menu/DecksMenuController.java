@@ -239,6 +239,22 @@ public class DecksMenuController {
         }
     }
     
+    public void handleImportDecksButtonAction(ActionEvent event) throws IOException {
+        // TODO
+    }
+    
+    public void handleExportDecksButtonAction(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(DeckExporterController.class.getClassLoader().getResource("deck_export_menu.fxml"));
+        Parent parent = loader.load();        
+        
+        Stage deckExportStage = new Stage();
+        deckExportStage.setScene(new Scene(parent));
+        DeckExporterController dec = loader.getController();
+        dec.setStage(deckExportStage);
+        deckExportStage.initModality(Modality.APPLICATION_MODAL);
+        deckExportStage.showAndWait();
+    }
+    
     private void showCardInfoView(Card c) {
         FXMLLoader loader = new FXMLLoader(CardInfoViewController.class.getClassLoader().getResource("cardinfo_popup.fxml"));
         Parent parent;
