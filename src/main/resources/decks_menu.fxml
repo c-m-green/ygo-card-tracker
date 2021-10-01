@@ -35,12 +35,15 @@
    <right>
       <VBox alignment="CENTER" prefHeight="329.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button onAction="#handleAddDeckButtonAction" mnemonicParsing="false" text="Add deck..." />
-            <Button onAction="#handleDeleteDeckButtonAction" mnemonicParsing="false" text="Delete deck..." />
+            <Button mnemonicParsing="false" onAction="#handleAddDeckButtonAction" text="Add deck..." />
+            <Button mnemonicParsing="false" onAction="#handleDeleteDeckButtonAction" text="Delete deck..." />
             <Separator prefWidth="200.0" />
-            <Button fx:id="addCardButton" onAction="#handleAddCardButtonAction" mnemonicParsing="false" text="Add card" />
-            <Button fx:id="moveCardButton" onAction="#handleMoveCardButtonAction" mnemonicParsing="false" text="Move card" />
-            <Button fx:id="removeCardButton" onAction="#handleRemoveCardButtonAction" mnemonicParsing="false" text="Remove card" />
+            <Button fx:id="addCardButton" mnemonicParsing="false" onAction="#handleAddCardButtonAction" text="Add card" />
+            <Button fx:id="moveCardButton" mnemonicParsing="false" onAction="#handleMoveCardButtonAction" text="Move card" />
+            <Button fx:id="removeCardButton" mnemonicParsing="false" onAction="#handleRemoveCardButtonAction" text="Remove card" />
+            <Separator prefWidth="200.0" />
+            <Button mnemonicParsing="false" text="Import decks..." />
+            <Button mnemonicParsing="false" text="Export decks..." />
          </children>
          <BorderPane.margin>
             <Insets left="5.0" />
