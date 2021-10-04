@@ -39,6 +39,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -63,69 +64,28 @@ public class AddCardsMenuController {
                 }
             }            
         });
+        nameSearchField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                addByName();
+            }
+            event.consume();
+        });
+        passcodeSearchField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                addByPasscode();
+            }
+            event.consume();
+        });
     }
     
     public void handleAddByNameButtonAction(ActionEvent event) {
-        setButtonDisable(true);
-        String searchTerm = nameSearchField.getText();
-        if (searchTerm.isBlank()) {
-            AlertHelper.raiseAlert("Please enter something!");
-        } else {
-            JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, searchTerm);
-            // TODO: Might just want 200, not 201?
-            if (data == null) {
-                System.out.println("Online search failed -- resorting to local DB");
-                try {
-                    CardInfoDao dao = new CardInfoDao();
-                    ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
-                    if (cardInfos.isEmpty()) {
-                        AlertHelper.raiseAlert("No card info by the name \"" + searchTerm + "\" was found.");
-                    } else {
-                        showConfirmationScreen(cardInfos);
-                    }
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    AlertHelper.raiseAlert(e.getStackTrace().toString());
-                    
-                }
-                setButtonDisable(false);
-            } else {
-                // Save info for this card (may include multiple IDs)
-                saveNewCardInfoFromJson(data);
-            }
-        }
+        addByName();
+        event.consume();
     }
     
     public void handleAddByPasscodeButtonAction(ActionEvent event) {
-        setButtonDisable(true);
-        try {
-            Integer searchTerm = Integer.parseInt(passcodeSearchField.getText());
-            CardInfoDao dao = new CardInfoDao();
-            CardInfo cardInfo = dao.getCardInfoByPasscode(searchTerm);
-            if (cardInfo == null) {
-                JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
-                if (data == null) {
-                    AlertHelper.raiseAlert("Could not find id #" + searchTerm);
-                    setButtonDisable(false);
-                } else {
-                    saveNewCardInfoFromJson(CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, data.getJSONObject(0).getString("name")));
-                }
-            } else {
-                if (cardInfo.isFake()) {
-                    showConfirmationScreen(dao.getCardInfoByName(cardInfo.getName()));
-                    setButtonDisable(false);
-                } else {
-                    saveNewCardInfoFromJson(CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
-                }
-            }
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            setButtonDisable(false);
-        } catch (NumberFormatException nfe) {
-            AlertHelper.raiseAlert("You need to enter an integer here...");
-            setButtonDisable(false);
-        }
+        addByPasscode();
+        event.consume();
     }
     
     public void handleAddManuallyButtonAction(ActionEvent event) {
@@ -348,6 +308,69 @@ public class AddCardsMenuController {
             AlertHelper.raiseAlert("An error has occurred during card saving.");
         } catch (IllegalArgumentException iae) {
             AlertHelper.raiseAlert("No valid cards were found matching this term.\n\nPlease note that Skill cards are currently not supported. Otherwise, this could be due to an error while saving card information.");
+        }
+    }
+    
+    private void addByName() {
+        setButtonDisable(true);
+        String searchTerm = nameSearchField.getText();
+        if (searchTerm.isBlank()) {
+            AlertHelper.raiseAlert("Please enter something!");
+        } else {
+            JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, searchTerm);
+            // TODO: Might just want 200, not 201?
+            if (data == null) {
+                System.out.println("Online search failed -- resorting to local DB");
+                try {
+                    CardInfoDao dao = new CardInfoDao();
+                    ObservableList<CardInfo> cardInfos = dao.getCardInfoByName(searchTerm);
+                    if (cardInfos.isEmpty()) {
+                        AlertHelper.raiseAlert("No card info by the name \"" + searchTerm + "\" was found.");
+                    } else {
+                        showConfirmationScreen(cardInfos);
+                    }
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    AlertHelper.raiseAlert(e.getStackTrace().toString());
+                    
+                }
+                setButtonDisable(false);
+            } else {
+                // Save info for this card (may include multiple IDs)
+                saveNewCardInfoFromJson(data);
+            }
+        }
+    }
+    
+    private void addByPasscode() {
+        setButtonDisable(true);
+        try {
+            Integer searchTerm = Integer.parseInt(passcodeSearchField.getText());
+            CardInfoDao dao = new CardInfoDao();
+            CardInfo cardInfo = dao.getCardInfoByPasscode(searchTerm);
+            if (cardInfo == null) {
+                JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.PASSCODE, searchTerm.toString());
+                if (data == null) {
+                    AlertHelper.raiseAlert("Could not find id #" + searchTerm);
+                    setButtonDisable(false);
+                } else {
+                    saveNewCardInfoFromJson(CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, data.getJSONObject(0).getString("name")));
+                }
+            } else {
+                if (cardInfo.isFake()) {
+                    showConfirmationScreen(dao.getCardInfoByName(cardInfo.getName()));
+                    setButtonDisable(false);
+                } else {
+                    saveNewCardInfoFromJson(CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, cardInfo.getName()));
+                }
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            setButtonDisable(false);
+        } catch (NumberFormatException nfe) {
+            AlertHelper.raiseAlert("You need to enter an integer here...");
+            setButtonDisable(false);
         }
     }
     
