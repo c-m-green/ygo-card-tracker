@@ -74,6 +74,7 @@ public class CardConfirmerController {
             try {
                 dao.save(card, passcode);
                 AlertHelper.raiseAlert("Success", "Card saved successfully", "Saved 1 of " + passcode + " to collection.");
+                stage.close();
             } catch (SQLException e) {
                 e.printStackTrace();
                 AlertHelper.raiseAlert("Error saving to the database.");
