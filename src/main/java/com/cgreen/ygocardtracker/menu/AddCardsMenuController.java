@@ -316,6 +316,7 @@ public class AddCardsMenuController {
         String searchTerm = nameSearchField.getText();
         if (searchTerm.isBlank()) {
             AlertHelper.raiseAlert("Please enter something!");
+            setButtonDisable(false);
         } else {
             JSONArray data = CardInfoFetcher.doOnlineSearch(RemoteDBKey.NAME, searchTerm);
             // TODO: Might just want 200, not 201?
