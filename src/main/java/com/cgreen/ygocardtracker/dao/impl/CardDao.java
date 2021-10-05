@@ -214,6 +214,7 @@ public class CardDao implements Dao<Card> {
             stmt.setInt(1, deckId);
             stmt.setInt(2, c.getId());
             stmt.executeUpdate();
+            c.setDeckId(deckId);
         } catch (SQLException sqle) {
             throw sqle;
         } finally {
