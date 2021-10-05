@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.Comparator;
 
 import com.cgreen.ygocardtracker.card.Card;
+import com.cgreen.ygocardtracker.card.Group;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
+import com.cgreen.ygocardtracker.dao.impl.GroupDao;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,6 +33,9 @@ public class AllCardsController {
     private Stage stage;
     private CardDao cardDao;
     private CardInfoDao cardInfoDao;
+    private GroupDao grpDao;
+    @FXML
+    private ChoiceBox<Group> groupChoicebox;
     @FXML
     private ListView<Card> listView;
     @FXML
@@ -37,7 +43,7 @@ public class AllCardsController {
     @FXML
     private ImageView imageView;
     @FXML
-    private Text cardNameText, setCodeText, deckText, groupText;
+    private Text cardNameText, setCodeText, deckText;
     
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -47,6 +53,7 @@ public class AllCardsController {
         try {
             cardDao = new CardDao();
             cardInfoDao = new CardInfoDao();
+            grpDao = new GroupDao();
             ObservableList<Card> allCards = cardDao.getAll();
             cardInfoDao.setCardInfosToCards(allCards);
             Comparator<Card> comparator = new Comparator<Card>() {
