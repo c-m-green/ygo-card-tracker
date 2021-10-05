@@ -33,11 +33,11 @@ public class AllCardsController {
     @FXML
     private ListView<Card> listView;
     @FXML
-    private Button addCardButton, deleteButton, backButton;
+    private Button addCardButton, deleteButton, backButton, groupButton;
     @FXML
     private ImageView imageView;
     @FXML
-    private Text cardNameText, setCodeText, deckText;
+    private Text cardNameText, setCodeText, deckText, groupText;
     
     public void setStage(Stage stage) {
         this.stage = stage;

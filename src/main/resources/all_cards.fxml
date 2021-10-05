@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="521.0" prefWidth="647.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AllCardsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="521.0" prefWidth="689.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgreen.ygocardtracker.menu.AllCardsController">
    <right>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -18,6 +18,7 @@
             <Button fx:id="exportButton" mnemonicParsing="false" onAction="#handleExportButtonAction" text="Export..." />
             <Separator prefWidth="200.0" />
             <Button fx:id="addCardButton" mnemonicParsing="false" onAction="#handleAddCardButtonAction" text="Add card..." />
+            <Button fx:id="groupButton" mnemonicParsing="false" text="Group..." />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="Delete" />
             <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackButtonAction" text="Back" />
          </children>
@@ -27,7 +28,7 @@
       </VBox>
    </right>
    <left>
-      <ListView fx:id="listView" onMouseClicked="#handleListClickEvent" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="listView" onMouseClicked="#handleListClickEvent" prefHeight="521.0" prefWidth="217.0" BorderPane.alignment="CENTER" />
    </left>
    <center>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -43,7 +44,12 @@
                   <Font size="16.0" />
                </font>
             </Text>
-            <Text fx:id="deckText" strokeType="OUTSIDE" strokeWidth="0.0">
+            <Text fx:id="groupText" strokeType="OUTSIDE" strokeWidth="0.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="deckText" layoutX="246.0" layoutY="499.0" strokeType="OUTSIDE" strokeWidth="0.0">
                <font>
                   <Font size="14.0" />
                </font>
