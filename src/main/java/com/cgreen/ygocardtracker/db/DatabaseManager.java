@@ -58,6 +58,7 @@ public class DatabaseManager {
             createSetCodeTable();
             createCardInfoTable();
             createDeckTable();
+            createGroupTable();
             createMyCardCollectionTable();
         } catch (SQLException sqle) {
             AlertHelper.raiseAlert(sqle.getMessage());
@@ -108,6 +109,23 @@ public class DatabaseManager {
         String sqlCreate = Queries.getQuery("create_set_code_table_statement");
         Statement stmt = conn.createStatement();
         stmt.execute(sqlCreate);
+        stmt.close();
+        conn.close();
+    }
+    
+    private void createGroupTable() throws SQLException {
+        Connection conn = connectToDatabase();
+        String sqlCreate = Queries.getQuery("create_group_table_statement");
+        Statement stmt = conn.createStatement();
+        stmt.execute(sqlCreate);
+        // TODO: Find a less hacky was to insert this row *if it doesn't exist*.
+        String sqlQuery = Queries.getQuery("select_group_table_query");
+        stmt.execute(sqlQuery);
+        ResultSet rs = stmt.getResultSet();
+        if (!rs.isBeforeFirst()) {
+            String groupCreate = Queries.getQuery("insert_default_group_statement");
+            stmt.execute(groupCreate);
+        }
         stmt.close();
         conn.close();
     }

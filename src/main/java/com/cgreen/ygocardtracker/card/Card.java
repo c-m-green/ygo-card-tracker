@@ -3,7 +3,7 @@ package com.cgreen.ygocardtracker.card;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 
 public class Card {
-    private Integer id, cardInfoId, deckId;
+    private Integer id, cardInfoId, deckId, groupId;
     private String setCode;
     private Boolean inSideDeck, isVirtual;
     private CardInfo cardInfo;
@@ -81,6 +81,14 @@ public class Card {
         return cardInfo;
     }
     
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
     @Override
     public String toString() {
         if (cardInfo == null) {

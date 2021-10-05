@@ -39,6 +39,7 @@ public class CardDao implements Dao<Card> {
                 Card card = new Card();
                 card.setCardInfoId(rs.getInt("card_info_id"));
                 card.setDeckId(rs.getInt("deck_id"));
+                card.setGroupId(rs.getInt("group_id"));
                 card.setSetCode(rs.getString("set_code"));
                 card.setInSideDeck(rs.getBoolean("in_side_deck"));
                 card.setIsVirtual(rs.getBoolean("is_virtual"));
@@ -74,6 +75,7 @@ public class CardDao implements Dao<Card> {
             card = new Card();
             card.setCardInfoId(rs.getInt("card_info_id"));
             card.setDeckId(rs.getInt("deck_id"));
+            card.setGroupId(rs.getInt("group_id"));
             card.setSetCode(rs.getString("set_code"));
             card.setInSideDeck(rs.getBoolean("in_side_deck"));
             card.setIsVirtual(rs.getBoolean("is_virtual"));
@@ -110,6 +112,7 @@ public class CardDao implements Dao<Card> {
                 card = new Card();
                 card.setCardInfoId(rs.getInt("card_info_id"));
                 card.setDeckId(rs.getInt("deck_id"));
+                card.setGroupId(rs.getInt("group_id"));
                 card.setSetCode(rs.getString("set_code"));
                 card.setInSideDeck(rs.getBoolean("in_side_deck"));
                 card.setIsVirtual(rs.getBoolean("is_virtual"));
@@ -138,9 +141,10 @@ public class CardDao implements Dao<Card> {
             stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_statement"), Statement.RETURN_GENERATED_KEYS);           
             stmt.setObject(1, Objects.requireNonNull(card.getCardInfoId(), "Card info ID must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
-            stmt.setObject(3, card.getSetCode());
-            stmt.setObject(4, card.inSideDeck());
-            stmt.setObject(5, card.isVirtual());
+            stmt.setObject(3, Objects.requireNonNull(card.getGroupId(), "Group ID must have a value."));
+            stmt.setObject(4, card.getSetCode());
+            stmt.setObject(5, card.inSideDeck());
+            stmt.setObject(6, card.isVirtual());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -175,9 +179,10 @@ public class CardDao implements Dao<Card> {
             stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"), Statement.RETURN_GENERATED_KEYS);           
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
-            stmt.setObject(3, card.getSetCode());
-            stmt.setObject(4, card.inSideDeck());
-            stmt.setObject(5, card.isVirtual());
+            stmt.setObject(3, Objects.requireNonNull(card.getGroupId(), "Group ID must have a value."));
+            stmt.setObject(4, card.getSetCode());
+            stmt.setObject(5, card.inSideDeck());
+            stmt.setObject(6, card.isVirtual());
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
