@@ -86,7 +86,7 @@ public class Card {
         if (cardInfo == null) {
             return "id:" + id;
         } else {
-            return cardInfo.getName();
+            return cardInfo.getName() + " (" + setCode + ")";
         }
     }
 }
