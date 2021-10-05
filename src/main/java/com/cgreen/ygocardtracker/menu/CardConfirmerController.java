@@ -67,6 +67,7 @@ public class CardConfirmerController {
             Integer passcode = Integer.parseInt(passcodeChoiceBox.getValue());
             Card card = new Card();
             card.setDeckId(1);
+            card.setGroupId(1);
             card.setInSideDeck(false);
             card.setIsVirtual(false);
             card.setSetCode(cardSetChoiceBox.getValue());

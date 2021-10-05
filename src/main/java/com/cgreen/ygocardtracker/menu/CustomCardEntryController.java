@@ -308,6 +308,7 @@ public class CustomCardEntryController {
                                 Card card = new Card();
                                 card.setCardInfoId(otherInfo.getId());
                                 card.setDeckId(1);
+                                card.setGroupId(1);
                                 card.setSetCode(cardInfo.getSetCodes());
                                 card.setInSideDeck(false);
                                 card.setIsVirtual(false);
@@ -357,6 +358,7 @@ public class CustomCardEntryController {
             Card card = new Card();
             card.setCardInfoId(cardInfo.getId());
             card.setDeckId(1);
+            card.setGroupId(1);
             // There's only one set code in cardInfo at the moment
             card.setSetCode(cardInfo.getSetCodes());
             card.setIsVirtual(cardInfo.isFake());
