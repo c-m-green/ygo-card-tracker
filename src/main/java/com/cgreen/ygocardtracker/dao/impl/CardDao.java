@@ -226,6 +226,20 @@ public class CardDao implements Dao<Card> {
         }
     }
     
+    // UPDATE
+    public void updateGroupId(Card c, int groupId) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        try (
+            Connection conn = dbm.connectToDatabase();
+            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("update_card_group_id_statement"));
+        ){
+            stmt.setInt(1, groupId);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+            c.setGroupId(groupId);
+        }
+    }
+    
  // UPDATE
     public void updateInSideDeck(Card c, boolean inSideDeck) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
