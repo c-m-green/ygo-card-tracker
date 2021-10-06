@@ -129,6 +129,33 @@ public class CardDao implements Dao<Card> {
         }
         return out; 
     }
+    
+    // SELECT
+    public ObservableList<Card> getCardsByGroupId(Integer groupId) throws SQLException {
+        ObservableList<Card> out = FXCollections.observableArrayList();
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        Card card = null;
+        try (
+            Connection conn = dbm.connectToDatabase();
+            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_card_by_group_query"));
+        ){            
+            stmt.setObject(1, Objects.requireNonNull(groupId, "A group must be indicated."));
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            while(rs.next()) {                
+                card = new Card();
+                card.setCardInfoId(rs.getInt("card_info_id"));
+                card.setDeckId(rs.getInt("deck_id"));
+                card.setGroupId(rs.getInt("group_id"));
+                card.setSetCode(rs.getString("set_code"));
+                card.setInSideDeck(rs.getBoolean("in_side_deck"));
+                card.setIsVirtual(rs.getBoolean("is_virtual"));
+                card.setId(rs.getInt("ID"));
+                out.add(card);
+            }
+        }
+        return out; 
+    }
 
     // INSERT
     @Override

@@ -9,6 +9,7 @@ import com.cgreen.ygocardtracker.card.Group;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.dao.impl.GroupDao;
+import com.cgreen.ygocardtracker.util.AlertHelper;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +35,7 @@ public class AllCardsController {
     private CardDao cardDao;
     private CardInfoDao cardInfoDao;
     private GroupDao grpDao;
+    private ObservableList<Card> cardList;
     @FXML
     private ChoiceBox<Group> groupChoicebox;
     @FXML
@@ -54,16 +56,18 @@ public class AllCardsController {
             cardDao = new CardDao();
             cardInfoDao = new CardInfoDao();
             grpDao = new GroupDao();
-            ObservableList<Card> allCards = cardDao.getAll();
-            cardInfoDao.setCardInfosToCards(allCards);
+            cardList = cardDao.getAll();
+            cardInfoDao.setCardInfosToCards(cardList);
             Comparator<Card> comparator = new Comparator<Card>() {
                 @Override
                 public int compare(Card c1, Card c2) {
                     return c1.compareTo(c2);
                 }
             };
-            FXCollections.sort(allCards, comparator);
-            listView.setItems(allCards);
+            FXCollections.sort(cardList, comparator);
+            listView.setItems(cardList);
+            ObservableList<Group> allGroups = grpDao.getAll();
+            groupChoicebox.setItems(allGroups);
             wipeCurrentCardView();
             listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Card>() {
                 @Override
@@ -116,6 +120,24 @@ public class AllCardsController {
     }
     
     public void handleBackButtonAction(ActionEvent event) {
+        stage.close();
+    }
+    
+    public void handleGroupChoiceAction(ActionEvent event) {
+        Group currentGroup = groupChoicebox.getSelectionModel().getSelectedItem();
+        if (currentGroup != null) {
+            try {
+                ObservableList<Card> cards = cardDao.getCardsByGroupId(currentGroup.getId());
+                cardInfoDao.setCardInfosToCards(cards);
+                listView.setItems(cards);
+                wipeCurrentCardView();
+            } catch (SQLException e) {
+                AlertHelper.raiseAlert("Error loading cards belonging to the group \"" + currentGroup + ".\"");
+            }
+        }
+    }
+    
+    public void handleGroupButtonAction(ActionEvent event) {
         
     }
     
@@ -144,6 +166,7 @@ public class AllCardsController {
         setCodeText.setText("");
         deckText.setText("");
         imageView.setImage(null);
+        
     }
     
     
