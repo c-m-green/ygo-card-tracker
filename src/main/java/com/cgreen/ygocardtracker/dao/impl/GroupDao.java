@@ -12,10 +12,15 @@ import com.cgreen.ygocardtracker.dao.Dao;
 import com.cgreen.ygocardtracker.db.DatabaseManager;
 import com.cgreen.ygocardtracker.db.Queries;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class GroupDao implements Dao<Group> {
     private ObservableList<Group> allGroups;
+    
+    public GroupDao() {
+        allGroups = FXCollections.observableArrayList();
+    }
     
     @Override
     public ObservableList<Group> getAll() throws SQLException {
