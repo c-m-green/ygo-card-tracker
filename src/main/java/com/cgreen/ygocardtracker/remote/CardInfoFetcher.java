@@ -7,14 +7,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.cgreen.ygocardtracker.util.AlertHelper;
 
 public class CardInfoFetcher {
     private static final String REMOTE_DB_URL = "https://db.ygoprodeck.com/api/v7/cardinfo.php";
-    public static JSONArray doOnlineSearch(RemoteDBKey key, String value) {
+    public static JSONObject doOnlineSearch(RemoteDBKey key, String value) {
         // https://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
         // https://stackoverflow.com/questions/8760052/httpurlconnection-sends-a-post-request-even-though-httpcon-setrequestmethodget
         try {
@@ -36,7 +35,7 @@ public class CardInfoFetcher {
                 }
                 br.close();
                 // https://stackoverflow.com/a/29183161
-                JSONArray data = (JSONArray) new JSONObject(sb.toString()).get("data");
+                JSONObject data = new JSONObject(sb.toString());
                 return data;
             case 400:
                 break;
