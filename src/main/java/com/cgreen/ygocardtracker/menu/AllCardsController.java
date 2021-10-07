@@ -36,6 +36,7 @@ public class AllCardsController {
     private CardInfoDao cardInfoDao;
     private GroupDao grpDao;
     private ObservableList<Card> cardList;
+    private ObservableList<Group> allGroups;
     @FXML
     private ChoiceBox<Group> groupChoicebox;
     @FXML
@@ -66,7 +67,7 @@ public class AllCardsController {
             };
             FXCollections.sort(cardList, comparator);
             listView.setItems(cardList);
-            ObservableList<Group> allGroups = grpDao.getAll();
+            allGroups = grpDao.getAll();
             groupChoicebox.setItems(allGroups);
             wipeCurrentCardView();
             listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Card>() {
@@ -137,8 +138,22 @@ public class AllCardsController {
         }
     }
     
-    public void handleGroupButtonAction(ActionEvent event) {
-        
+    public void handleGroupButtonAction(ActionEvent event) throws IOException {
+        Card c = listView.getSelectionModel().getSelectedItem();
+        if (c != null) {
+            FXMLLoader loader = new FXMLLoader(GroupMenuController.class.getClassLoader().getResource("group_select_menu.fxml"));
+            Parent parent = loader.load();        
+            
+            Stage groupStage = new Stage();
+            groupStage.setScene(new Scene(parent));
+            GroupMenuController gmc = loader.getController();
+            gmc.setStage(groupStage);
+            gmc.init(grpDao, cardDao, allGroups, c);
+            groupStage.initModality(Modality.APPLICATION_MODAL);
+            groupStage.showAndWait();
+            init();
+        }
+        event.consume();
     }
     
     public void handleListClickEvent() {
