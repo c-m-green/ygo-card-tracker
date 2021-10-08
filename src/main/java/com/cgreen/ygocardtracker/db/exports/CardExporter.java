@@ -25,6 +25,7 @@ public class CardExporter {
     private static final String CARD_QUERY = "select_cards_for_export_query";
     private static final String DECK_QUERY = "select_deck_table_query";
     private static final String SET_CODE_QUERY = "select_set_codes_for_export_query";
+    private static final String GROUP_QUERY = "select_group_table_query";
     private static final String JSON_FILENAME = "collection.json";
     private static final String CSV_FILENAME = "collection.csv";
     private static final String TXT_FILENAME = "set_codes.txt";
@@ -71,10 +72,12 @@ public class CardExporter {
         JSONObject root = new JSONObject();
         JSONArray cards = new JSONArray();
         JSONArray decks = new JSONArray();
+        JSONArray groups = new JSONArray();
         try (
             Connection conn = dbm.connectToDatabase();
             PreparedStatement cardStmt = conn.prepareStatement(Queries.getQuery(CARD_QUERY));
-            PreparedStatement deckStmt = conn.prepareStatement(Queries.getQuery(DECK_QUERY))
+            PreparedStatement deckStmt = conn.prepareStatement(Queries.getQuery(DECK_QUERY));
+            PreparedStatement grpStmt = conn.prepareStatement(Queries.getQuery(GROUP_QUERY));
         ) {            
             cardStmt.executeQuery();
             ResultSet rs = cardStmt.getResultSet();
@@ -84,6 +87,7 @@ public class CardExporter {
                 cardData.put("passcode", rs.getInt("passcode"));
                 cardData.put("set_code", rs.getString("set_code"));
                 cardData.put("deck_id", rs.getInt("deck_id"));
+                cardData.put("group_id", rs.getInt("group_id"));
                 cards.put(cardData);
             }
             deckStmt.executeQuery();
@@ -95,6 +99,14 @@ public class CardExporter {
                 deckData.put("name", rs.getString("name"));
                 decks.put(deckData);
             }
+            grpStmt.executeQuery();
+            rs = grpStmt.getResultSet();
+            while (rs.next()) {
+                JSONObject grpData = new JSONObject();
+                grpData.put("name", rs.getString("name"));
+                grpData.put("id", rs.getInt("id"));
+                groups.put(grpData);
+            }
         } catch (SQLException e) {
             // TODO: Log this
             AlertHelper.raiseAlert("Error exporting collection: " + e.getMessage());
@@ -102,6 +114,7 @@ public class CardExporter {
         }
         root.put("cards", cards);
         root.put("decks", decks);
+        root.put("groups", groups);
         String appVersion = "?.?.?";
         try {
             appVersion = Version.getVersion();
