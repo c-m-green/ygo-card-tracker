@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.cgreen.ygocardtracker.remote.CardInfoSaveTask;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -116,127 +117,14 @@ public class AddCardsMenuController {
         ProgressBar pBar = new ProgressBar();
         pBar.setPrefWidth(350);
         // We're not doing fuzzy searches, so we should only have one card.
+        if (cardData.length() != 1) {
+            throw new IllegalArgumentException("Expected exactly one card name.");
+        }
         JSONObject allCardInfo = cardData.getJSONObject(0);
         // Grab the name now so we can use it later.
         String nameColVal = allCardInfo.getString("name");
-        Task<Void> cardSaveTask = new Task<Void>() {
-            @Override
-            protected Void call() throws SQLException {
-                CardInfoDao dao = new CardInfoDao();           
-                Integer cardTypeIndex = CardType.getIndexOf(allCardInfo.getString("type"));
-                CardType cardType = CardType.getCardType(cardTypeIndex);
-                if (cardType == CardType.SKILL) {
-                    // TODO: Log this
-                    System.out.println("Encountered a Skill card -- skipping this one.");
-                    return null;
-                }
-                CardModel cardModel = CardModelFactory.getCardModel(cardType);
-                String descColVal = allCardInfo.getString("desc");
-                String cardVarStr = allCardInfo.getString("race");
-                // Manually setting card variant in some cases because there are two that
-                // say "Normal"
-                CardVariant cardVariant;
-                if (cardVarStr.equalsIgnoreCase("Normal")) {
-                    if (cardType == CardType.SPELL) {
-                        cardVariant = CardVariant.SPELL_NORMAL;
-                    } else if (cardType == CardType.TRAP) {
-                        cardVariant = CardVariant.TRAP_NORMAL;
-                    } else {
-                        // Dunno what to do in this case...
-                        cardVariant = CardVariant.UNKNOWN;
-                    }
-                } else {
-                    cardVariant = CardVariant.getCardVariant(CardVariant.getIndexOf(cardVarStr));
-                }
-                Integer linkValueColVal, atkColVal, defColVal, levelColVal, scaleColVal;
-                String linkMarkersColVal, attributeColVal, setCodesColVal;
-                if (cardModel.isLink()) {
-                    JSONArray linkMarkersArr = allCardInfo.getJSONArray("linkmarkers");
-                    linkMarkersColVal = "";
-                    for (int linkIndex = 0; linkIndex < linkMarkersArr.length() - 1; linkIndex++) {
-                        linkMarkersColVal += linkMarkersArr.getString(linkIndex) + ",";
-                    }
-                    linkMarkersColVal += linkMarkersArr.getString(linkMarkersArr.length() - 1);
-                    linkValueColVal = allCardInfo.getInt("linkval");
-                } else {
-                    linkValueColVal = null;
-                    linkMarkersColVal = null;
-                }
-                atkColVal = (cardModel.isMonster()) ? allCardInfo.getInt("atk") : null;
-                defColVal = (cardModel.isMonster() && !cardModel.isLink()) ? allCardInfo.getInt("def") : null;
-                levelColVal = (cardModel.hasLevel()) ? allCardInfo.getInt("level") : null;
-                scaleColVal = (cardModel.hasScale()) ? allCardInfo.getInt("scale") : null;
-                attributeColVal = (cardModel.hasAttribute()) ? allCardInfo.getString("attribute") : null;
-                JSONArray cardSetsArr = allCardInfo.getJSONArray("card_sets");
-                setCodesColVal = "";
-                for (int i = 0; i < cardSetsArr.length() - 1; i++) {
-                    JSONObject cardSetObj = cardSetsArr.getJSONObject(i);
-                    setCodesColVal += cardSetObj.getString("set_code") + ",";
-                }
-                JSONObject cardSetObjLast = cardSetsArr.getJSONObject(cardSetsArr.length() - 1);
-                setCodesColVal += cardSetObjLast.getString("set_code");
-                SetCodeDao setCodeDao = new SetCodeDao();
-                int setCodeId = setCodeDao.save(setCodesColVal);
-                JSONArray cardImagesArr = allCardInfo.getJSONArray("card_images");
-                for (int i = 0; i < cardImagesArr.length(); i++) {
-                    updateProgress(i, cardImagesArr.length());
-                    System.out.println("Saving card info for " + nameColVal + "(" + (i + 1) + ")");
-                    JSONObject cardImageObj = cardImagesArr.getJSONObject(i);
-                    Integer passcodeColVal = cardImageObj.getInt("id");
-                    int numCardsInDBWithThisPasscode = dao.getNumCardInfos(passcodeColVal);
-                    if (numCardsInDBWithThisPasscode > 0) {
-                        // TODO: Log this
-                        System.out.println("Already have card info for " + passcodeColVal + " -- skipping it");
-                        continue;
-                    } else if (numCardsInDBWithThisPasscode == -1) {
-                        // TODO: Log this
-                        // TODO: Am I sure I want to throw this exception here?
-                        throw new SQLException ("ERROR: Problem checking whether " + passcodeColVal + " is in the DB.");
-                    }
-                    CardInfo dbCardInfo = new CardInfo();
-                    dbCardInfo.setIsFakeCol(false);
-                    dbCardInfo.setPasscodeCol(passcodeColVal);
-                    dbCardInfo.setCardTypeCol(cardType);
-                    dbCardInfo.setNameCol(nameColVal);
-                    dbCardInfo.setDescriptionCol(descColVal);
-                    dbCardInfo.setVariantCol(cardVariant);
-                    dbCardInfo.setAttributeCol(attributeColVal);
-                    dbCardInfo.setAttackCol(atkColVal);
-                    dbCardInfo.setLinkMarkersCol(linkMarkersColVal);
-                    dbCardInfo.setLinkValueCol(linkValueColVal);
-                    dbCardInfo.setDefenseCol(defColVal);
-                    dbCardInfo.setLevelCol(levelColVal);
-                    dbCardInfo.setScaleCol(scaleColVal);
-                    dbCardInfo.setSetCodesCol(setCodesColVal);
-                    dbCardInfo.setSetCodeId(setCodeId);
-                    
-                    String picUrl = cardImageObj.getString("image_url");
-                    String picUrlSmall = cardImageObj.getString("image_url_small");
-                    
-                    Image image;
-                    try {
-                        image = CardImageSaver.getCardImage(picUrl);
-                        dbCardInfo.setImageLinkCol(CardImageSaver.saveCardImageFile(image, passcodeColVal));
-                    } catch (IOException e) {
-                        // TODO Log this
-                        System.out.println("ERROR: Problem saving image for " + passcodeColVal);
-                        dbCardInfo.setImageLinkCol(null);
-                    }
-                    Image imageSmall;
-                    try {
-                        imageSmall = CardImageSaver.getCardImage(picUrlSmall);
-                        dbCardInfo.setSmallImageLinkCol(CardImageSaver.saveCardImageFileSmall(imageSmall, passcodeColVal));
-                    } catch (IOException e) {
-                        // TODO Log this
-                        System.out.println("ERROR: Problem saving small image for " + passcodeColVal);
-                        dbCardInfo.setSmallImageLinkCol(null);
-                    }
-                    dao.save(dbCardInfo);
-                }
-                return null;
-            }
-        };
-        cardSaveTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+        CardInfoSaveTask cardInfoSaveTask = new CardInfoSaveTask(cardData);
+        cardInfoSaveTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task succeeded!");
@@ -253,19 +141,19 @@ public class AddCardsMenuController {
             }           
         });
         
-        cardSaveTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+        cardInfoSaveTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task failed!");
                 progress.hide();
                 isSaving = false;
-                Throwable ex = cardSaveTask.getException();
+                Throwable ex = cardInfoSaveTask.getException();
                 AlertHelper.raiseAlert("Error while saving card information:\n\n" + ex.getMessage());
                 setButtonDisable(false);
             }           
         });
         
-        cardSaveTask.setOnCancelled(new EventHandler<WorkerStateEvent>() {
+        cardInfoSaveTask.setOnCancelled(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task cancelled!");
@@ -275,12 +163,12 @@ public class AddCardsMenuController {
                 setButtonDisable(false);
             }           
         });
-        pBar.progressProperty().bind(cardSaveTask.progressProperty());
+        pBar.progressProperty().bind(cardInfoSaveTask.progressProperty());
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                cardSaveTask.cancel();
+                cardInfoSaveTask.cancel();
                 event.consume();
             }
         });
@@ -289,7 +177,7 @@ public class AddCardsMenuController {
         progress.setTitle("Searching...");
         progress.setScene(new Scene(vbox));
         progress.show();
-        new Thread(cardSaveTask).start();
+        new Thread(cardInfoSaveTask).start();
     }
     
     private void showConfirmationScreen(List<CardInfo> savedCardInfo) {
