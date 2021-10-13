@@ -81,7 +81,6 @@ public class CardImporter {
             deckIds = new HashMap<Integer, Integer>();
             groupIds.put(1, 1);
             deckIds.put(1, 1);
-            JSONArray fetchedCardInfos = new JSONArray();
             Set<String> cardNames = new HashSet<String>();
             Task<Void> importFromFileTask = new Task<Void>() {
                 @Override
@@ -139,7 +138,7 @@ public class CardImporter {
                 public void handle(WorkerStateEvent event) {
                     System.out.println("Task succeeded!");
                     progress.hide();
-                    fetchNewCardInfo(fetchedCardInfos, cardNames);
+                    fetchNewCardInfo(cardNames);
                 }
             });
 
@@ -182,7 +181,8 @@ public class CardImporter {
         }
     }
     
-    private static void fetchNewCardInfo(JSONArray fetchedCardInfos, Set<String> cardNames) {
+    private static void fetchNewCardInfo(Set<String> cardNames) {
+        JSONArray fetchedCardInfos = new JSONArray();
         Task<Void> cardInfoFetchTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
