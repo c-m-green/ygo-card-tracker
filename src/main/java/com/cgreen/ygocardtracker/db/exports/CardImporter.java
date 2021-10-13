@@ -148,6 +148,7 @@ public class CardImporter {
                     System.out.println("Task failed!");
                     progress.hide();
                     AlertHelper.raiseAlert("There was a problem reading the input file.");
+                    importedCards = null;
                 }
             });
 
@@ -157,6 +158,7 @@ public class CardImporter {
                     System.out.println("Task cancelled!");
                     progress.hide();
                     AlertHelper.raiseAlert("Import was interrupted.");
+                    importedCards = null;
                 }
             });
             Label label = new Label("Fetching card information...");
@@ -216,6 +218,7 @@ public class CardImporter {
                 System.out.println("Task failed!");
                 progress.hide();
                 AlertHelper.raiseAlert("There was a problem fetching card data from the remote database.");
+                importedCards = null;
             }
         });
 
@@ -225,6 +228,7 @@ public class CardImporter {
                 System.out.println("Task cancelled!");
                 progress.hide();
                 AlertHelper.raiseAlert("Import was interrupted.");
+                importedCards = null;
             }
         });
         Label label = new Label("Fetching card information...");
@@ -275,6 +279,7 @@ public class CardImporter {
                 System.out.println("Task failed!");
                 progress.hide();
                 AlertHelper.raiseAlert("There was a problem saving card information.");
+                importedCards = null;
             }
         });
 
@@ -284,6 +289,7 @@ public class CardImporter {
                 System.out.println("Task cancelled!");
                 progress.hide();
                 AlertHelper.raiseAlert("Import was interrupted.");
+                importedCards = null;
             }
         });
 
@@ -346,6 +352,7 @@ public class CardImporter {
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task succeeded!");
                 progress.hide();
+                importedCards = null;
                 Alert success = new Alert(AlertType.INFORMATION, "Import complete!");
                 success.showAndWait();
             }
@@ -359,6 +366,7 @@ public class CardImporter {
                 Throwable throwable = saveCardsTask.getException();
                 throwable.printStackTrace();
                 AlertHelper.raiseAlert("There was a problem saving cards.");
+                importedCards = null;
             }
         });
 
@@ -368,6 +376,7 @@ public class CardImporter {
                 System.out.println("Task cancelled!");
                 progress.hide();
                 AlertHelper.raiseAlert("Import was interrupted.");
+                importedCards = null;
             }
         });
 
