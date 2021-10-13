@@ -1,15 +1,20 @@
 package com.cgreen.ygocardtracker.db.exports;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.cgreen.ygocardtracker.card.Card;
+import com.cgreen.ygocardtracker.dao.impl.CardDao;
+import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.remote.CardInfoFetcher;
 import com.cgreen.ygocardtracker.remote.CardInfoSaveTask;
 import com.cgreen.ygocardtracker.remote.RemoteDBKey;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -74,6 +79,8 @@ public class CardImporter {
         } else {
             groupIds = new HashMap<Integer, Integer>();
             deckIds = new HashMap<Integer, Integer>();
+            groupIds.put(1, 1);
+            deckIds.put(1, 1);
             JSONArray fetchedCardInfos = new JSONArray();
             Set<String> cardNames = new HashSet<String>();
             Task<Void> importFromFileTask = new Task<Void>() {
@@ -116,8 +123,7 @@ public class CardImporter {
                         JSONObject card = cardsArr.getJSONObject(i);
                         CardImportEntry cie = new CardImportEntry();
                         cie.setDeckId(card.getInt("deck_id"));
-                        // TODO: Update this after tin_export is imported!!
-                        cie.setGroupId(1);
+                        cie.setGroupId(card.getInt("group_id"));
                         cie.setName(card.getString("name"));
                         cie.setPasscode(card.getInt("passcode"));
                         cie.setSetCode(card.getString("set_code"));
@@ -259,6 +265,7 @@ public class CardImporter {
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task succeeded!");
                 progress.hide();
+                saveCards();
             }
         });
 
@@ -290,5 +297,89 @@ public class CardImporter {
         });
         progress.show();
         new Thread(saveTask).start();
+    }
+
+    private static void saveCards() {
+        Task<Void> saveCardsTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                CardDao cardDao = new CardDao();
+                CardInfoDao cardInfoDao = new CardInfoDao();
+                for (int i = 0; i < importedCards.length; i++) {
+                    updateProgress(i, importedCards.length);
+                    CardImportEntry cardImportEntry = importedCards[i];
+                    Card card = new Card();
+                    card.setDeckId(deckIds.get(cardImportEntry.getDeckId()));
+                    card.setGroupId(groupIds.get(cardImportEntry.getGroupId()));
+                    card.setInSideDeck(false);
+                    card.setSetCode(cardImportEntry.getSetCode());
+                    card.setIsVirtual(false);
+                    try {
+                        System.out.println("Made it here!");
+                        cardDao.save(card, cardImportEntry.getPasscode());
+                    } catch (SQLException e) {
+                        Platform.runLater(
+                                () -> {
+                                    Alert warn = new Alert(AlertType.WARNING, "Could not find card information for \""
+                                            + cardImportEntry.getPasscode() + ".\" Check for mismatch with card name \""
+                                            + cardImportEntry.getName() + ".\"\n\nThis card will be skipped.");
+                                    warn.showAndWait();
+                                }
+                        );
+                    }
+                }
+                return null;
+            }
+        };
+        Stage progress = new Stage(StageStyle.UTILITY);
+        Label label = new Label("Saving " + importedCards.length + " card(s)...");
+        label.setPrefWidth(350);
+        ProgressBar pBar = new ProgressBar();
+        pBar.setPrefWidth(350);
+        Button cancelButton = new Button("Cancel");
+        VBox vbox = new VBox(10, label, pBar, cancelButton);
+        vbox.setPadding(new Insets(10));
+        progress.setTitle("Importing...");
+        progress.setScene(new Scene(vbox));
+        saveCardsTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                System.out.println("Task succeeded!");
+                progress.hide();
+                Alert success = new Alert(AlertType.INFORMATION, "Import complete!");
+                success.showAndWait();
+            }
+        });
+
+        saveCardsTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                System.out.println("Task failed!");
+                progress.hide();
+                Throwable throwable = saveCardsTask.getException();
+                throwable.printStackTrace();
+                AlertHelper.raiseAlert("There was a problem saving cards.");
+            }
+        });
+
+        saveCardsTask.setOnCancelled(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                System.out.println("Task cancelled!");
+                progress.hide();
+                AlertHelper.raiseAlert("Import was interrupted.");
+            }
+        });
+
+        pBar.progressProperty().bind(saveCardsTask.progressProperty());
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                saveCardsTask.cancel();
+                event.consume();
+            }
+        });
+        progress.show();
+        new Thread(saveCardsTask).start();
     }
 }
