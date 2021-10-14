@@ -109,10 +109,16 @@ public class AllCardsController {
                     CardImporter.importJson(file);
                     break;
                 case "csv":
-                    // TODO
-                    // CardImporter.importCsv(file);
-                    // break;
-                    AlertHelper.raiseAlert("Sorry, CSV import is not yet supported. Please check back in a later version!");
+                    FXMLLoader loader = new FXMLLoader(AddCardsMenuController.class.getClassLoader().getResource("csv_import_menu.fxml"));
+                    Parent parent = loader.load();
+
+                    Stage csvImportStage = new Stage();
+                    csvImportStage.setScene(new Scene(parent));
+                    CsvImportController cic = loader.getController();
+                    cic.setStage(csvImportStage);
+                    cic.init(file);
+                    csvImportStage.initModality(Modality.APPLICATION_MODAL);
+                    csvImportStage.showAndWait();
                     break;
                 default:
                     AlertHelper.raiseAlert("Invalid file format.");

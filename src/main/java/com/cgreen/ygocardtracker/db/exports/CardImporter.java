@@ -2,10 +2,7 @@ package com.cgreen.ygocardtracker.db.exports;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.cgreen.ygocardtracker.card.Card;
@@ -14,6 +11,8 @@ import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.remote.CardInfoFetcher;
 import com.cgreen.ygocardtracker.remote.CardInfoSaveTask;
 import com.cgreen.ygocardtracker.remote.RemoteDBKey;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -43,7 +42,7 @@ import javafx.scene.control.Alert.AlertType;
 public class CardImporter {
     private static final String BREAKING_VER = "0.5.0";
     private static Map<Integer, Integer> groupIds, deckIds;
-    private static CardImportEntry[] importedCards;
+    private static List<CardImportEntry> importedCards;
     public static void importJson(File inputFile) {
         /*
          * Step 1: Read contents of file into memory. Probably store
@@ -66,6 +65,22 @@ public class CardImporter {
             JSONObject inputData = new JSONObject(sb.toString());
             readJson(inputData);
         } catch (IOException e) {
+            AlertHelper.raiseAlert("Error reading input file.");
+        }
+    }
+
+    public static void importCsv(File inputFile, String groupName) {
+        if (inputFile == null) {
+            throw new IllegalArgumentException("File for import was null!");
+        }
+        List<List<String>> entries = new ArrayList<List<String>>();
+        try (CSVReader csvReader = new CSVReader(new FileReader(inputFile))) {
+            String[] values = null;
+            while ((values= csvReader.readNext()) != null) {
+                entries.add(Arrays.asList(values));
+            }
+            readCsv(entries, groupName);
+        } catch (IOException | CsvValidationException e) {
             AlertHelper.raiseAlert("Error reading input file.");
         }
     }
@@ -117,8 +132,9 @@ public class CardImporter {
                         }
                     }
                     JSONArray cardsArr = inputData.getJSONArray("cards");
-                    importedCards = new CardImportEntry[cardsArr.length()];
+                    importedCards = new ArrayList<CardImportEntry>();
                     for (int i = 0; i < cardsArr.length(); i++) {
+                        updateProgress(i, cardsArr.length());
                         JSONObject card = cardsArr.getJSONObject(i);
                         CardImportEntry cie = new CardImportEntry();
                         cie.setDeckId(card.getInt("deck_id"));
@@ -126,8 +142,8 @@ public class CardImporter {
                         cie.setName(card.getString("name"));
                         cie.setPasscode(card.getInt("passcode"));
                         cie.setSetCode(card.getString("set_code"));
-                        importedCards[i] = cie;
                         cardNames.add(cie.getName());
+                        importedCards.add(cie);
                     }
                     return null;
                 }
@@ -148,7 +164,7 @@ public class CardImporter {
                     System.out.println("Task failed!");
                     progress.hide();
                     AlertHelper.raiseAlert("There was a problem reading the input file.");
-                    importedCards = null;
+                    importedCards.clear();
                 }
             });
 
@@ -158,7 +174,7 @@ public class CardImporter {
                     System.out.println("Task cancelled!");
                     progress.hide();
                     AlertHelper.raiseAlert("Import was interrupted.");
-                    importedCards = null;
+                    importedCards.clear();
                 }
             });
             Label label = new Label("Fetching card information...");
@@ -180,6 +196,57 @@ public class CardImporter {
             });
             progress.show();
             new Thread(importFromFileTask).start();
+        }
+    }
+
+    private static void readCsv(List<List<String>> inputData, String groupName) {
+        try {
+            Set<String> cardNames = new HashSet<String>();
+            importedCards = new ArrayList<CardImportEntry>();
+            groupIds = new HashMap<Integer, Integer>();
+            int groupId = 1;
+            if (groupName != null && !groupName.isBlank()) {
+                GroupDao grpDao = new GroupDao();
+                Group grp = new Group();
+                grp.setName(groupName);
+                grpDao.save(grp);
+                groupId = grp.getId();
+            }
+            groupIds.put(1, groupId);
+            deckIds = new HashMap<Integer, Integer>();
+            deckIds.put(1, 1);
+            for (int i = 0; i < inputData.size(); i++) {
+                List<String> cols = inputData.get(i);
+                if (i > 0) {
+                    int qty = Integer.parseInt(cols.get(1));
+                    for (int cardNum = 0; cardNum < qty; cardNum++) {
+                        CardImportEntry cie = new CardImportEntry();
+                        cardNames.add(cols.get(0));
+                        cie.setName(cols.get(0));
+                        cie.setPasscode(Integer.parseInt(cols.get(2)));
+                        cie.setGroupId(1);
+                        cie.setDeckId(1);
+                        cie.setSetCode(cols.get(7));
+                        importedCards.add(cie);
+                    }
+                } else {
+                    assert(cols.get(0).equals("cardname"));
+                    assert(cols.get(1).equals("cardq"));
+                    assert(cols.get(2).equals("cardid"));
+                    assert(cols.get(3).equals("cardrarity"));
+                    assert(cols.get(4).equals("cardcondition"));
+                    assert(cols.get(5).equals("card_edition"));
+                    assert(cols.get(6).equals("cardset"));
+                    assert(cols.get(7).equals("cardcode"));
+                }
+            }
+            fetchNewCardInfo(cardNames);
+        } catch (SQLException e) {
+            AlertHelper.raiseAlert("There was a problem connecting to the database.");
+        } catch (NullPointerException npe) {
+            AlertHelper.raiseAlert("ERROR: Missing data for one or more cards in the input file.");
+        } catch (NumberFormatException nfe) {
+            AlertHelper.raiseAlert("ERROR: Missing numerical value in input file where one was expected.");
         }
     }
     
@@ -218,7 +285,7 @@ public class CardImporter {
                 System.out.println("Task failed!");
                 progress.hide();
                 AlertHelper.raiseAlert("There was a problem fetching card data from the remote database.");
-                importedCards = null;
+                importedCards.clear();
             }
         });
 
@@ -228,7 +295,7 @@ public class CardImporter {
                 System.out.println("Task cancelled!");
                 progress.hide();
                 AlertHelper.raiseAlert("Import was interrupted.");
-                importedCards = null;
+                importedCards.clear();
             }
         });
         Label label = new Label("Fetching card information...");
@@ -279,7 +346,7 @@ public class CardImporter {
                 System.out.println("Task failed!");
                 progress.hide();
                 AlertHelper.raiseAlert("There was a problem saving card information.");
-                importedCards = null;
+                importedCards.clear();
             }
         });
 
@@ -289,7 +356,7 @@ public class CardImporter {
                 System.out.println("Task cancelled!");
                 progress.hide();
                 AlertHelper.raiseAlert("Import was interrupted.");
-                importedCards = null;
+                importedCards.clear();
             }
         });
 
@@ -311,9 +378,9 @@ public class CardImporter {
             protected Void call() throws Exception {
                 CardDao cardDao = new CardDao();
                 CardInfoDao cardInfoDao = new CardInfoDao();
-                for (int i = 0; i < importedCards.length; i++) {
-                    updateProgress(i, importedCards.length);
-                    CardImportEntry cardImportEntry = importedCards[i];
+                for (int i = 0; i < importedCards.size(); i++) {
+                    updateProgress(i, importedCards.size());
+                    CardImportEntry cardImportEntry = importedCards.get(i);
                     Card card = new Card();
                     card.setDeckId(deckIds.get(cardImportEntry.getDeckId()));
                     card.setGroupId(groupIds.get(cardImportEntry.getGroupId()));
@@ -338,7 +405,7 @@ public class CardImporter {
             }
         };
         Stage progress = new Stage(StageStyle.UTILITY);
-        Label label = new Label("Saving " + importedCards.length + " card(s)...");
+        Label label = new Label("Saving " + importedCards.size() + " card(s)...");
         label.setPrefWidth(350);
         ProgressBar pBar = new ProgressBar();
         pBar.setPrefWidth(350);
@@ -352,7 +419,7 @@ public class CardImporter {
             public void handle(WorkerStateEvent event) {
                 System.out.println("Task succeeded!");
                 progress.hide();
-                importedCards = null;
+                importedCards.clear();
                 Alert success = new Alert(AlertType.INFORMATION, "Import complete!");
                 success.showAndWait();
             }
@@ -366,7 +433,7 @@ public class CardImporter {
                 Throwable throwable = saveCardsTask.getException();
                 throwable.printStackTrace();
                 AlertHelper.raiseAlert("There was a problem saving cards.");
-                importedCards = null;
+                importedCards.clear();
             }
         });
 
@@ -376,7 +443,7 @@ public class CardImporter {
                 System.out.println("Task cancelled!");
                 progress.hide();
                 AlertHelper.raiseAlert("Import was interrupted.");
-                importedCards = null;
+                importedCards.clear();
             }
         });
 
