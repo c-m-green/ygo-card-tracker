@@ -388,7 +388,6 @@ public class CardImporter {
                     card.setSetCode(cardImportEntry.getSetCode());
                     card.setIsVirtual(false);
                     try {
-                        System.out.println("Made it here!");
                         cardDao.save(card, cardImportEntry.getPasscode());
                     } catch (SQLException e) {
                         Platform.runLater(
