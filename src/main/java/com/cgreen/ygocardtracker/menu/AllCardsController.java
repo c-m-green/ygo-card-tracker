@@ -177,6 +177,13 @@ public class AllCardsController {
             try {
                 ObservableList<Card> cards = cardDao.getCardsByGroupId(currentGroup.getId());
                 cardInfoDao.setCardInfosToCards(cards);
+                Comparator<Card> comparator = new Comparator<Card>() {
+                    @Override
+                    public int compare(Card c1, Card c2) {
+                        return c1.compareTo(c2);
+                    }
+                };
+                FXCollections.sort(cards, comparator);
                 listView.setItems(cards);
                 wipeCurrentCardView();
             } catch (SQLException e) {
