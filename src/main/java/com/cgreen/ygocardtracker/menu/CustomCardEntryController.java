@@ -196,9 +196,7 @@ public class CustomCardEntryController {
                 }
                 cardInfo.setDescriptionCol(fullDesc);
             }
-            if (!attributeChoice.isDisabled()) {
-                cardInfo.setAttributeCol(attributeChoice.getValue());
-            }
+            cardInfo.setAttributeCol(attributeChoice.getValue());
             if (!atkField.isDisabled()) {
                 cardInfo.setAttackCol(Integer.parseInt(atkField.getText()));
             }
