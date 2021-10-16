@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.cgreen.ygocardtracker.card.Card;
+import com.cgreen.ygocardtracker.card.data.Attribute;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
@@ -47,7 +48,7 @@ public class CustomCardEntryController {
     @FXML
     private ChoiceBox<CardVariant> variantChoice;
     @FXML
-    private ChoiceBox<String> attributeChoice;
+    private ChoiceBox<Attribute> attributeChoice;
     @FXML
     private TextField nameField, passcodeField, atkField, defField, setCodeField, imagePathField, smallImagePathField;
     @FXML
@@ -85,16 +86,10 @@ public class CustomCardEntryController {
         variantChoice.setItems(cardVariantOptions);
         variantChoice.setValue(CardVariant.UNKNOWN);
         // TODO: Maybe hardcode these somewhere else?
-        ObservableList<String> attributes = FXCollections.observableArrayList();
-        attributes.add("DARK");
-        attributes.add("DIVINE");
-        attributes.add("EARTH");
-        attributes.add("FIRE");
-        attributes.add("LAUGH");
-        attributes.add("LIGHT");
-        attributes.add("WATER");
-        attributes.add("WIND");
+        ObservableList<Attribute> attributes = FXCollections.observableArrayList();
+        attributes.addAll(Arrays.asList(Attribute.values()));
         attributeChoice.setItems(attributes);
+        attributeChoice.setValue(Attribute.NONE);
         
         imagePathField.setEditable(false);
         smallImagePathField.setEditable(false);
@@ -115,13 +110,18 @@ public class CustomCardEntryController {
     
     public void handleTypeChoiceAction() {
         CardModel cardModel = CardModelFactory.getCardModel(typeChoice.getValue());
-        attributeChoice.setDisable(!cardModel.isMonster());
         atkField.setDisable(!cardModel.isMonster());
         defField.setDisable(!cardModel.isMonster() || cardModel.isLink());
         levelSlider.setDisable(!cardModel.hasLevel() && !cardModel.hasRank());
         scaleSlider.setDisable(!cardModel.isPendulum());
         pendulumDescArea.setDisable(!cardModel.isPendulum());
         linkArrowPane.setDisable(!cardModel.isLink());
+        if (cardModel.isSpell() || cardModel.isTrap()) {
+            attributeChoice.setValue(Attribute.NONE);
+            attributeChoice.setDisable(true);
+        } else {
+            attributeChoice.setDisable(false);
+        }
     }
     
     public void handleFakeCheckAction(ActionEvent event) {
@@ -395,6 +395,11 @@ public class CustomCardEntryController {
             AlertHelper.raiseAlert("Please select appropriate categories for this card.");
             return false;
         }
+        Attribute selectedAttribute = attributeChoice.getValue();
+        if (!attributeChoice.isDisabled() && selectedAttribute == Attribute.NONE) {
+            AlertHelper.raiseAlert("Select an attribute for this card.");
+            return false;
+        }
         boolean hasTypeVariantConflict = false;
         switch(selectedType) {
         case SPELL:
@@ -411,7 +416,7 @@ public class CustomCardEntryController {
                 selectedVariant == CardVariant.TRAP_COUNTER);
             break;
         default:
-            hasTypeVariantConflict = (selectedVariant == CardVariant.SPELL_NORMAL || 
+            hasTypeVariantConflict = (selectedVariant == CardVariant.SPELL_NORMAL ||
                 selectedVariant == CardVariant.SPELL_FIELD || 
                 selectedVariant == CardVariant.SPELL_EQUIP ||
                 selectedVariant == CardVariant.SPELL_CONTINUOUS || 
@@ -476,9 +481,6 @@ public class CustomCardEntryController {
                 break;
             }
         }
-        hasEmptyFields = hasEmptyFields ||
-                (!attributeChoice.isDisabled() && (attributeChoice.getValue() == null ||
-                attributeChoice.getValue().isBlank()));
         if (hasEmptyFields) {
             AlertHelper.raiseAlert("Please ensure that all available fields are filled before saving.");
         } else if (!linkArrowPane.isDisabled() && selectedLinkArrowBoxes.isEmpty()) {

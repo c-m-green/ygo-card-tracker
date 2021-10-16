@@ -6,18 +6,18 @@ import com.cgreen.ygocardtracker.card.model.CardModelFactory;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class CardInfo {
-    private SimpleObjectProperty<String> nameCol, descriptionCol, attributeCol, linkMarkersCol, imageLinkCol, smallImageLinkCol, setCodesCol;
+    private SimpleObjectProperty<String> nameCol, descriptionCol, linkMarkersCol, imageLinkCol, smallImageLinkCol, setCodesCol;
     private SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol;
     private SimpleObjectProperty<Boolean> isFakeCol;
     private SimpleObjectProperty<CardType> cardTypeCol;
     private SimpleObjectProperty<CardVariant> variantCol;
+    private SimpleObjectProperty<Attribute> attributeCol;
     private int id, setCodeId;
     private CardModel cardModel;
     
     public CardInfo() { 
         nameCol = new SimpleObjectProperty<String>();
         descriptionCol = new SimpleObjectProperty<String>();
-        attributeCol = new SimpleObjectProperty<String>();
         linkMarkersCol = new SimpleObjectProperty<String>();
         imageLinkCol = new SimpleObjectProperty<String>();
         smallImageLinkCol = new SimpleObjectProperty<String>();
@@ -32,7 +32,8 @@ public class CardInfo {
         
         cardTypeCol = new SimpleObjectProperty<CardType>();
         variantCol = new SimpleObjectProperty<CardVariant>();
-        
+        attributeCol = new SimpleObjectProperty<Attribute>();
+
         isFakeCol = new SimpleObjectProperty<Boolean>();
         cardModel = null;
     }
@@ -83,11 +84,11 @@ public class CardInfo {
         variantCol.set(variant);
     }
 
-    public SimpleObjectProperty<String> getAttributeCol() {
+    public SimpleObjectProperty<Attribute> getAttributeCol() {
         return attributeCol;
     }
 
-    public void setAttributeCol(String attribute) {
+    public void setAttributeCol(Attribute attribute) {
         attributeCol.set(attribute);
     }
 
@@ -203,7 +204,7 @@ public class CardInfo {
         return variantCol.getValue();
     }
 
-    public String getAttribute() {
+    public Attribute getAttribute() {
         return attributeCol.getValue();
     }
 

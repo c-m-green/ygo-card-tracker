@@ -1,5 +1,6 @@
 package com.cgreen.ygocardtracker.remote;
 
+import com.cgreen.ygocardtracker.card.data.Attribute;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
@@ -52,7 +53,8 @@ public class CardInfoSaveTask extends Task<Void> {
                 cardVariant = CardVariant.getCardVariant(CardVariant.getIndexOf(cardVarStr));
             }
             Integer linkValueColVal, atkColVal, defColVal, levelColVal, scaleColVal;
-            String linkMarkersColVal, attributeColVal, setCodesColVal;
+            String linkMarkersColVal, setCodesColVal;
+            Attribute attributeColVal;
             if (cardModel.isLink()) {
                 JSONArray linkMarkersArr = currentCardInfo.getJSONArray("linkmarkers");
                 linkMarkersColVal = "";
@@ -69,7 +71,7 @@ public class CardInfoSaveTask extends Task<Void> {
             defColVal = (cardModel.isMonster() && !cardModel.isLink()) ? currentCardInfo.getInt("def") : null;
             levelColVal = (cardModel.hasLevel()) ? currentCardInfo.getInt("level") : null;
             scaleColVal = (cardModel.hasScale()) ? currentCardInfo.getInt("scale") : null;
-            attributeColVal = (cardModel.hasAttribute()) ? currentCardInfo.getString("attribute") : null;
+            attributeColVal = (cardModel.hasAttribute()) ? Attribute.getAttributeByName(currentCardInfo.getString("attribute")) : Attribute.NONE;
             JSONArray cardSetsArr = currentCardInfo.getJSONArray("card_sets");
             setCodesColVal = "";
             for (int i = 0; i < cardSetsArr.length() - 1; i++) {

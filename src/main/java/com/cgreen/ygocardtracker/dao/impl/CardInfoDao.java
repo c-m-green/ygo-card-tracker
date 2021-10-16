@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.Objects;
 
 import com.cgreen.ygocardtracker.card.Card;
+import com.cgreen.ygocardtracker.card.data.Attribute;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
@@ -48,7 +49,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setDefenseCol(rs.getInt("defense"));
                 cardInfo.setLevelCol(rs.getInt("level"));
                 cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
-                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setAttributeCol(Attribute.getAttributeByName(rs.getString("attribute")));
                 cardInfo.setScaleCol(rs.getInt("scale"));
                 cardInfo.setLinkValueCol(rs.getInt("link_value"));
                 cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
@@ -77,13 +78,13 @@ public class CardInfoDao implements Dao<CardInfo> {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
         Connection conn = null;
         PreparedStatement stmt = null;
-        try {            
+        try {
             conn = dbm.connectToDatabase();
             stmt = conn.prepareStatement(Queries.getQuery("select_card_info_by_id_query"));
             stmt.setInt(1, infoId);
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
-            if (rs.next()) {                
+            if (rs.next()) {
                 CardInfo cardInfo = new CardInfo();
                 cardInfo.setPasscodeCol(rs.getInt("passcode"));
                 cardInfo.setNameCol(rs.getString("name"));
@@ -93,7 +94,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setDefenseCol(rs.getInt("defense"));
                 cardInfo.setLevelCol(rs.getInt("level"));
                 cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
-                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setAttributeCol(Attribute.getAttributeByName(rs.getString("attribute")));
                 cardInfo.setScaleCol(rs.getInt("scale"));
                 cardInfo.setLinkValueCol(rs.getInt("link_value"));
                 cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
@@ -138,7 +139,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setDefenseCol(rs.getInt("defense"));
                 cardInfo.setLevelCol(rs.getInt("level"));
                 cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
-                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setAttributeCol(Attribute.getAttributeByName(rs.getString("attribute")));
                 cardInfo.setScaleCol(rs.getInt("scale"));
                 cardInfo.setLinkValueCol(rs.getInt("link_value"));
                 cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
@@ -183,7 +184,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setDefenseCol(rs.getInt("defense"));
                 cardInfo.setLevelCol(rs.getInt("level"));
                 cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
-                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setAttributeCol(Attribute.getAttributeByName(rs.getString("attribute")));
                 cardInfo.setScaleCol(rs.getInt("scale"));
                 cardInfo.setLinkValueCol(rs.getInt("link_value"));
                 cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
@@ -245,6 +246,7 @@ public class CardInfoDao implements Dao<CardInfo> {
     
     // SELECT
     public int getNumCardInfos(Integer passcode) {
+        // TODO: Reorder this check
         if (passcode > 99999999 || passcode < 0 || passcode == null) {
             throw new IllegalArgumentException("Received invalid passcode value.");
         }
@@ -301,7 +303,7 @@ public class CardInfoDao implements Dao<CardInfo> {
                 cardInfo.setDefenseCol(rs.getInt("defense"));
                 cardInfo.setLevelCol(rs.getInt("level"));
                 cardInfo.setVariantCol(CardVariant.getCardVariant(rs.getInt("variant")));
-                cardInfo.setAttributeCol(rs.getString("attribute"));
+                cardInfo.setAttributeCol(Attribute.getAttributeByName(rs.getString("attribute")));
                 cardInfo.setScaleCol(rs.getInt("scale"));
                 cardInfo.setLinkValueCol(rs.getInt("link_value"));
                 cardInfo.setLinkMarkersCol(rs.getString("link_markers"));
@@ -345,7 +347,7 @@ public class CardInfoDao implements Dao<CardInfo> {
             stmt.setObject(3, c.getDescriptionCol().getValue());
             stmt.setObject(4, c.getCardTypeCol().getValue().getIndex());
             stmt.setObject(5, c.getVariantCol().getValue().getIndex());
-            stmt.setObject(6, c.getAttributeCol().getValue());
+            stmt.setObject(6, c.getAttributeCol().getValue().toString());
             stmt.setObject(7, c.getAttackCol().getValue());
             stmt.setObject(8, c.getDefenseCol().getValue());
             stmt.setObject(9, c.getLevelCol().getValue());

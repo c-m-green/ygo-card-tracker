@@ -1,6 +1,7 @@
 package com.cgreen.ygocardtracker.menu;
 import java.sql.SQLException;
 
+import com.cgreen.ygocardtracker.card.data.Attribute;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.card.data.CardType;
 import com.cgreen.ygocardtracker.card.data.CardVariant;
@@ -21,13 +22,15 @@ public class AllCardInfoController {
     @FXML
     private TableColumn<CardInfo, Integer> passcodeCol, atkCol, defCol, levelCol, scaleCol, linkValCol;
     @FXML
-    private TableColumn<CardInfo, String> nameCol, descCol, attributeCol, linkMarkersCol, imageCol, imageSmallCol;
+    private TableColumn<CardInfo, String> nameCol, descCol, linkMarkersCol, imageCol, imageSmallCol;
     @FXML
     private TableColumn<CardInfo, Boolean> isFakeCol;
     @FXML
     private TableColumn<CardInfo, CardType> cardTypeCol;
     @FXML
     private TableColumn<CardInfo, CardVariant> variantCol;
+    @FXML
+    private TableColumn<CardInfo, Attribute> attributeCol;
     //TEMP
     @FXML
     private Button deleteButton;
