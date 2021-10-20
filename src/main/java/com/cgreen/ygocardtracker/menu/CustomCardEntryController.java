@@ -85,7 +85,7 @@ public class CustomCardEntryController {
         }
         variantChoice.setItems(cardVariantOptions);
         variantChoice.setValue(CardVariant.UNKNOWN);
-        // TODO: Maybe hardcode these somewhere else?
+
         ObservableList<Attribute> attributes = FXCollections.observableArrayList();
         attributes.addAll(Arrays.asList(Attribute.values()));
         attributeChoice.setItems(attributes);
