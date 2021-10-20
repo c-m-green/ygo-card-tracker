@@ -22,16 +22,6 @@ public class CardImageSaver {
         return image;
     }
     
-    public static Image getDefaultImage() {
-        // TODO
-        return null;
-    }
-    
-    public static Image getDefaultImageSmall() {
-        // TODO
-        return null;
-    }
-    
     public static String saveCardImageFile(Image image, Integer passcode) throws IOException {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
