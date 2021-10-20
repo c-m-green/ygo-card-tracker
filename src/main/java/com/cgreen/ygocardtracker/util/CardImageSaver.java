@@ -28,9 +28,7 @@ public class CardImageSaver {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
         File allRegImages = new File(allImages, IMAGES_DIR);
-        if (!allRegImages.exists()) {
-            allRegImages.mkdirs();
-        }
+        allRegImages.mkdirs();
         BufferedImage bi;
         if (resizeToFit) {
             bi = Scalr.resize((BufferedImage) image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, 421, 614);
@@ -46,9 +44,7 @@ public class CardImageSaver {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
         File allSmallImages = new File(allImages, SMALL_IMAGES_DIR);
-        if (!allSmallImages.exists()) {
-            allSmallImages.mkdirs();
-        }
+        allSmallImages.mkdirs();
         BufferedImage bi;
         if (resizeToFit) {
             bi = Scalr.resize((BufferedImage)image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, 168, 246);
