@@ -1,6 +1,8 @@
 package com.cgreen.ygocardtracker.menu;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import com.cgreen.ygocardtracker.dao.impl.CardInfoDao;
 import com.cgreen.ygocardtracker.dao.impl.SetCodeDao;
 import com.cgreen.ygocardtracker.util.AlertHelper;
 
+import com.cgreen.ygocardtracker.util.CardImageSaver;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +39,8 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import javax.imageio.ImageIO;
 
 public class CustomCardEntryController {
     private Stage stage;
@@ -251,8 +256,6 @@ public class CustomCardEntryController {
                 linkMarkersText += linkMarkers[index];
                 cardInfo.setLinkMarkersCol(linkMarkersText);
             }
-            cardInfo.setImageLinkCol(imagePathField.getText());
-            cardInfo.setSmallImageLinkCol(smallImagePathField.getText());
             cardInfo.setSetCodesCol(setCodeField.getText());
             if (cardInfo.isFake()) {
                 final int tempPasscode = 100000000;
@@ -264,6 +267,26 @@ public class CustomCardEntryController {
                         cardInfoDao.delete(temp);
                     }
                     cardInfo.setPasscodeCol(tempPasscode);
+                    // Try saving images
+                    try {
+                        String imgPath = imagePathField.getText();
+                        Image img = ImageIO.read(new File(imgPath));
+                        String resavedPath = CardImageSaver.saveCardImageFile(img, cardInfo.getPasscode(), imgPath.substring(imgPath.lastIndexOf('.') + 1), true);
+                        cardInfo.setImageLinkCol(resavedPath);
+                    } catch (IOException e) {
+                        // TODO Log that the image could not be saved
+                        System.out.println("Problem saving image: " + e.getMessage());
+                        cardInfo.setImageLinkCol(imagePathField.getText());
+                    }
+                    try {
+                        String smallImgPath = smallImagePathField.getText();
+                        Image img = ImageIO.read(new File(smallImgPath));
+                        String resavedPath = CardImageSaver.saveCardImageFileSmall(img, cardInfo.getPasscode(), smallImgPath.substring(smallImgPath.lastIndexOf('.') + 1), true);
+                        cardInfo.setSmallImageLinkCol(resavedPath);
+                    } catch (IOException e) {
+                        // TODO Log that the image could not be saved
+                        cardInfo.setSmallImageLinkCol(smallImagePathField.getText());
+                    }
                     cardInfoDao.save(cardInfo);
                 } catch (SQLException e) {
                     AlertHelper.raiseAlert("Error saving card information.\n\n" + e.getMessage());
@@ -344,6 +367,26 @@ public class CustomCardEntryController {
                     try {
                         SetCodeDao setCodeDao = new SetCodeDao();
                         cardInfo.setSetCodeId(setCodeDao.save(setCodeField.getText()));
+                        // Try saving images
+                        try {
+                            String imgPath = imagePathField.getText();
+                            Image img = ImageIO.read(new File(imgPath));
+                            String resavedPath = CardImageSaver.saveCardImageFile(img, cardInfo.getPasscode(), imgPath.substring(imgPath.lastIndexOf('.') + 1), true);
+                            cardInfo.setImageLinkCol(resavedPath);
+                        } catch (IOException e) {
+                            // TODO Log that the image could not be saved
+                            System.out.println("Problem saving image: " + e.getMessage());
+                            cardInfo.setImageLinkCol(imagePathField.getText());
+                        }
+                        try {
+                            String smallImgPath = smallImagePathField.getText();
+                            Image img = ImageIO.read(new File(smallImgPath));
+                            String resavedPath = CardImageSaver.saveCardImageFileSmall(img, cardInfo.getPasscode(), smallImgPath.substring(smallImgPath.lastIndexOf('.') + 1), true);
+                            cardInfo.setSmallImageLinkCol(resavedPath);
+                        } catch (IOException e) {
+                            // TODO Log that the image could not be saved
+                            cardInfo.setSmallImageLinkCol(smallImagePathField.getText());
+                        }
                         cardInfoDao.save(cardInfo);
                     } catch (SQLException e) {
                         AlertHelper.raiseAlert("Error saving card information to the database.\n" + e.getMessage());

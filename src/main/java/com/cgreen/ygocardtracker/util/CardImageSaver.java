@@ -24,7 +24,7 @@ public class CardImageSaver {
         return image;
     }
     
-    public static String saveCardImageFile(Image image, Integer passcode, boolean resizeToFit) throws IOException {
+    public static String saveCardImageFile(Image image, Integer passcode, String format, boolean resizeToFit) throws IOException {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
         File allRegImages = new File(allImages, IMAGES_DIR);
@@ -35,12 +35,12 @@ public class CardImageSaver {
         } else {
             bi = (BufferedImage) image;
         }
-        File outputFile = new File(allRegImages, passcode + ".jpg");
-        ImageIO.write(bi, "jpg", outputFile);
+        File outputFile = new File(allRegImages, passcode + "." + format.toLowerCase());
+        ImageIO.write(bi, format, outputFile);
         return outputFile.getAbsolutePath();
     }
     
-    public static String saveCardImageFileSmall(Image image, Integer passcode, boolean resizeToFit) throws IOException {
+    public static String saveCardImageFileSmall(Image image, Integer passcode, String format, boolean resizeToFit) throws IOException {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
         File allSmallImages = new File(allImages, SMALL_IMAGES_DIR);
@@ -51,8 +51,8 @@ public class CardImageSaver {
         } else {
             bi = (BufferedImage) image;
         }
-        File outputFile = new File(allSmallImages, passcode + ".jpg");
-        ImageIO.write(bi, "jpg", outputFile);
+        File outputFile = new File(allSmallImages, passcode + "." + format.toLowerCase());
+        ImageIO.write(bi, format, outputFile);
         return outputFile.getAbsolutePath();
     }
     
