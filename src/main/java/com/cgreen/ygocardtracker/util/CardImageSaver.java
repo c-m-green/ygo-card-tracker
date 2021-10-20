@@ -33,7 +33,7 @@ public class CardImageSaver {
         }
         BufferedImage bi;
         if (resizeToFit) {
-            bi = Scalr.resize((BufferedImage) image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, 421, 614);
+            bi = Scalr.resize((BufferedImage) image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, 421, 614);
         } else {
             bi = (BufferedImage) image;
         }
@@ -51,7 +51,7 @@ public class CardImageSaver {
         }
         BufferedImage bi;
         if (resizeToFit) {
-            bi = Scalr.resize((BufferedImage)image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, 168, 246);
+            bi = Scalr.resize((BufferedImage)image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, 168, 246);
         } else {
             bi = (BufferedImage) image;
         }
