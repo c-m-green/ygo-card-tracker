@@ -119,7 +119,7 @@ public class CardInfoSaveTask extends Task<Void> {
                 Image image;
                 try {
                     image = CardImageSaver.getCardImage(picUrl);
-                    dbCardInfo.setImageLinkCol(CardImageSaver.saveCardImageFile(image, passcodeColVal));
+                    dbCardInfo.setImageLinkCol(CardImageSaver.saveCardImageFile(image, passcodeColVal, false));
                 } catch (IOException e) {
                     // TODO Log this
                     System.out.println("ERROR: Problem saving image for " + passcodeColVal);
@@ -128,7 +128,7 @@ public class CardInfoSaveTask extends Task<Void> {
                 Image imageSmall;
                 try {
                     imageSmall = CardImageSaver.getCardImage(picUrlSmall);
-                    dbCardInfo.setSmallImageLinkCol(CardImageSaver.saveCardImageFileSmall(imageSmall, passcodeColVal));
+                    dbCardInfo.setSmallImageLinkCol(CardImageSaver.saveCardImageFileSmall(imageSmall, passcodeColVal, false));
                 } catch (IOException e) {
                     // TODO Log this
                     System.out.println("ERROR: Problem saving small image for " + passcodeColVal);

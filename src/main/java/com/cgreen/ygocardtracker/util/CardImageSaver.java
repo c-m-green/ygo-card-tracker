@@ -1,5 +1,7 @@
 package com.cgreen.ygocardtracker.util;
 
+import org.imgscalr.Scalr;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -22,27 +24,37 @@ public class CardImageSaver {
         return image;
     }
     
-    public static String saveCardImageFile(Image image, Integer passcode) throws IOException {
+    public static String saveCardImageFile(Image image, Integer passcode, boolean resizeToFit) throws IOException {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
         File allRegImages = new File(allImages, IMAGES_DIR);
         if (!allRegImages.exists()) {
             allRegImages.mkdirs();
         }
-        BufferedImage bi = (BufferedImage)image;
+        BufferedImage bi;
+        if (resizeToFit) {
+            bi = Scalr.resize((BufferedImage) image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, 421, 614);
+        } else {
+            bi = (BufferedImage) image;
+        }
         File outputFile = new File(allRegImages, passcode + ".jpg");
         ImageIO.write(bi, "jpg", outputFile);
         return outputFile.getAbsolutePath();
     }
     
-    public static String saveCardImageFileSmall(Image image, Integer passcode) throws IOException {
+    public static String saveCardImageFileSmall(Image image, Integer passcode, boolean resizeToFit) throws IOException {
         File homeDir = new File(System.getProperty("user.dir"));
         File allImages = new File(homeDir, IMAGES_TOP_DIR);
         File allSmallImages = new File(allImages, SMALL_IMAGES_DIR);
         if (!allSmallImages.exists()) {
             allSmallImages.mkdirs();
         }
-        BufferedImage bi = (BufferedImage)image;
+        BufferedImage bi;
+        if (resizeToFit) {
+            bi = Scalr.resize((BufferedImage)image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, 168, 246);
+        } else {
+            bi = (BufferedImage) image;
+        }
         File outputFile = new File(allSmallImages, passcode + ".jpg");
         ImageIO.write(bi, "jpg", outputFile);
         return outputFile.getAbsolutePath();
