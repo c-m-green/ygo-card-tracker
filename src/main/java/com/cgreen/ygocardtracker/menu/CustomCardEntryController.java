@@ -296,7 +296,6 @@ public class CustomCardEntryController {
                 int newPasscode = tempPasscode + cardInfo.getId();
                 try {
                     cardInfoDao.updateFakeCardInfoPasscode(cardInfo, newPasscode);
-                    cardInfo.setPasscodeCol(newPasscode);
                 } catch (SQLException e) {
                     AlertHelper.raiseAlert("Error saving card information.\n\n" + e.getMessage());
                     return;

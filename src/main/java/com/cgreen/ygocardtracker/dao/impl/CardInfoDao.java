@@ -395,6 +395,7 @@ public class CardInfoDao implements Dao<CardInfo> {
             stmt.setInt(1, passcode);
             stmt.setInt(2, c.getId());
             stmt.executeUpdate();
+            c.setPasscodeCol(passcode);
         } catch (SQLException sqle) {
             throw sqle;
         } finally {
