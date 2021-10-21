@@ -210,6 +210,7 @@ public class CardInfoDao implements Dao<CardInfo> {
     
     // SELECT
     public int getNumCardInfos(String name) {
+        // TODO: Reorder this check
         if (name.isBlank() || name.isEmpty() || name == null) {
             throw new IllegalArgumentException("Card name cannot be blank in query.");
         }
@@ -405,6 +406,34 @@ public class CardInfoDao implements Dao<CardInfo> {
             if (conn != null) {
                 conn.close();
             }
+        }
+    }
+
+    // UPDATE
+    public void updateCardInfoImage(CardInfo c, String pathToImage) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("update_card_info_image"));
+        ){
+            stmt.setString(1, pathToImage);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+            c.setImageLinkCol(pathToImage);
+        }
+    }
+
+    // UPDATE
+    public void updateCardInfoImageSmall(CardInfo c, String pathToImage) throws SQLException {
+        DatabaseManager dbm = DatabaseManager.getDatabaseManager();
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("update_card_info_small_image"));
+        ){
+            stmt.setString(1, pathToImage);
+            stmt.setInt(2, c.getId());
+            stmt.executeUpdate();
+            c.setSmallImageLinkCol(pathToImage);
         }
     }
     
