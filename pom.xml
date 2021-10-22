@@ -25,7 +25,7 @@
         	<execution>
         		<id>default-cli</id>
         		<configuration>
-        			<mainClass>com.cgreen.ygocardtracker.YGOCardTracker</mainClass>
+        			<mainClass>com.cgreen.ygocardtracker.YGOCardTrackerLauncher</mainClass>
         		</configuration>
         	</execution>
         	<execution>
@@ -34,9 +34,31 @@
         			<options>
         				<option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8001</option>
         			</options>
-        			<mainClass>com.cgreen.ygocardtracker.YGOCardTracker</mainClass>
+        			<mainClass>com.cgreen.ygocardtracker.YGOCardTrackerLauncher</mainClass>
         		</configuration>
         	</execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+            <archive>
+                <manifest>
+                  <mainClass>com.cgreen.ygocardtracker.YGOCardTrackerLauncher</mainClass>
+                </manifest>
+            </archive>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
     </plugins>
