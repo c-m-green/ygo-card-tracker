@@ -217,9 +217,15 @@ public class AllCardsController {
     
     private void updateCurrentCardView(Card newValue) {
         if (newValue == null || newValue.getCardInfo() == null) {
-            // TODO: Display default card image
+            displayDefaultCardImage();
         } else {
-            imageView.setImage(new Image(new File(newValue.getCardInfo().getImageLink()).toURI().toString()));
+            File imgFile = new File(newValue.getCardInfo().getImageLink());
+            if (imgFile.exists()) {
+                Image image = new Image(imgFile.toURI().toString());
+                imageView.setImage(image);
+            } else {
+                displayDefaultCardImage();
+            }
             cardNameText.setText(newValue.getCardInfo().getName());
             setCodeText.setText(newValue.getSetCode());
             if (newValue.getDeckId() > 1) {
@@ -229,13 +235,23 @@ public class AllCardsController {
             }
         }
     }
+
+    private void displayDefaultCardImage() {
+        try {
+            File imgNotFound = new File(AllCardsController.class.getClassLoader().getResource("default-card-image-421x614.png").getFile());
+            Image img = new Image(imgNotFound.toURI().toString());
+            imageView.setImage(img);
+        } catch (NullPointerException npe) {
+            // TODO Log this
+            imageView.setImage(null);
+        }
+    }
     
     private void wipeCurrentCardView() {
         cardNameText.setText("");
         setCodeText.setText("");
         deckText.setText("");
         imageView.setImage(null);
-        
     }
     
     

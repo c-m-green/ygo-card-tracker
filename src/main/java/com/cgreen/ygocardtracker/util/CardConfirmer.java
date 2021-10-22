@@ -28,18 +28,11 @@ public class CardConfirmer {
     }
     
     public String getImageLinkForPasscode(String passcode) {
-        // TODO: Set this link to the default card image.
-        String defaultImageLink = "";
         for (CardInfo cardInfo : cardInfos) {
             if (String.format("%08d", cardInfo.getPasscode()).equals(passcode)) {
-                String imgLink = cardInfo.getImageLink();
-                if (imgLink == null) {
-                    return defaultImageLink;
-                } else {
-                    return imgLink;
-                }
+                return cardInfo.getImageLink();
             }
         }
-        return defaultImageLink;
+        return "";
     }
 }

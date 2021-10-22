@@ -49,13 +49,17 @@ public class CardConfirmerController {
         passcodeChoiceBox.setItems(passcodeChoices);
         passcodeChoiceBox.setValue(passcodeChoices.get(0));
         cardSetChoiceBox.setItems(cardConfirmer.getCardSetChoicesForPasscode(passcodeChoices.get(0)));
-        // TODO: Handle case where image URL is empty, null, or links to nothing.
-        imageView.setImage(new Image(new File(cardConfirmer.getImageLinkForPasscode(passcodeChoices.get(0))).toURI().toString()));
+        String imgLink = cardConfirmer.getImageLinkForPasscode(passcodeChoices.get(0));
+        if (imgLink == null || imgLink.isBlank()) {
+            displayDefaultImage();
+        } else {
+            imageView.setImage(new Image(new File(imgLink).toURI().toString()));
+        }
     }
     
     public void handlePasscodeSelectAction(ActionEvent event) {
         cardSetChoiceBox.setItems(cardConfirmer.getCardSetChoicesForPasscode(passcodeChoiceBox.getValue()));
-        // TODO: Handle case where image URL is empty, null, or links to nothing.
+        String imgLink = cardConfirmer.getImageLinkForPasscode(passcodeChoiceBox.getValue());
         imageView.setImage(new Image(new File(cardConfirmer.getImageLinkForPasscode(passcodeChoiceBox.getValue())).toURI().toString()));
     }
     
@@ -87,5 +91,16 @@ public class CardConfirmerController {
     
     public void handleCancelButtonAction(ActionEvent event) {
         stage.close();
+    }
+
+    private void displayDefaultImage() {
+        try {
+            File imgNotFound = new File(CardConfirmerController.class.getClassLoader().getResource("default-card-image-421x614.png").getFile());
+            Image img = new Image(imgNotFound.toURI().toString());
+            imageView.setImage(img);
+        } catch (NullPointerException npe) {
+            // TODO: Log this
+            imageView.setImage(null);
+        }
     }
 }
