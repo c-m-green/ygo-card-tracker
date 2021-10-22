@@ -53,14 +53,28 @@ public class CardConfirmerController {
         if (imgLink == null || imgLink.isBlank()) {
             displayDefaultImage();
         } else {
-            imageView.setImage(new Image(new File(imgLink).toURI().toString()));
+            File imgFile = new File(imgLink);
+            if (imgFile.exists()) {
+                imageView.setImage(new Image(new File(imgLink).toURI().toString()));
+            } else {
+                displayDefaultImage();
+            }
         }
     }
     
     public void handlePasscodeSelectAction(ActionEvent event) {
         cardSetChoiceBox.setItems(cardConfirmer.getCardSetChoicesForPasscode(passcodeChoiceBox.getValue()));
         String imgLink = cardConfirmer.getImageLinkForPasscode(passcodeChoiceBox.getValue());
-        imageView.setImage(new Image(new File(cardConfirmer.getImageLinkForPasscode(passcodeChoiceBox.getValue())).toURI().toString()));
+        if (imgLink == null || imgLink.isBlank()) {
+            displayDefaultImage();
+        } else {
+            File imgFile = new File(imgLink);
+            if (imgFile.exists()) {
+                imageView.setImage(new Image(new File(imgLink).toURI().toString()));
+            } else {
+                displayDefaultImage();
+            }
+        }
     }
     
     public void handleSaveButtonAction(ActionEvent event) {
