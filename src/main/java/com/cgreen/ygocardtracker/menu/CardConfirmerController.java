@@ -1,6 +1,7 @@
 package com.cgreen.ygocardtracker.menu;
 
 import java.io.File;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -108,13 +109,13 @@ public class CardConfirmerController {
     }
 
     private void displayDefaultImage() {
-        try {
-            File imgNotFound = new File(CardConfirmerController.class.getClassLoader().getResource("default-card-image-421x614.png").getFile());
-            Image img = new Image(imgNotFound.toURI().toString());
-            imageView.setImage(img);
-        } catch (NullPointerException npe) {
-            // TODO: Log this
+        InputStream is = AllCardsController.class.getClassLoader().getResourceAsStream("default-card-image-421x614.png");
+        if (is == null) {
+            // TODO: Log that a resource was not found!!
             imageView.setImage(null);
+        } else {
+            Image img = new Image(is);
+            imageView.setImage(img);
         }
     }
 }
