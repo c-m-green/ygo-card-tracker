@@ -37,9 +37,9 @@ public enum CardVariant {
     TRAP_CONTINUOUS(33, "Continuous", "Continuous Trap"),
     TRAP_COUNTER(34, "Counter", "Counter Trap");
     
-    private int index;
-    private String code, label;
-    private static CardVariant[] list = CardVariant.values();
+    private final int index;
+    private final String code, label;
+    private static final CardVariant[] list = CardVariant.values();
     private CardVariant(int index, String code, String label) {
         this.index = index;
         this.code = code;
