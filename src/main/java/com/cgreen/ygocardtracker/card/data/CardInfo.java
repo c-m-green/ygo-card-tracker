@@ -6,12 +6,12 @@ import com.cgreen.ygocardtracker.card.model.CardModelFactory;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class CardInfo {
-    private SimpleObjectProperty<String> nameCol, descriptionCol, linkMarkersCol, imageLinkCol, smallImageLinkCol, setCodesCol;
-    private SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol;
-    private SimpleObjectProperty<Boolean> isFakeCol;
-    private SimpleObjectProperty<CardType> cardTypeCol;
-    private SimpleObjectProperty<CardVariant> variantCol;
-    private SimpleObjectProperty<Attribute> attributeCol;
+    private final SimpleObjectProperty<String> nameCol, descriptionCol, linkMarkersCol, imageLinkCol, smallImageLinkCol, setCodesCol;
+    private final SimpleObjectProperty<Integer> passcodeCol, attackCol, defenseCol, levelCol, scaleCol, linkValueCol;
+    private final SimpleObjectProperty<Boolean> isFakeCol;
+    private final SimpleObjectProperty<CardType> cardTypeCol;
+    private final SimpleObjectProperty<CardVariant> variantCol;
+    private final SimpleObjectProperty<Attribute> attributeCol;
     private int id, setCodeId;
     private CardModel cardModel;
     
