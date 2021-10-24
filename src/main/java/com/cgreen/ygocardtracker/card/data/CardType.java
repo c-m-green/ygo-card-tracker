@@ -30,9 +30,9 @@ public enum CardType {
     MONSTER_XYZ(26, "XYZ Monster"),
     MONSTER_XYZ_PENDULUM_EFFECT(27, "XYZ Pendulum Effect Monster");
     
-    private int index;
-    private String label;
-    private static CardType[] list = CardType.values();
+    private final int index;
+    private final String label;
+    private static final CardType[] list = CardType.values();
     private CardType(int index, String label) {
         this.index = index;
         this.label = label;
