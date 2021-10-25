@@ -17,26 +17,16 @@ public class SetCodeDao {
     
     public String get(Integer id) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
         String out = "";
-        try {            
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_set_code_by_id_query"));
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_set_code_by_id_query"));
+                ){
             stmt.setInt(1, id);
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
             if (rs.next()) {
                 out = rs.getString("set_codes");
-            }
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
         return out;
@@ -47,28 +37,16 @@ public class SetCodeDao {
             throw new IllegalArgumentException("Set codes cannot be blank.");
         }
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
         int generatedId = -1;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_set_code_table_statement"), Statement.RETURN_GENERATED_KEYS);           
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("insert_into_set_code_table_statement"), Statement.RETURN_GENERATED_KEYS);
+                ){
             stmt.setObject(1, Objects.requireNonNull(setCodes, "Set codes must have a value."));
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 generatedId = rs.getInt(1);
-            }
-        } catch (SQLException sqle) {
-            throw sqle;
-        } catch (IllegalArgumentException iae) {
-            AlertHelper.raiseAlert(iae.getMessage());
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
         return generatedId;
@@ -76,23 +54,13 @@ public class SetCodeDao {
     
     public void update(int id, String setCodes) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("update_set_code_table_statement"));           
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("update_set_code_table_statement"))
+        ) {
             stmt.setString(1, setCodes);
             stmt.setInt(2, id);
             stmt.executeUpdate();
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
 
