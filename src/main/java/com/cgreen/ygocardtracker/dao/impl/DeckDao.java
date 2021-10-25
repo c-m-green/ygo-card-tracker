@@ -26,26 +26,18 @@ public class DeckDao implements Dao<Deck> {
     public ObservableList<Deck> getAll() throws SQLException {
         // TODO Auto-generated method stub
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {            
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_deck_table_query"));
+        try (
+            Connection conn = dbm.connectToDatabase();
+            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_deck_table_query"))
+        ) {
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
-            while (rs.next()) {                
+            while (rs.next()) {
                 Deck deck = new Deck();
                 deck.setName(rs.getString("name"));
                 deck.setNote(rs.getString("note"));
                 deck.setId(rs.getInt("ID"));
                 collectionItems.add(deck);
-            }
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
         return collectionItems;
@@ -54,11 +46,10 @@ public class DeckDao implements Dao<Deck> {
  // INSERT
     public void save(Deck deck) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_deck_table_statement"), Statement.RETURN_GENERATED_KEYS);           
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("insert_into_deck_table_statement"), Statement.RETURN_GENERATED_KEYS)
+        ) {
             stmt.setObject(1, Objects.requireNonNull(deck.getName(), "Deck must have a name."));
             stmt.setObject(2, Objects.requireNonNull(deck.getNote(), "Note must have a value."));
             stmt.executeUpdate();
@@ -67,34 +58,19 @@ public class DeckDao implements Dao<Deck> {
                 deck.setId(rs.getInt(1));
             }
             collectionItems.add(deck);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
 
     @Override
     public void delete(Deck deck) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("delete_from_deck_table_statement"));           
+        try (
+            Connection conn = dbm.connectToDatabase();
+            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("delete_from_deck_table_statement"))
+        ) {
             stmt.setInt(1, deck.getId());
             stmt.executeUpdate();
             collectionItems.remove(deck);
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
 
