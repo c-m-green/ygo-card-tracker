@@ -22,7 +22,7 @@ import javafx.collections.ObservableList;
 
 public class CardInfoDao implements Dao<CardInfo> {
     
-    private ObservableList<CardInfo> collectionItems;
+    private final ObservableList<CardInfo> collectionItems;
     
     public CardInfoDao() {
         collectionItems = FXCollections.observableArrayList();

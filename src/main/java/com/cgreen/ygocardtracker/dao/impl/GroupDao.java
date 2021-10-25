@@ -16,7 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class GroupDao implements Dao<Group> {
-    private ObservableList<Group> allGroups;
+    private final ObservableList<Group> allGroups;
     
     public GroupDao() {
         allGroups = FXCollections.observableArrayList();

@@ -18,7 +18,7 @@ import javafx.collections.ObservableList;
 
 public class CardDao implements Dao<Card> {
     
-    private ObservableList<Card> collectionItems;
+    private final ObservableList<Card> collectionItems;
     
     public CardDao() {
         collectionItems = FXCollections.observableArrayList();

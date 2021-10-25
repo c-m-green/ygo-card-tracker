@@ -16,7 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DeckDao implements Dao<Deck> {
-    private ObservableList<Deck> collectionItems;
+    private final ObservableList<Deck> collectionItems;
     
     public DeckDao() {
         collectionItems = FXCollections.observableArrayList();
