@@ -28,11 +28,10 @@ public class CardDao implements Dao<Card> {
     @Override
     public ObservableList<Card> getAll() throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {            
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_card_table_query"));
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_card_table_query"));
+                ){
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
             while (rs.next()) {                
@@ -46,15 +45,6 @@ public class CardDao implements Dao<Card> {
                 card.setId(rs.getInt("ID"));
                 collectionItems.add(card);
             }
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
         return collectionItems;
     }
@@ -62,12 +52,11 @@ public class CardDao implements Dao<Card> {
     // SELECT
     public Card getCardByPasscode(Integer passcode) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
         Card card = null;
-        try {            
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_card_by_passcode_query"));
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_card_by_passcode_query"));
+                ){
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
@@ -81,15 +70,6 @@ public class CardDao implements Dao<Card> {
             card.setIsVirtual(rs.getBoolean("is_virtual"));
             card.setId(rs.getInt("ID"));
             collectionItems.add(card);
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
         return card; 
     }
@@ -98,12 +78,11 @@ public class CardDao implements Dao<Card> {
     public ObservableList<Card> getCardsByDeckId(Integer deckId, boolean inSideDeck) throws SQLException {
         ObservableList<Card> out = FXCollections.observableArrayList();
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
         Card card = null;
-        try {            
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("select_card_by_deck_query"));
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("select_card_by_deck_query"));
+                ){
             stmt.setObject(1, Objects.requireNonNull(deckId, "A deck must be indicated."));
             stmt.setObject(2, inSideDeck);
             stmt.executeQuery();
@@ -118,13 +97,6 @@ public class CardDao implements Dao<Card> {
                 card.setIsVirtual(rs.getBoolean("is_virtual"));
                 card.setId(rs.getInt("ID"));
                 out.add(card);
-            }
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
             }
         }
         return out; 
@@ -161,11 +133,10 @@ public class CardDao implements Dao<Card> {
     @Override
     public void save(Card card) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_statement"), Statement.RETURN_GENERATED_KEYS);           
+        try (
+            Connection conn = dbm.connectToDatabase();
+            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_statement"), Statement.RETURN_GENERATED_KEYS);
+        ){
             stmt.setObject(1, Objects.requireNonNull(card.getCardInfoId(), "Card info ID must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
             stmt.setObject(3, Objects.requireNonNull(card.getGroupId(), "Group ID must have a value."));
@@ -178,17 +149,6 @@ public class CardDao implements Dao<Card> {
                 card.setId(rs.getInt(1));
             }
             collectionItems.add(card);
-        } catch (SQLException sqle) {
-            throw sqle;
-        } catch (IllegalArgumentException iae) {
-            AlertHelper.raiseAlert(iae.getMessage());
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
     
@@ -199,11 +159,10 @@ public class CardDao implements Dao<Card> {
             throw new IllegalArgumentException("Invalid passcode " + passcode);
         }
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"), Statement.RETURN_GENERATED_KEYS);           
+        try (
+            Connection conn = dbm.connectToDatabase();
+            PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("insert_into_card_table_by_passcode_statement"), Statement.RETURN_GENERATED_KEYS);
+        ){
             stmt.setObject(1, Objects.requireNonNull(passcode, "Passcode must have a value."));
             stmt.setObject(2, Objects.requireNonNull(card.getDeckId(), "Deck ID must have a value."));
             stmt.setObject(3, Objects.requireNonNull(card.getGroupId(), "Group ID must have a value."));
@@ -216,41 +175,20 @@ public class CardDao implements Dao<Card> {
                 card.setId(rs.getInt(1));
             }
             collectionItems.add(card);
-        } catch (SQLException sqle) {
-            throw sqle;
-        } catch (IllegalArgumentException iae) {
-            AlertHelper.raiseAlert(iae.getMessage());
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
     
     // UPDATE
     public void updateDeckId(Card c, int deckId) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("update_card_deck_id_statement"));           
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("update_card_deck_id_statement"));
+        ){
             stmt.setInt(1, deckId);
             stmt.setInt(2, c.getId());
             stmt.executeUpdate();
             c.setDeckId(deckId);
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
     
@@ -271,23 +209,13 @@ public class CardDao implements Dao<Card> {
  // UPDATE
     public void updateInSideDeck(Card c, boolean inSideDeck) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("update_card_side_deck_statement"));           
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("update_card_side_deck_statement"));
+                ){
             stmt.setBoolean(1, inSideDeck);
             stmt.setInt(2, c.getId());
             stmt.executeUpdate();
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
     }
     
@@ -295,22 +223,12 @@ public class CardDao implements Dao<Card> {
     @Override
     public void delete(Card card) throws SQLException {
         DatabaseManager dbm = DatabaseManager.getDatabaseManager();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = dbm.connectToDatabase();
-            stmt = conn.prepareStatement(Queries.getQuery("delete_from_card_table_statement"));           
+        try (
+                Connection conn = dbm.connectToDatabase();
+                PreparedStatement stmt = conn.prepareStatement(Queries.getQuery("delete_from_card_table_statement"));
+        ){
             stmt.setInt(1, card.getId());
             stmt.executeUpdate();
-        } catch (SQLException sqle) {
-            throw sqle;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
         }
         collectionItems.remove(card);
     }
