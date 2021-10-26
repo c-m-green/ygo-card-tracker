@@ -9,7 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class CardConfirmer {
-    private List<CardInfo> cardInfos;
+    private final List<CardInfo> cardInfos;
     public CardConfirmer(List<CardInfo> cardInfos) {
         this.cardInfos = cardInfos;
     }
