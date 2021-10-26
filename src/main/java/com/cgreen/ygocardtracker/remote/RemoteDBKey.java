@@ -5,10 +5,9 @@ public enum RemoteDBKey {
     
     @Override
     public String toString() {
-        switch(this) {
-        case NAME: return "name";
-        case PASSCODE: return "id";
-        default: throw new IllegalArgumentException();
-        }
+        return switch (this) {
+            case NAME -> "name";
+            case PASSCODE -> "id";
+        };
     }
 }
