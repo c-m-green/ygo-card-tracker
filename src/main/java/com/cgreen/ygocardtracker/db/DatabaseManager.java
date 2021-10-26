@@ -53,7 +53,7 @@ public class DatabaseManager {
         this.user = user;
     }
     
-    public boolean initializeTables() {
+    public void initializeTables() {
         try {
             createSetCodeTable();
             createCardInfoTable();
@@ -63,9 +63,7 @@ public class DatabaseManager {
         } catch (SQLException sqle) {
             AlertHelper.raiseAlert(sqle.getMessage());
             sqle.printStackTrace();
-            return false;
         }
-        return true;
     }
     
     private void createCardInfoTable() throws SQLException {
