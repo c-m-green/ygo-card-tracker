@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.json.JSONObject;
 
@@ -17,7 +18,7 @@ public class CardInfoFetcher {
         // https://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
         // https://stackoverflow.com/questions/8760052/httpurlconnection-sends-a-post-request-even-though-httpcon-setrequestmethodget
         try {
-            URL ygoDb = new URL(REMOTE_DB_URL + "?" + key.toString() + "=" + URLEncoder.encode(value, "UTF-8"));
+            URL ygoDb = new URL(REMOTE_DB_URL + "?" + key.toString() + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8));
             System.out.println(ygoDb);
             HttpURLConnection connection = (HttpURLConnection) ygoDb.openConnection();
             connection.setUseCaches(false);
