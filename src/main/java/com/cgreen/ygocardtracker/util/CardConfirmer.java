@@ -1,5 +1,6 @@
 package com.cgreen.ygocardtracker.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.cgreen.ygocardtracker.card.data.CardInfo;
@@ -18,9 +19,7 @@ public class CardConfirmer {
         for (CardInfo cardInfo : cardInfos) {
             if (String.format("%08d", cardInfo.getPasscode()).equals(passcode)) {
                 String[] cardSetArr = cardInfo.getSetCodes().split(",");
-                for (String cardSet : cardSetArr) {
-                    cardSetChoices.add(cardSet);
-                }
+                cardSetChoices.addAll(Arrays.asList(cardSetArr));
                 break;
             }
         }
