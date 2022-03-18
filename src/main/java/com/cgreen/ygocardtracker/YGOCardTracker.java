@@ -38,7 +38,9 @@ public class YGOCardTracker extends Application
                 FXMLLoader loader = new FXMLLoader(MainMenuController.class.getClassLoader().getResource("main_menu.fxml"));                
                 Parent parent = loader.load();
                 ((MainMenuController)loader.getController()).init();
-                
+
+                // NOTE: This application is intended for personal use.
+                // Use these simple values for the H2 db username and password.
                 User user = new User();
                 user.setUsername("ygoadmin");
                 user.setPassword("password");
