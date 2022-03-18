@@ -31,7 +31,7 @@ public class CardInfoViewController {
                 Image img = new Image(imgFile.toURI().toString());
                 cardImageView.setImage(img);
             } else {
-                InputStream is = AllCardsController.class.getClassLoader().getResourceAsStream("default-card-image-421x614.png");
+                InputStream is = CardInfoViewController.class.getClassLoader().getResourceAsStream("default-card-image-421x614.png");
                 if (is == null) {
                     // TODO: Log that a resource was not found!!
                     cardImageView.setImage(null);

@@ -109,7 +109,7 @@ public class CardConfirmerController {
     }
 
     private void displayDefaultImage() {
-        InputStream is = AllCardsController.class.getClassLoader().getResourceAsStream("default-card-image-421x614.png");
+        InputStream is = CardConfirmerController.class.getClassLoader().getResourceAsStream("default-card-image-421x614.png");
         if (is == null) {
             // TODO: Log that a resource was not found!!
             imageView.setImage(null);
