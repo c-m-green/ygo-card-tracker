@@ -1,7 +1,7 @@
 .classpath
 .project
 .settings/
-ygodb.*
+*.db
 target/
 card_images/
 .idea/
