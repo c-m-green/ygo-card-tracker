@@ -40,7 +40,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class CardImporter {
-    private static final String BREAKING_VER = "0.5.0";
+    private static final String BREAKING_VER = "0.6.0";
     private static Map<Integer, Integer> groupIds, deckIds;
     private static List<CardImportEntry> importedCards;
     public static void importJson(File inputFile) {
