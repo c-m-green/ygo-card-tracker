@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.cgreen.ygocardtracker.card.Card;
+import com.cgreen.ygocardtracker.card.Group;
 import com.cgreen.ygocardtracker.card.data.CardInfo;
 import com.cgreen.ygocardtracker.dao.impl.CardDao;
 import com.cgreen.ygocardtracker.util.AlertHelper;
@@ -22,13 +23,14 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class CardConfirmerController {
-    // TODO: Give this a private CardConfirmer to initialize in init()
     private Stage stage;
     private CardConfirmer cardConfirmer;
     @FXML
     private Button saveButton, cancelButton;
     @FXML
     private ChoiceBox<String> passcodeChoiceBox, cardSetChoiceBox;
+    @FXML
+    private ChoiceBox<Group> groupChoiceBox;
     @FXML
     private ImageView imageView;
     
@@ -50,6 +52,7 @@ public class CardConfirmerController {
         passcodeChoiceBox.setItems(passcodeChoices);
         passcodeChoiceBox.setValue(passcodeChoices.get(0));
         cardSetChoiceBox.setItems(cardConfirmer.getCardSetChoicesForPasscode(passcodeChoices.get(0)));
+        groupChoiceBox.setItems(cardConfirmer.getAllGroups());
         String imgLink = cardConfirmer.getImageLinkForPasscode(passcodeChoices.get(0));
         if (imgLink == null || imgLink.isBlank()) {
             displayDefaultImage();
@@ -86,7 +89,11 @@ public class CardConfirmerController {
             Integer passcode = Integer.parseInt(passcodeChoiceBox.getValue());
             Card card = new Card();
             card.setDeckId(1);
-            card.setGroupId(1);
+            if (groupChoiceBox.getValue() == null) {
+                card.setGroupId(1);
+            } else {
+                card.setGroupId(groupChoiceBox.getValue().getId());
+            }
             card.setInSideDeck(false);
             card.setIsVirtual(false);
             card.setSetCode(cardSetChoiceBox.getValue());
